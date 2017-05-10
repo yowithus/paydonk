@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\User;
+use App\PhoneVerification;
 use Twilio;
 
 
@@ -27,30 +28,37 @@ class UserController extends Controller
     public function register(Request $request)
     {
         $validator = validator()->make($request->all(), [
-            'phone'     => 'required|max:80|unique:users',
-            'password'  => 'required|string|min:6|confirmed',
+            'phone_number'  => 'required|max:80|unique:users',
+            'password'      => 'required|string|min:6|confirmed',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                'error' => $validator->errors()->first()
+                'status'    => 0,
+                'message'   => $validator->errors()->first()
             ]);
         }
 
+        $user = User::create([
+            'phone_number'      => $request->phone_number,
+            'password'          => bcrypt($request->password)
+        ]);
+
         $verification_code = rand(1000, 9999);
 
-        $user = User::create([
-            'phone'         => $request->phone,
-            'password'      => bcrypt($request->password),
+        PhoneVerification::create([
+            'user_id'           => $user->id,
+            'phone_number'      => $request->phone_number,
             'verification_code' => $verification_code,
         ]);
 
-        Twilio::message($request->phone, $verification_code);
+        Twilio::message($request->phone_number, $verification_code);
 
         $token = JWTAuth::fromUser($user);
 
         return response()->json([
-            'success'   => 'Register successful',
+            'status'    => 1,
+            'message'   => 'Register successful',
             'token'     => $token
         ]);
     }
@@ -58,23 +66,28 @@ class UserController extends Controller
     public function login(Request $request)
     {
         $validator = validator()->make($request->all(), [
-            'phone'     => 'required|max:80',
-            'password'  => 'required|string|min:6',
+            'phone_number'  => 'required|max:80',
+            'password'      => 'required|string|min:6',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                'error' => $validator->errors()->first()
+                'status'    => 0,
+                'message'   => $validator->errors()->first()
             ]);
         }
 
-        $credentials = $request->only('phone', 'password');
+        $credentials = $request->only('phone_number', 'password');
         if (! $token = JWTAuth::attempt($credentials)) {
-            return response()->json(['error' => 'Incorrect phone number or password.']);
+            return response()->json([
+                'status'    => 0,
+                'message'   => 'Incorrect phone number or password.'
+            ]);
         }
 
         return response()->json([
-            'success'   => 'Login successful',
+            'status'    => 1,
+            'message'   => 'Login successful',
             'token'     => $token
         ]);
     }
@@ -84,7 +97,8 @@ class UserController extends Controller
         JWTAuth::invalidate(JWTAuth::getToken());
 
         return response()->json([
-            'success'   => 'Logout successful',
+            'status'    => 1,
+            'message'   => 'Logout successful',
         ]);
     }
 
@@ -92,16 +106,19 @@ class UserController extends Controller
     {
         $user = JWTAuth::parseToken()->authenticate();
 
-        $phone = $user->phone;
         $verification_code = rand(1000, 9999);
 
-        $user->verification_code = $verification_code;
-        $user->save();
+        PhoneVerification::create([
+            'user_id'           => $user->id,
+            'phone_number'      => $user->phone_number,
+            'verification_code' => $verification_code,
+        ]);
 
-        Twilio::message($phone, $verification_code);
+        Twilio::message($user->phone_number, $verification_code);
 
         return response()->json([
-            'success'   => 'Send verification code successful'
+            'status'    => 1,
+            'message'   => 'Send verification code successful'
         ]);
     }
 
@@ -109,61 +126,46 @@ class UserController extends Controller
     {
         $user = JWTAuth::parseToken()->authenticate();
         
-        if ($user->verification_code != $request->verification_code) {
+        if ($user->phone_verification()->verification_code != $request->verification_code) {
             return response()->json([
-                'error'   => 'Verify failed'
+                'status'    => 0,
+                'message'   => 'Verify failed'
             ]);
         }
 
-        $user->is_verified = true;
+        $user->is_phone_verified = true;
         $user->save();
 
         return response()->json([
-            'success'   => 'Verify successful'
+            'status'    => 1,
+            'message'   => 'Verify successful'
         ]);
     }
 
-    public function saveName(Request $request)
+    public function saveUserInfo(Request $request)
     {
         $validator = validator()->make($request->all(), [
             'first_name' => 'required|regex:/^[\pL\s\-]+$/u|min:2|max:30',
             'last_name'  => 'required|regex:/^[\pL\s\-]+$/u|min:2|max:30',
+            'email'      => 'required|email|max:80|unique:users',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                'error' => $validator->errors()->first()
+                'status'    => 0,
+                'message'   => $validator->errors()->first()
             ]);
         }
 
         $user = JWTAuth::parseToken()->authenticate();
-        $user->first_name = $request->first_name;
-        $user->last_name = $request->last_name;
+        $user->first_name   = $request->first_name;
+        $user->last_name    = $request->last_name;
+        $user->email        = $request->email;
         $user->save();
 
         return response()->json([
-            'success'   => 'Successfully save name'
-        ]);
-    }
-
-    public function saveEmail(Request $request)
-    {
-        $validator = validator()->make($request->all(), [
-            'email' => 'required|email|max:80|unique:users',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'error' => $validator->errors()->first()
-            ]);
-        }
-
-        $user = JWTAuth::parseToken()->authenticate();
-        $user->email = $request->email;
-        $user->save();
-
-        return response()->json([
-            'success'   => 'Successfully save email'
+            'status'    => 1,
+            'message'   => 'Successfully save user info'
         ]);
     }
 
@@ -175,7 +177,8 @@ class UserController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'error' => $validator->errors()->first()
+                'status'    => 0,
+                'message'   => $validator->errors()->first()
             ]);
         }
 
@@ -184,7 +187,8 @@ class UserController extends Controller
         $user->save();
 
         return response()->json([
-            'success'   => 'Successfully reset password'
+            'status'    => 1,
+            'message'   => 'Successfully reset password'
         ]);
     }
 }

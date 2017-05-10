@@ -15,7 +15,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'first_name', 'last_name', 'email', 'phone', 'password', 'is_verified', 'verification_code'
+        'first_name', 'last_name', 'email', 'phone_number', 'password', 'is_phone_verified'
     ];
 
     /**
@@ -26,4 +26,14 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+     * Get the latest verification code for the user.
+     */
+    public function phone_verification()
+    {
+        return $this->hasMany(PhoneVerification::class)
+            ->orderBy('created_at', 'desc')
+            ->first();
+    }
 }
