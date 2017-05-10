@@ -3,10 +3,12 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 
-class JWTAuth extends \Tymon\JWTAuth\Middleware\GetUserFromToken
+class JWTAuth
 {
     /**
      * Handle an incoming request.
@@ -17,31 +19,27 @@ class JWTAuth extends \Tymon\JWTAuth\Middleware\GetUserFromToken
      */
     public function handle($request, Closure $next)
     {
-        if (! $token = $this->auth->setRequest($request)->getToken()) {
-            return response()->json([
-                'status'    => 0,
-                'message'   => 'token_not_provided'
-            ]);
-        }
-
         try {
-            $user = $this->auth->authenticate($token);
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+                return response()->json([
+                    'status'    => 0,
+                    'message'   => 'user_not_found'
+                ]);
+            }
         } catch (TokenExpiredException $e) {
             return response()->json([
                 'status'    => 0,
                 'message'   => 'token_expired'
             ]);
-        } catch (JWTException $e) {
+        } catch (TokenInvalidException $e) {
             return response()->json([
                 'status'    => 0,
                 'message'   => 'token_invalid'
             ]);
-        }
-        
-        if (! $user) {
+        } catch (JWTException $e) {
             return response()->json([
                 'status'    => 0,
-                'message'   => 'user_not_found'
+                'message'   => 'token_absent'
             ]);
         }
 
