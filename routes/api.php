@@ -17,7 +17,15 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/login', 'AuthController@login');
-Route::post('/register', 'AuthController@register');
+Route::post('/login', 'UserController@login');
+Route::post('/register', 'UserController@register');
+Route::post('/logout', 'UserController@logout');
+Route::post('/send-verification-code', 'UserController@sendVerificationCode');
+Route::post('/verify', 'UserController@verify');
+Route::post('/save-user-info', 'UserController@saveUserInfo');
+Route::post('/reset-password', 'UserController@resetPassword');
 
-Route::get('/users', 'UserController@index');
+Route::get('/user', 'UserController@show');
+
+
+
