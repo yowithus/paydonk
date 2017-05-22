@@ -28,7 +28,8 @@ Route::post('/reset-password', 'UserController@resetPassword');
 Route::get('/user', 'UserController@show');
 
 
-Route::get('/test', 'UserController@test');
+Route::post('/login-test', 'UserController@login_test');
+Route::post('/register-test', 'UserController@register_test');
 
 
 

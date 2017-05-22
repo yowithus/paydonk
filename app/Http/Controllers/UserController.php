@@ -15,7 +15,7 @@ class UserController extends Controller
 	public function __construct()
     {
        // $this->middleware('guest');
-       $this->middleware('jwt.auth', ['except' => ['login', 'register', 'test']]);
+       $this->middleware('jwt.auth', ['except' => ['login', 'register', 'login_test', 'register_test']]);
     }  
 
     public function show()
@@ -25,38 +25,104 @@ class UserController extends Controller
         return response()->json(compact('user'));
     }
 
-    public function test()
+    private function http_digest_parse($txt)
     {
-        // $request_url = "http://182.253.236.154/Services/Registrasi-Merchant";
+        $keys_arr = array();
+        $values_arr = array();
+        $cindex = 0;
+        $parts = explode(',', $txt);
 
-        // $client     = new \GuzzleHttp\Client();
-        // $response   = $client->post($request_url, [
-        //     'form_params' => [
-        //        'msisdn' => '081932058111', 
-        //        'email'  => 'yonatan.nugraha',
-        //        'name'   => 'Yonatan Nugraha',
-        //        'upline' => '',
-        //        'serial' => 'tes123'
-        //     ]
-        // ]);
+        foreach($parts as $p) {
+            $p = trim($p);
+            $kvpair = explode('=', $p);
+            $kvpair[1] = str_replace("\"", "", $kvpair[1]);
+            $keys_arr[$cindex] = $kvpair[0];
+            $values_arr[$cindex] = $kvpair[1];
+            $cindex++;
+        }
+      
+        $ret_arr = array_combine($keys_arr, $values_arr);
 
+        return $ret_arr;  
+    }
 
-        $request_url = "https://182.253.236.154:32146/auth/Login";
+    private function get_authorization()
+    {
+        $base_uri       = "https://182.253.236.154:32146";
+        $request_uri    = '/auth/Login';
+        $request_method = 'POST';
 
-        $client     = new \GuzzleHttp\Client();
-        $response   = $client->post($request_url, [
-            'form_params' => [
+        $client     = new \GuzzleHttp\Client(['base_uri' => $base_uri, 'verify' => false, 'exceptions' => false]);
+        $res        = $client->post($request_uri);
+
+        $digest = $res->getHeaderLine('WWW-Authenticate');
+        if (strpos($digest,'Digest') === 0) {
+            $digest = substr($digest, 7);
+        }
+
+        $data       = $this->http_digest_parse($digest);
+        $username   = 'dji';
+        $password   = 'abcde';
+        $realm      = $data['realm'];
+        $qop        = $data['qop'];
+        $nonce      = $data['nonce'];
+        $opaque     = $data['opaque'];
+        $nc         = '00000001';
+        $cnonce     = '098f6bcd4621d373cade4e832627b4f6';
+
+        $A1         = md5("$username:$realm:$password");
+        $A2         = md5("$request_method:$request_uri");
+        $response   = md5("$A1:$nonce:$nc:$cnonce:$qop:$A2");
+
+        $authorization = "Digest username=\"$username\", realm=\"$realm\", nonce=\"$nonce\", uri=\"$request_uri\", qop=\"$qop\", nc=\"$nc\", cnonce=\"$cnonce\", response=\"$response\", opaque=\"$opaque\"";
+
+        return $authorization;
+    }
+
+    public function login_test()
+    {
+        $base_uri       = "https://182.253.236.154:32146";
+        $request_uri    = '/auth/Login';
+        $authorization  = $this->get_authorization();
+
+        $client = new \GuzzleHttp\Client(['base_uri' => $base_uri, 'verify' => false, 'exceptions' => false]);
+        $res   = $client->post($request_uri, [
+            'headers'   => ['Authorization' => $authorization],
+            'json' => [
+               'accountID'  => '081932058111', 
+               'hardwareID' => 'tes123',
+               'password'   => '123456'
+            ],
+        ]);
+
+        dd($res);
+
+        $result = json_decode((string)$res);
+
+        return response()->json($result);
+    }
+
+    public function register_test()
+    {
+        $base_uri       = "https://182.253.236.154:32146";
+        $request_uri    = '/Services/Registrasi-Merchant';
+        $authorization  = $this->get_authorization();
+
+        $client = new \GuzzleHttp\Client(['base_uri' => $base_uri, 'verify' => false, 'exceptions' => false]);
+        $res   = $client->post($request_uri, [
+            'headers'   => ['Authorization' => $authorization],
+            'json' => [
                'msisdn' => '081932058111', 
-               'email'  => 'yonatan.nugraha',
+               'email'  => 'yonatan.nugraha@hotmail.com',
                'name'   => 'Yonatan Nugraha',
                'upline' => '',
                'serial' => 'tes123'
-            ]
+            ],
         ]);
 
-        dd($response);
+        dd($res);
 
-        $result = json_decode((string)$response->getHeader());
+        $result = json_decode((string)$res);
 
         return response()->json($result);
     }
