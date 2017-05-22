@@ -15,7 +15,7 @@ class UserController extends Controller
 	public function __construct()
     {
        // $this->middleware('guest');
-       $this->middleware('jwt.auth', ['except' => ['login', 'register']]);
+       $this->middleware('jwt.auth', ['except' => ['login', 'register', 'test']]);
     }  
 
     public function show()
@@ -23,6 +23,42 @@ class UserController extends Controller
         $user = JWTAuth::parseToken()->authenticate();
 
         return response()->json(compact('user'));
+    }
+
+    public function test()
+    {
+        // $request_url = "http://182.253.236.154/Services/Registrasi-Merchant";
+
+        // $client     = new \GuzzleHttp\Client();
+        // $response   = $client->post($request_url, [
+        //     'form_params' => [
+        //        'msisdn' => '081932058111', 
+        //        'email'  => 'yonatan.nugraha',
+        //        'name'   => 'Yonatan Nugraha',
+        //        'upline' => '',
+        //        'serial' => 'tes123'
+        //     ]
+        // ]);
+
+
+        $request_url = "https://182.253.236.154:32146/auth/Login";
+
+        $client     = new \GuzzleHttp\Client();
+        $response   = $client->post($request_url, [
+            'form_params' => [
+               'msisdn' => '081932058111', 
+               'email'  => 'yonatan.nugraha',
+               'name'   => 'Yonatan Nugraha',
+               'upline' => '',
+               'serial' => 'tes123'
+            ]
+        ]);
+
+        dd($response);
+
+        $result = json_decode((string)$response->getHeader());
+
+        return response()->json($result);
     }
 
     public function register(Request $request)
