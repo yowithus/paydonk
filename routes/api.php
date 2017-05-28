@@ -22,11 +22,9 @@ Route::post('/register', 'UserController@register');
 Route::post('/logout', 'UserController@logout');
 Route::post('/send-verification-code', 'UserController@sendVerificationCode');
 Route::post('/verify', 'UserController@verify');
-Route::post('/save-user-info', 'UserController@saveUserInfo');
 Route::post('/reset-password', 'UserController@resetPassword');
 
 Route::get('/user', 'UserController@show');
-
 
 Route::post('/dji-login', 'UserController@dji_login');
 Route::post('/dji-register', 'UserController@dji_register');

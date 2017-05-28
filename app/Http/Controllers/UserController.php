@@ -15,7 +15,7 @@ class UserController extends Controller
 	public function __construct()
     {
        // $this->middleware('guest');
-       $this->middleware('jwt.auth', ['except' => ['login', 'register', 'dji_login', 'dji_register', 'dji_inquiry']]);
+       $this->middleware('jwt.auth', ['except' => ['login', 'register', 'sendVerificationCode', 'verify', 'dji_login', 'dji_register', 'dji_inquiry']]);
     }  
 
     public function show()
@@ -154,7 +154,10 @@ class UserController extends Controller
     public function register(Request $request)
     {
         $validator = validator()->make($request->all(), [
+            'first_name'    => 'required|regex:/^[\pL\s\-]+$/u|min:2|max:30',
+            'last_name'     => 'required|regex:/^[\pL\s\-]+$/u|min:2|max:30',
             'phone_number'  => 'required|max:80|unique:users',
+            'email'         => 'required|email|max:80|unique:users',
             'password'      => 'required|string|min:6|confirmed',
         ]);
 
@@ -166,19 +169,12 @@ class UserController extends Controller
         }
 
         $user = User::create([
+            'first_name'        => $request->first_name,
+            'last_name'         => $request->last_name,
             'phone_number'      => $request->phone_number,
+            'email'             => $request->email,
             'password'          => bcrypt($request->password)
         ]);
-
-        $verification_code = rand(1000, 9999);
-
-        PhoneVerification::create([
-            'user_id'           => $user->id,
-            'phone_number'      => $request->phone_number,
-            'verification_code' => $verification_code,
-        ]);
-
-        Twilio::message($request->phone_number, $verification_code);
 
         $token = JWTAuth::fromUser($user);
 
@@ -230,50 +226,8 @@ class UserController extends Controller
 
     public function sendVerificationCode(Request $request)
     {
-        $user = JWTAuth::parseToken()->authenticate();
-
-        $verification_code = rand(1000, 9999);
-
-        PhoneVerification::create([
-            'user_id'           => $user->id,
-            'phone_number'      => $user->phone_number,
-            'verification_code' => $verification_code,
-        ]);
-
-        Twilio::message($user->phone_number, $verification_code);
-
-        return response()->json([
-            'status'    => 1,
-            'message'   => 'Send verification code successful'
-        ]);
-    }
-
-    public function verify(Request $request)
-    {
-        $user = JWTAuth::parseToken()->authenticate();
-        
-        if ($user->phone_verification()->verification_code != $request->verification_code) {
-            return response()->json([
-                'status'    => 0,
-                'message'   => 'Verify failed'
-            ]);
-        }
-
-        $user->is_phone_verified = true;
-        $user->save();
-
-        return response()->json([
-            'status'    => 1,
-            'message'   => 'Verify successful'
-        ]);
-    }
-
-    public function saveUserInfo(Request $request)
-    {
         $validator = validator()->make($request->all(), [
-            'first_name' => 'required|regex:/^[\pL\s\-]+$/u|min:2|max:30',
-            'last_name'  => 'required|regex:/^[\pL\s\-]+$/u|min:2|max:30',
-            'email'      => 'required|email|max:80|unique:users',
+            'phone_number'  => 'required|max:80|unique:users'
         ]);
 
         if ($validator->fails()) {
@@ -283,15 +237,53 @@ class UserController extends Controller
             ]);
         }
 
-        $user = JWTAuth::parseToken()->authenticate();
-        $user->first_name   = $request->first_name;
-        $user->last_name    = $request->last_name;
-        $user->email        = $request->email;
-        $user->save();
+        $phone_number      = $request->phone_number;
+        $verification_code = rand(1000, 9999);
+
+        PhoneVerification::create([
+            'phone_number'      => $phone_number,
+            'verification_code' => $verification_code,
+        ]);
+
+        Twilio::message($phone_number, $verification_code);
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Successfully save user info'
+            'message'   => 'Send verification code successful'
+        ]);
+    }
+
+    public function verify(Request $request)
+    {
+        $validator = validator()->make($request->all(), [
+            'phone_number'  => 'required|max:80|unique:users',
+            'verification_code' => 'required|digits:4',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => $validator->errors()->first()
+            ]);
+        }
+
+        $phone_number       = $request->phone_number;
+        $verification_code  = $request->verification_code;
+
+        $phone_verification = PhoneVerification::where('phone_number', $phone_number)
+            ->orderBy('created_at', 'desc')
+            ->first();
+        
+        if ($verification_code != $phone_verification->verification_code) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => 'Verify failed'
+            ]);
+        }
+
+        return response()->json([
+            'status'    => 1,
+            'message'   => 'Verify successful'
         ]);
     }
 

@@ -12,7 +12,7 @@ class PhoneVerification extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'phone_number', 'verification_code'
+        'phone_number', 'verification_code'
     ];
 
     public function setUpdatedAt($value) {

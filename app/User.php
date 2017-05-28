@@ -26,14 +26,4 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
-
-    /**
-     * Get the latest verification code for the user.
-     */
-    public function phone_verification()
-    {
-        return $this->hasMany(PhoneVerification::class)
-            ->orderBy('created_at', 'desc')
-            ->first();
-    }
 }

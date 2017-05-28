@@ -15,7 +15,6 @@ class CreatePhoneVerificationsTable extends Migration
     {
         Schema::create('phone_verifications', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id');
             $table->string('phone_number');
             $table->string('verification_code');
             $table->timestamp('created_at');
