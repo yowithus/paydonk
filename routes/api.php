@@ -28,8 +28,9 @@ Route::post('/reset-password', 'UserController@resetPassword');
 Route::get('/user', 'UserController@show');
 
 
-Route::post('/login-test', 'UserController@login_test');
-Route::post('/register-test', 'UserController@register_test');
+Route::post('/dji-login', 'UserController@dji_login');
+Route::post('/dji-register', 'UserController@dji_register');
+Route::post('/dji-inquiry', 'UserController@dji_inquiry');
 
 
 

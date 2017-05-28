@@ -15,7 +15,7 @@ class UserController extends Controller
 	public function __construct()
     {
        // $this->middleware('guest');
-       $this->middleware('jwt.auth', ['except' => ['login', 'register', 'login_test', 'register_test']]);
+       $this->middleware('jwt.auth', ['except' => ['login', 'register', 'dji_login', 'dji_register', 'dji_inquiry']]);
     }  
 
     public function show()
@@ -79,14 +79,14 @@ class UserController extends Controller
         return $authorization;
     }
 
-    public function login_test()
+    public function dji_login()
     {
         $base_uri       = "https://182.253.236.154:32146";
         $request_uri    = '/auth/Login';
         $authorization  = $this->get_authorization();
 
         $client = new \GuzzleHttp\Client(['base_uri' => $base_uri, 'verify' => false, 'exceptions' => false]);
-        $res   = $client->post($request_uri, [
+        $response   = $client->post($request_uri, [
             'headers'   => ['Authorization' => $authorization],
             'json' => [
                'accountID'  => '081932058111', 
@@ -95,34 +95,58 @@ class UserController extends Controller
             ],
         ]);
 
-        dd($res);
-
-        $result = json_decode((string)$res);
+        $body   = $response->getBody()->read(1024);
+        $result = json_decode((string)$body);
 
         return response()->json($result);
     }
 
-    public function register_test()
+    public function dji_register()
     {
         $base_uri       = "https://182.253.236.154:32146";
         $request_uri    = '/Services/Registrasi-Merchant';
         $authorization  = $this->get_authorization();
 
         $client = new \GuzzleHttp\Client(['base_uri' => $base_uri, 'verify' => false, 'exceptions' => false]);
-        $res   = $client->post($request_uri, [
+        $response   = $client->post($request_uri, [
             'headers'   => ['Authorization' => $authorization],
             'json' => [
-               'msisdn' => '081932058111', 
-               'email'  => 'yonatan.nugraha@hotmail.com',
+               'msisdn' => '081932058123', 
+               'email'  => 'yonatan.nugraha2@hotmail.com',
                'name'   => 'Yonatan Nugraha',
                'upline' => '',
                'serial' => 'tes123'
             ],
         ]);
 
-        dd($res);
+        $body   = $response->getBody()->read(1024);
+        $result = json_decode((string)$body);
 
-        $result = json_decode((string)$res);
+        return response()->json($result);
+    }
+
+    public function dji_inquiry()
+    {
+        $base_uri       = "https://182.253.236.154:32146";
+        $request_uri    = '/Services/Inquiry';
+        $authorization  = $this->get_authorization();
+
+        $client = new \GuzzleHttp\Client(['base_uri' => $base_uri, 'verify' => false, 'exceptions' => false]);
+        $response   = $client->post($request_uri, [
+            'headers'   => ['Authorization' => $authorization],
+            'json' => [
+               'sessionID'      => '5D3A7B4663D87C1FF9C62FE3FA8B26C7', 
+               'merchantID'     => 'DJI000315',
+               'productID'      => '100302',
+               'customerID'     => '39121812406',
+               'accountID'      => '081932058111',
+               'counterID'      => '1',
+               'referenceID'    => '123456789654'
+            ],
+        ]);
+
+        $body   = $response->getBody()->read(1024);
+        $result = json_decode((string)$body);
 
         return response()->json($result);
     }
