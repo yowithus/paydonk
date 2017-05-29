@@ -81,18 +81,6 @@ class UserController extends Controller
 
     public function dji_login(Request $request)
     {
-        $validator = validator()->make($request->all(), [
-            'phone_number'  => 'required|max:80',
-            'password'      => 'required|string|min:6',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status'    => 0,
-                'message'   => $validator->errors()->first()
-            ]);
-        }
-
         $base_uri       = "https://182.253.236.154:32146";
         $request_uri    = '/auth/Login';
         $authorization  = $this->get_authorization();
@@ -101,9 +89,9 @@ class UserController extends Controller
         $response   = $client->post($request_uri, [
             'headers'   => ['Authorization' => $authorization],
             'json' => [
-               'accountID'  => $request->phone_number, 
+               'accountID'  => '0' . substr($request->phone_number, 3), 
                'hardwareID' => 'tes123',
-               'password'   => md5($request->password)
+               'password'   => md5($request->dji_password)
             ],
         ]);
 
@@ -115,20 +103,6 @@ class UserController extends Controller
 
     public function dji_register(Request $request)
     {
-        $validator = validator()->make($request->all(), [
-            'first_name'    => 'required|regex:/^[\pL\s\-]+$/u|min:2|max:30',
-            'last_name'     => 'required|regex:/^[\pL\s\-]+$/u|min:2|max:30',
-            'phone_number'  => 'required|max:80',
-            'email'         => 'required|email|max:80',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status'    => 0,
-                'message'   => $validator->errors()->first()
-            ]);
-        }
-
         $base_uri       = "https://182.253.236.154:32146";
         $request_uri    = '/Services/Registrasi-Merchant';
         $authorization  = $this->get_authorization();
@@ -194,13 +168,34 @@ class UserController extends Controller
             ]);
         }
 
-        $user = User::create([
-            'first_name'        => $request->first_name,
-            'last_name'         => $request->last_name,
-            'phone_number'      => $request->phone_number,
-            'email'             => $request->email,
-            'password'          => bcrypt($request->password)
-        ]);
+        if ($request->dji) {
+            $dji = $this->dji_register($request);
+            if ($dji->rc != '00') {
+                return response()->json([
+                    'status'    => 0,
+                    'message'   => $dji->description
+                ]);
+            }
+
+            $user = User::create([
+                'first_name'        => $request->first_name,
+                'last_name'         => $request->last_name,
+                'phone_number'      => $request->phone_number,
+                'email'             => $request->email,
+                'password'          => bcrypt($request->password),
+                'dji_merchant_id'   => $dji->merchantID,
+                'dji_password'      => $dji->password,
+                'dji_pin'           => $dji->pin
+            ]);
+        } else {
+            $user = User::create([
+                'first_name'        => $request->first_name,
+                'last_name'         => $request->last_name,
+                'phone_number'      => $request->phone_number,
+                'email'             => $request->email,
+                'password'          => bcrypt($request->password)
+            ]);
+        }
 
         $token = JWTAuth::fromUser($user);
 
@@ -231,6 +226,21 @@ class UserController extends Controller
                 'status'    => 0,
                 'message'   => 'Incorrect phone number or password.'
             ]);
+        }
+
+        if ($request->dji) {
+            $user = User::where('phone_number', $request->phone_number)
+                ->first();
+
+            $request->request->add(['dji_password' => $user->password]);
+
+            $dji = $this->dji_login($request);
+            if ($dji->rc != '00') {
+                return response()->json([
+                    'status'    => 0,
+                    'message'   => $dji->description
+                ]);
+            }
         }
 
         return response()->json([
