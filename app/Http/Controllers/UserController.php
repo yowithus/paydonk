@@ -79,8 +79,20 @@ class UserController extends Controller
         return $authorization;
     }
 
-    public function dji_login()
+    public function dji_login(Request $request)
     {
+        $validator = validator()->make($request->all(), [
+            'phone_number'  => 'required|max:80',
+            'password'      => 'required|string|min:6',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => $validator->errors()->first()
+            ]);
+        }
+
         $base_uri       = "https://182.253.236.154:32146";
         $request_uri    = '/auth/Login';
         $authorization  = $this->get_authorization();
@@ -89,9 +101,9 @@ class UserController extends Controller
         $response   = $client->post($request_uri, [
             'headers'   => ['Authorization' => $authorization],
             'json' => [
-               'accountID'  => '081932058111', 
+               'accountID'  => $request->phone_number, 
                'hardwareID' => 'tes123',
-               'password'   => '123456'
+               'password'   => md5($request->password)
             ],
         ]);
 
@@ -101,8 +113,22 @@ class UserController extends Controller
         return response()->json($result);
     }
 
-    public function dji_register()
+    public function dji_register(Request $request)
     {
+        $validator = validator()->make($request->all(), [
+            'first_name'    => 'required|regex:/^[\pL\s\-]+$/u|min:2|max:30',
+            'last_name'     => 'required|regex:/^[\pL\s\-]+$/u|min:2|max:30',
+            'phone_number'  => 'required|max:80',
+            'email'         => 'required|email|max:80',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => $validator->errors()->first()
+            ]);
+        }
+
         $base_uri       = "https://182.253.236.154:32146";
         $request_uri    = '/Services/Registrasi-Merchant';
         $authorization  = $this->get_authorization();
@@ -111,9 +137,9 @@ class UserController extends Controller
         $response   = $client->post($request_uri, [
             'headers'   => ['Authorization' => $authorization],
             'json' => [
-               'msisdn' => '081932058123', 
-               'email'  => 'yonatan.nugraha2@hotmail.com',
-               'name'   => 'Yonatan Nugraha',
+               'msisdn' => $request->phone_number, 
+               'email'  => $request->email, 
+               'name'   => $request->first_name . ' ' . $request->last_name,
                'upline' => '',
                'serial' => 'tes123'
             ],
