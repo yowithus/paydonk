@@ -345,7 +345,7 @@ class UserController extends Controller
     public function verify(Request $request)
     {
         $validator = validator()->make($request->all(), [
-            'phone_number'  => 'required|max:80|unique:users',
+            'phone_number'      => 'required|max:80',
             'verification_code' => 'required|digits:4',
         ]);
 
