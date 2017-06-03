@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\User;
-use App\PhoneVerification;
 use Twilio;
+use DB;
 
 
 class UserController extends Controller
@@ -329,7 +329,7 @@ class UserController extends Controller
         $phone_number      = $request->phone_number;
         $verification_code = rand(1000, 9999);
 
-        PhoneVerification::create([
+        DB::table('phone_verifications')->insert([
             'phone_number'      => $phone_number,
             'verification_code' => $verification_code,
         ]);
@@ -359,7 +359,8 @@ class UserController extends Controller
         $phone_number       = $request->phone_number;
         $verification_code  = $request->verification_code;
 
-        $phone_verification = PhoneVerification::where('phone_number', $phone_number)
+        $phone_verification = DB::table('phone_verifications')
+            ->where('phone_number', $phone_number)
             ->orderBy('created_at', 'desc')
             ->first();
         
