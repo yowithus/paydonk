@@ -15,7 +15,7 @@ class UserController extends Controller
 	public function __construct()
     {
        // $this->middleware('guest');
-       $this->middleware('jwt.auth', ['except' => ['login', 'register', 'sendVerificationCode', 'verify', 'dji_login', 'dji_register', 'dji_inquiry']]);
+       $this->middleware('jwt.auth', ['except' => ['login', 'register', 'sendVerificationCode', 'verify', 'dji_login', 'dji_register', 'dji_inquiry', 'dji_payment']]);
     }  
 
     public function show()
@@ -98,7 +98,11 @@ class UserController extends Controller
         $body   = $response->getBody()->read(1024);
         $result = json_decode((string)$body);
 
-        return response()->json($result);
+        if (request()->wantsJson()) {
+            return response()->json($result);
+        }
+
+        return $result;
     }
 
     public function dji_register(Request $request)
@@ -122,10 +126,14 @@ class UserController extends Controller
         $body   = $response->getBody()->read(1024);
         $result = json_decode((string)$body);
 
-        return response()->json($result);
+        if (request()->wantsJson()) {
+            return response()->json($result);
+        }
+
+        return $result;
     }
 
-    public function dji_inquiry()
+    public function dji_inquiry(Request $request)
     {
         $base_uri       = "https://182.253.236.154:32146";
         $request_uri    = '/Services/Inquiry';
@@ -135,20 +143,58 @@ class UserController extends Controller
         $response   = $client->post($request_uri, [
             'headers'   => ['Authorization' => $authorization],
             'json' => [
-               'sessionID'      => '5D3A7B4663D87C1FF9C62FE3FA8B26C7', 
-               'merchantID'     => 'DJI000315',
-               'productID'      => '100302',
-               'customerID'     => '39121812406',
-               'accountID'      => '081932058111',
+               'sessionID'      => $request->dji_session_id, 
+               'merchantID'     => $request->dji_merchant_id,
+               'productID'      => $request->dji_product_id,
+               'customerID'     => $request->customer_number,
+               'accountID'      => '0' . substr($request->phone_number, 3), 
                'counterID'      => '1',
-               'referenceID'    => '123456789654'
+               'referenceID'    => $request->reference_id, 
             ],
         ]);
 
         $body   = $response->getBody()->read(1024);
         $result = json_decode((string)$body);
 
-        return response()->json($result);
+        if (request()->wantsJson()) {
+            return response()->json($result);
+        }
+
+        return $result;
+    }
+
+    public function dji_payment(Request $request)
+    {
+        $base_uri       = "https://182.253.236.154:32146";
+        $request_uri    = '/Services/Payment';
+        $authorization  = $this->get_authorization();
+
+        $client = new \GuzzleHttp\Client(['base_uri' => $base_uri, 'verify' => false, 'exceptions' => false]);
+        $response   = $client->post($request_uri, [
+            'headers'   => ['Authorization' => $authorization],
+            'json' => [
+               'sessionID'      => $request->dji_session_id, 
+               'merchantID'     => $request->dji_merchant_id,
+               'productID'      => $request->dji_product_id,
+               'accountID'      => '0' . substr($request->phone_number, 3), 
+               'counterID'      => '1',
+               'customerID'     => $request->customer_number,
+               'pin'            => md5($request->dji_pin),
+               'referenceID'    => $request->reference_id, 
+               'tagihan'        => $request->tagihan,
+               'admin'          => $request->admin,
+               'total'          => $request->total
+            ],
+        ]);
+
+        $body   = $response->getBody()->read(1024);
+        $result = json_decode((string)$body);
+
+        if (request()->wantsJson()) {
+            return response()->json($result);
+        }
+
+        return $result;
     }
 
     public function register(Request $request)
@@ -170,7 +216,8 @@ class UserController extends Controller
 
         if ($request->dji) {
             $dji = $this->dji_register($request);
-            if ($dji->rc != '00') {
+
+            if (isset($dji->rc) && $dji->rc != '00') {
                 return response()->json([
                     'status'    => 0,
                     'message'   => $dji->description
@@ -232,10 +279,10 @@ class UserController extends Controller
             $user = User::where('phone_number', $request->phone_number)
                 ->first();
 
-            $request->request->add(['dji_password' => $user->password]);
+            $request->request->add(['dji_password' => $user->dji_password]);
 
             $dji = $this->dji_login($request);
-            if ($dji->rc != '00') {
+            if (isset($dji->rc) && $dji->rc != '00') {
                 return response()->json([
                     'status'    => 0,
                     'message'   => $dji->description
