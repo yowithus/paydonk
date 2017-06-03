@@ -15,7 +15,7 @@ class UserController extends Controller
 	public function __construct()
     {
        // $this->middleware('guest');
-       $this->middleware('jwt.auth', ['except' => ['login', 'register', 'sendVerificationCode', 'verify', 'dji_login', 'dji_register', 'dji_inquiry', 'dji_payment']]);
+       $this->middleware('jwt.auth', ['except' => ['login', 'register', 'sendVerificationCode', 'verify', 'resetPassword', 'dji_login', 'dji_register', 'dji_inquiry', 'dji_payment']]);
     }  
 
     public function show()
@@ -310,7 +310,7 @@ class UserController extends Controller
     public function sendVerificationCode(Request $request)
     {
         $validator = validator()->make($request->all(), [
-            'phone_number'  => 'required|max:80|unique:users'
+            'phone_number'  => 'required|max:80'
         ]);
 
         if ($validator->fails()) {
@@ -373,7 +373,8 @@ class UserController extends Controller
     public function resetPassword(Request $request)
     {
         $validator = validator()->make($request->all(), [
-            'password'  => 'required|string|min:6|confirmed',
+            'phone_number'  => 'required|max:80',
+            'password'      => 'required|string|min:6|confirmed',
         ]);
 
         if ($validator->fails()) {
@@ -383,7 +384,16 @@ class UserController extends Controller
             ]);
         }
 
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = User::where('phone_number', $request->phone_number)
+            ->first();
+
+        if (!$user) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => 'User does not exist'
+            ]);
+        }
+        
         $user->password = bcrypt($request->password);
         $user->save();
 
