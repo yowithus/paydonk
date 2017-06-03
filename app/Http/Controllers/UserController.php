@@ -309,9 +309,15 @@ class UserController extends Controller
 
     public function sendVerificationCode(Request $request)
     {
-        $validator = validator()->make($request->all(), [
-            'phone_number'  => 'required|max:80'
-        ]);
+        if ($request->is_register) {
+            $validator = validator()->make($request->all(), [
+                'phone_number'  => 'required|max:80|unique:users'
+            ]);  
+        } else {
+            $validator = validator()->make($request->all(), [
+                'phone_number'  => 'required|max:80'
+            ]); 
+        }
 
         if ($validator->fails()) {
             return response()->json([
@@ -393,7 +399,7 @@ class UserController extends Controller
                 'message'   => 'User does not exist'
             ]);
         }
-        
+
         $user->password = bcrypt($request->password);
         $user->save();
 
