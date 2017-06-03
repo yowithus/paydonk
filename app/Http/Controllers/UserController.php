@@ -204,7 +204,7 @@ class UserController extends Controller
             'last_name'     => 'required|regex:/^[\pL\s\-]+$/u|min:2|max:30',
             'phone_number'  => 'required|max:80|unique:users',
             'email'         => 'required|email|max:80|unique:users',
-            'password'      => 'required|string|min:6|confirmed',
+            'password'      => 'required|string|min:6',
         ]);
 
         if ($validator->fails()) {

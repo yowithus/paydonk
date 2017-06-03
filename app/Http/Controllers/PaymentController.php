@@ -28,4 +28,8 @@ class PaymentController extends Controller
 
     	return response()->json(compact('sender_banks'));
     }
+
+    public function topup() {
+    	
+    }
 }

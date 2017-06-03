@@ -36,3 +36,5 @@ Route::get('/get-recipient-banks', 'PaymentController@getRecipientBanks');
 Route::get('/get-sender-banks', 'PaymentController@getSenderBanks');
 
 
+Route::post('/topup/payment', 'PaymentController@getRecipientBanks');
+Route::post('/topup/confirm', 'PaymentController@getSenderBanks');
