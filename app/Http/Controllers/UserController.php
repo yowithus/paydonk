@@ -15,7 +15,7 @@ class UserController extends Controller
 	public function __construct()
     {
        // $this->middleware('guest');
-       $this->middleware('jwt.auth', ['except' => ['login', 'register', 'sendVerificationCode', 'verify', 'resetPassword', 'dji_login', 'dji_register', 'dji_inquiry', 'dji_payment']]);
+       $this->middleware('jwt.auth', ['except' => ['login', 'register', 'sendVerificationCode', 'verify', 'resetPassword', 'djiLogin', 'djiRegister', 'djiInquiry', 'djiPayment']]);
     }  
 
     public function show()
@@ -79,7 +79,7 @@ class UserController extends Controller
         return $authorization;
     }
 
-    public function dji_login(Request $request)
+    public function djiLogin(Request $request)
     {
         $base_uri       = "https://182.253.236.154:32146";
         $request_uri    = '/auth/Login';
@@ -105,7 +105,7 @@ class UserController extends Controller
         return $result;
     }
 
-    public function dji_register(Request $request)
+    public function djiRegister(Request $request)
     {
         $base_uri       = "https://182.253.236.154:32146";
         $request_uri    = '/Services/Registrasi-Merchant';
@@ -133,7 +133,7 @@ class UserController extends Controller
         return $result;
     }
 
-    public function dji_inquiry(Request $request)
+    public function djiInquiry(Request $request)
     {
         $base_uri       = "https://182.253.236.154:32146";
         $request_uri    = '/Services/Inquiry';
@@ -163,7 +163,7 @@ class UserController extends Controller
         return $result;
     }
 
-    public function dji_payment(Request $request)
+    public function djiPayment(Request $request)
     {
         $base_uri       = "https://182.253.236.154:32146";
         $request_uri    = '/Services/Payment';
@@ -230,6 +230,9 @@ class UserController extends Controller
                 'phone_number'      => $request->phone_number,
                 'email'             => $request->email,
                 'password'          => bcrypt($request->password),
+                'deposit'           => 0,
+                'status'            => 1,
+                'device_id'         => $request->device_id,
                 'dji_merchant_id'   => $dji->merchantID,
                 'dji_password'      => $dji->password,
                 'dji_pin'           => $dji->pin
@@ -240,7 +243,10 @@ class UserController extends Controller
                 'last_name'         => $request->last_name,
                 'phone_number'      => $request->phone_number,
                 'email'             => $request->email,
-                'password'          => bcrypt($request->password)
+                'password'          => bcrypt($request->password),
+                'deposit'           => 0,
+                'status'            => 1,
+                'device_id'         => $request->device_id,
             ]);
         }
 

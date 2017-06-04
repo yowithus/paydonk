@@ -15,7 +15,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'first_name', 'last_name', 'email', 'phone_number', 'password', 'dji_merchant_id', 'dji_password', 'dji_pin'
+        'first_name', 'last_name', 'email', 'phone_number', 'password', 'deposit', 'status', 'device_id', 'dji_merchant_id', 'dji_password', 'dji_pin'
     ];
 
     /**
@@ -24,6 +24,37 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
     ];
+
+    /**
+     * Get the photo for the user.
+     */
+    public function photo()
+    {
+        $filename = md5('user-' . $this->id) . '.jpg';
+        if (file_exists(public_path() . '/images/users/'. $filename)) {
+            return $filename;
+        } else {
+            return 'default.png';
+        }     
+    }
+
+    /**
+     * Get the orders for the user.
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+
+    /**
+     * Get the top up orders for the user.
+     */
+    public function topUpOrders()
+    {
+        return $this->hasMany(TopUpOrder::class);
+    }
+
 }

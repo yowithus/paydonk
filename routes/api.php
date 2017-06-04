@@ -17,6 +17,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// authentication
 Route::post('/login', 'UserController@login');
 Route::post('/register', 'UserController@register');
 Route::post('/logout', 'UserController@logout');
@@ -26,15 +27,19 @@ Route::post('/reset-password', 'UserController@resetPassword');
 
 Route::get('/user', 'UserController@show');
 
-Route::post('/dji-login', 'UserController@dji_login');
-Route::post('/dji-register', 'UserController@dji_register');
-Route::post('/dji-inquiry', 'UserController@dji_inquiry');
-Route::post('/dji-payment', 'UserController@dji_payment');
+// dji
+Route::post('/dji-login', 'UserController@djiLogin');
+Route::post('/dji-register', 'UserController@djiRegister');
+Route::post('/dji-inquiry', 'UserController@djiInquiry');
+Route::post('/dji-payment', 'UserController@djiPayment');
 
+// banks
+Route::get('/get-recipient-banks', 'OrderController@getRecipientBanks');
+Route::get('/get-sender-banks', 'OrderController@getSenderBanks');
 
-Route::get('/get-recipient-banks', 'PaymentController@getRecipientBanks');
-Route::get('/get-sender-banks', 'PaymentController@getSenderBanks');
-
-
-Route::post('/topup/payment', 'PaymentController@getRecipientBanks');
-Route::post('/topup/confirm', 'PaymentController@getSenderBanks');
+// top up
+Route::get('/topup/get-nominals', 'OrderController@getTopUpNominals');
+Route::get('/topup/get-orders', 'OrderController@getTopUpOrders');
+Route::post('/topup/create-order', 'OrderController@createTopUpOrder');
+Route::post('/topup/confirm-order', 'OrderController@confirmTopUpOrder');
+Route::post('/topup/verify-order', 'OrderController@verifyTopUpOrder');

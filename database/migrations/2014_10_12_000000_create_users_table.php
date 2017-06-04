@@ -20,6 +20,9 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->string('phone_number')->unique();
             $table->string('password');
+            $table->double('deposit');
+            $table->integer('status');
+            $table->string('device_id')->nullable();
             $table->string('dji_merchant_id')->nullable();
             $table->string('dji_password')->nullable();
             $table->string('dji_pin')->nullable();

@@ -15,11 +15,11 @@ class CreateTopupBankTransfersTable extends Migration
     {
         Schema::create('topup_bank_transfers', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('topup_payment_id');
+            $table->integer('topup_order_id');
             $table->integer('recipient_bank_id');
-            $table->string('bank_name');
-            $table->string('account_name');
-            $table->string('account_number');
+            $table->string('sender_bank_name');
+            $table->string('sender_account_name');
+            $table->string('sender_account_number');
             $table->timestamps();
         });
     }
