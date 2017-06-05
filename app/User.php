@@ -15,7 +15,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'first_name', 'last_name', 'email', 'phone_number', 'password', 'deposit', 'status', 'device_id', 'dji_merchant_id', 'dji_password', 'dji_pin'
+        'first_name', 'last_name', 'email', 'phone_number', 'password', 'deposit', 'status',
     ];
 
     /**

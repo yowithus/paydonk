@@ -89,20 +89,16 @@ class UserController extends Controller
         $response   = $client->post($request_uri, [
             'headers'   => ['Authorization' => $authorization],
             'json' => [
-               'accountID'  => '0' . substr($request->phone_number, 3), 
+               'accountID'  => '081932058111', 
                'hardwareID' => 'tes123',
-               'password'   => md5($request->dji_password)
+               'password'   => md5('967428')
             ],
         ]);
 
         $body   = $response->getBody()->read(1024);
         $result = json_decode((string)$body);
 
-        if (request()->wantsJson()) {
-            return response()->json($result);
-        }
-
-        return $result;
+        return response()->json($result);
     }
 
     public function djiRegister(Request $request)
@@ -115,9 +111,9 @@ class UserController extends Controller
         $response   = $client->post($request_uri, [
             'headers'   => ['Authorization' => $authorization],
             'json' => [
-               'msisdn' => $request->phone_number, 
-               'email'  => $request->email, 
-               'name'   => $request->first_name . ' ' . $request->last_name,
+               'msisdn' => '081932058111', 
+               'email'  => 'yonatan.nugraha@hotmail.com', 
+               'name'   => 'Yonatan Nugraha',
                'upline' => '',
                'serial' => 'tes123'
             ],
@@ -126,11 +122,7 @@ class UserController extends Controller
         $body   = $response->getBody()->read(1024);
         $result = json_decode((string)$body);
 
-        if (request()->wantsJson()) {
-            return response()->json($result);
-        }
-
-        return $result;
+        return response()->json($result);
     }
 
     public function djiInquiry(Request $request)
@@ -144,10 +136,10 @@ class UserController extends Controller
             'headers'   => ['Authorization' => $authorization],
             'json' => [
                'sessionID'      => $request->dji_session_id, 
-               'merchantID'     => $request->dji_merchant_id,
+               'merchantID'     => 'DRS111112',
                'productID'      => $request->dji_product_id,
                'customerID'     => $request->customer_number,
-               'accountID'      => '0' . substr($request->phone_number, 3), 
+               'accountID'      => '081932058111',
                'counterID'      => '1',
                'referenceID'    => $request->reference_id, 
             ],
@@ -156,11 +148,7 @@ class UserController extends Controller
         $body   = $response->getBody()->read(1024);
         $result = json_decode((string)$body);
 
-        if (request()->wantsJson()) {
-            return response()->json($result);
-        }
-
-        return $result;
+        return response()->json($result);
     }
 
     public function djiPayment(Request $request)
@@ -174,12 +162,12 @@ class UserController extends Controller
             'headers'   => ['Authorization' => $authorization],
             'json' => [
                'sessionID'      => $request->dji_session_id, 
-               'merchantID'     => $request->dji_merchant_id,
+               'merchantID'     => 'DRS111112',
                'productID'      => $request->dji_product_id,
-               'accountID'      => '0' . substr($request->phone_number, 3), 
+               'accountID'      => '081932058111',
                'counterID'      => '1',
                'customerID'     => $request->customer_number,
-               'pin'            => md5($request->dji_pin),
+               'pin'            => md5('879123'),
                'referenceID'    => $request->reference_id, 
                'tagihan'        => $request->tagihan,
                'admin'          => $request->admin,
@@ -190,11 +178,7 @@ class UserController extends Controller
         $body   = $response->getBody()->read(1024);
         $result = json_decode((string)$body);
 
-        if (request()->wantsJson()) {
-            return response()->json($result);
-        }
-
-        return $result;
+        return response()->json($result);
     }
 
     public function register(Request $request)
@@ -214,41 +198,15 @@ class UserController extends Controller
             ]);
         }
 
-        if ($request->dji) {
-            $dji = $this->djiRegister($request);
-
-            if (isset($dji->rc) && $dji->rc != '00') {
-                return response()->json([
-                    'status'    => 0,
-                    'message'   => $dji->description
-                ]);
-            }
-
-            $user = User::create([
-                'first_name'        => $request->first_name,
-                'last_name'         => $request->last_name,
-                'phone_number'      => $request->phone_number,
-                'email'             => $request->email,
-                'password'          => bcrypt($request->password),
-                'deposit'           => 0,
-                'status'            => 1,
-                'device_id'         => $request->device_id,
-                'dji_merchant_id'   => $dji->merchantID,
-                'dji_password'      => $dji->password,
-                'dji_pin'           => $dji->pin
-            ]);
-        } else {
-            $user = User::create([
-                'first_name'        => $request->first_name,
-                'last_name'         => $request->last_name,
-                'phone_number'      => $request->phone_number,
-                'email'             => $request->email,
-                'password'          => bcrypt($request->password),
-                'deposit'           => 0,
-                'status'            => 1,
-                'device_id'         => $request->device_id,
-            ]);
-        }
+        $user = User::create([
+            'first_name'        => $request->first_name,
+            'last_name'         => $request->last_name,
+            'phone_number'      => $request->phone_number,
+            'email'             => $request->email,
+            'password'          => bcrypt($request->password),
+            'deposit'           => 0,
+            'status'            => 1,
+        ]);
 
         $token = JWTAuth::fromUser($user);
 
@@ -279,21 +237,6 @@ class UserController extends Controller
                 'status'    => 0,
                 'message'   => 'Incorrect phone number or password.'
             ]);
-        }
-
-        if ($request->dji) {
-            $user = User::where('phone_number', $request->phone_number)
-                ->first();
-
-            $request->request->add(['dji_password' => $user->dji_password]);
-
-            $dji = $this->djiLogin($request);
-            if (isset($dji->rc) && $dji->rc != '00') {
-                return response()->json([
-                    'status'    => 0,
-                    'message'   => $dji->description
-                ]);
-            }
         }
 
         return response()->json([
