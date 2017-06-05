@@ -34,8 +34,8 @@ Route::post('/dji-inquiry', 'UserController@djiInquiry');
 Route::post('/dji-payment', 'UserController@djiPayment');
 
 // banks
-Route::get('/get-recipient-banks', 'OrderController@getRecipientBanks');
-Route::get('/get-sender-banks', 'OrderController@getSenderBanks');
+Route::get('/banks/get-recipient', 'OrderController@getRecipientBanks');
+Route::get('/banks/get-sender', 'OrderController@getSenderBanks');
 
 // top up
 Route::get('/topup/get-nominals', 'OrderController@getTopUpNominals');
