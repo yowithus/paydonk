@@ -3,5 +3,5 @@
     <div class="pull-right hidden-xs">
         Anything you want
     </div>
-    <strong>Copyright © 2016 <a href="#">Gethype</a>.</strong> All rights reserved.
+    <strong>Copyright © 2016 <a href="#">Allpay</a>.</strong> All rights reserved.
 </footer>

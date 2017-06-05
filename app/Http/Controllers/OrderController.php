@@ -62,7 +62,7 @@ class OrderController extends Controller
 
         $user_id = $user->id;
 
-    	TopUpOrder::create([
+    	$topup_order = TopUpOrder::create([
             'user_id'           => $user_id,
             'reference_id'      => 'TLT' . $this->generateReferenceId(5),
             'order_amount'      => $request->order_amount,
@@ -73,8 +73,9 @@ class OrderController extends Controller
         ]);
 
         return response()->json([
-            'status'    => 1,
-            'message'   => 'Create top up order successful'
+            'status'      => 1,
+            'message'     => 'Create top up order successful',
+            'topup_order' => $topup_order,
         ]);
     }
 

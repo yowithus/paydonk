@@ -52,7 +52,7 @@ class User extends Authenticatable
     /**
      * Get the top up orders for the user.
      */
-    public function topUpOrders()
+    public function top_up_orders()
     {
         return $this->hasMany(TopUpOrder::class);
     }

@@ -1,6 +1,6 @@
 
 <header class="main-header">
-    <a href="/" class="logo"><b>Gethype</a>
+    <a href="/" class="logo"><b>Allpay</a>
     <nav class="navbar navbar-static-top" role="navigation">
         <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
             <span class="sr-only">Toggle navigation</span>
