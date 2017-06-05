@@ -25,7 +25,7 @@ class UserController extends Controller
         return response()->json(compact('user'));
     }
 
-    private function httpDigestParse($txt)
+    private function parseHttpDigest($txt)
     {
         $keys_arr = array();
         $values_arr = array();
@@ -60,7 +60,7 @@ class UserController extends Controller
             $digest = substr($digest, 7);
         }
 
-        $data       = $this->httpDigestParse($digest);
+        $data       = $this->parseHttpDigest($digest);
         $username   = 'dji';
         $password   = 'abcde';
         $realm      = $data['realm'];
