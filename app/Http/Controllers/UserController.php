@@ -91,7 +91,7 @@ class UserController extends Controller
             'json' => [
                'accountID'  => '081932058111', 
                'hardwareID' => 'tes123',
-               'password'   => md5('967428')
+               'password'   => md5('958939')
             ],
         ]);
 
