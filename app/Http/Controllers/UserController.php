@@ -25,7 +25,7 @@ class UserController extends Controller
         return response()->json(compact('user'));
     }
 
-    private function http_digest_parse($txt)
+    private function httpDigestParse($txt)
     {
         $keys_arr = array();
         $values_arr = array();
@@ -46,7 +46,7 @@ class UserController extends Controller
         return $ret_arr;  
     }
 
-    private function get_authorization()
+    private function getAuthorization()
     {
         $base_uri       = "https://182.253.236.154:32146";
         $request_uri    = '/auth/Login';
@@ -60,7 +60,7 @@ class UserController extends Controller
             $digest = substr($digest, 7);
         }
 
-        $data       = $this->http_digest_parse($digest);
+        $data       = $this->httpDigestParse($digest);
         $username   = 'dji';
         $password   = 'abcde';
         $realm      = $data['realm'];
@@ -83,7 +83,7 @@ class UserController extends Controller
     {
         $base_uri       = "https://182.253.236.154:32146";
         $request_uri    = '/auth/Login';
-        $authorization  = $this->get_authorization();
+        $authorization  = $this->getAuthorization();
 
         $client = new \GuzzleHttp\Client(['base_uri' => $base_uri, 'verify' => false, 'exceptions' => false]);
         $response   = $client->post($request_uri, [
@@ -109,7 +109,7 @@ class UserController extends Controller
     {
         $base_uri       = "https://182.253.236.154:32146";
         $request_uri    = '/Services/Registrasi-Merchant';
-        $authorization  = $this->get_authorization();
+        $authorization  = $this->getAuthorization();
 
         $client = new \GuzzleHttp\Client(['base_uri' => $base_uri, 'verify' => false, 'exceptions' => false]);
         $response   = $client->post($request_uri, [
@@ -137,7 +137,7 @@ class UserController extends Controller
     {
         $base_uri       = "https://182.253.236.154:32146";
         $request_uri    = '/Services/Inquiry';
-        $authorization  = $this->get_authorization();
+        $authorization  = $this->getAuthorization();
 
         $client = new \GuzzleHttp\Client(['base_uri' => $base_uri, 'verify' => false, 'exceptions' => false]);
         $response   = $client->post($request_uri, [
@@ -167,7 +167,7 @@ class UserController extends Controller
     {
         $base_uri       = "https://182.253.236.154:32146";
         $request_uri    = '/Services/Payment';
-        $authorization  = $this->get_authorization();
+        $authorization  = $this->getAuthorization();
 
         $client = new \GuzzleHttp\Client(['base_uri' => $base_uri, 'verify' => false, 'exceptions' => false]);
         $response   = $client->post($request_uri, [
@@ -215,7 +215,7 @@ class UserController extends Controller
         }
 
         if ($request->dji) {
-            $dji = $this->dji_register($request);
+            $dji = $this->djiRegister($request);
 
             if (isset($dji->rc) && $dji->rc != '00') {
                 return response()->json([
@@ -287,7 +287,7 @@ class UserController extends Controller
 
             $request->request->add(['dji_password' => $user->dji_password]);
 
-            $dji = $this->dji_login($request);
+            $dji = $this->djiLogin($request);
             if (isset($dji->rc) && $dji->rc != '00') {
                 return response()->json([
                     'status'    => 0,
