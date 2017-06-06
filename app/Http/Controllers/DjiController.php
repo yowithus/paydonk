@@ -69,6 +69,7 @@ class DjiController extends Controller
     {
         $base_uri       = "https://182.253.236.154:32146";
         $request_uri    = '/auth/Sign-On';
+        dd('a');
         $authorization  = $this->getAuthorization();
 
         $client = new \GuzzleHttp\Client(['base_uri' => $base_uri, 'verify' => false, 'exceptions' => false]);
