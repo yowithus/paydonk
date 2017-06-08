@@ -29,8 +29,6 @@ Route::get('/user', 'UserController@show');
 
 // dji
 Route::post('/dji/sign-on', 'DjiController@signOn');
-Route::post('/dji/login', 'DjiController@login');
-Route::post('/dji/register', 'DjiController@register');
 Route::post('/dji/inquiry', 'DjiController@inquiry');
 Route::post('/dji/payment', 'DjiController@payment');
 

@@ -89,52 +89,6 @@ class DjiController extends Controller
         return response()->json($result);
     }
 
-    public function login(Request $request)
-    {
-        $base_uri       = "https://182.253.236.154:32146";
-        $request_uri    = '/auth/Login';
-        $authorization  = $this->getAuthorization();
-
-        $client = new \GuzzleHttp\Client(['base_uri' => $base_uri, 'verify' => false, 'exceptions' => false]);
-        $response   = $client->post($request_uri, [
-            'headers'   => ['Authorization' => $authorization],
-            'json' => [
-               'accountID'  => '081932058111', 
-               'hardwareID' => 'tes123',
-               'password'   => md5('958939')
-            ],
-        ]);
-
-        $body   = $response->getBody()->read(1024);
-        $result = json_decode((string)$body);
-
-        return response()->json($result);
-    }
-
-    public function register(Request $request)
-    {
-        $base_uri       = "https://182.253.236.154:32146";
-        $request_uri    = '/Services/Registrasi-Merchant';
-        $authorization  = $this->getAuthorization();
-
-        $client = new \GuzzleHttp\Client(['base_uri' => $base_uri, 'verify' => false, 'exceptions' => false]);
-        $response   = $client->post($request_uri, [
-            'headers'   => ['Authorization' => $authorization],
-            'json' => [
-               'msisdn' => '081932058111', 
-               'email'  => 'yonatan.nugraha@hotmail.com', 
-               'name'   => 'Yonatan Nugraha',
-               'upline' => '',
-               'serial' => 'tes123'
-            ],
-        ]);
-
-        $body   = $response->getBody()->read(1024);
-        $result = json_decode((string)$body);
-
-        return response()->json($result);
-    }
-
     public function inquiry(Request $request)
     {
         $base_uri       = "https://182.253.236.154:32146";
@@ -146,11 +100,9 @@ class DjiController extends Controller
             'headers'   => ['Authorization' => $authorization],
             'json' => [
                'sessionID'      => $request->dji_session_id, 
-               'merchantID'     => 'DRS111112',
+               'merchantID'     => 'DJI000016',
                'productID'      => $request->dji_product_id,
                'customerID'     => $request->customer_number,
-               'accountID'      => '081932058111',
-               'counterID'      => '1',
                'referenceID'    => $request->reference_id, 
             ],
         ]);
@@ -172,12 +124,9 @@ class DjiController extends Controller
             'headers'   => ['Authorization' => $authorization],
             'json' => [
                'sessionID'      => $request->dji_session_id, 
-               'merchantID'     => 'DRS111112',
+               'merchantID'     => 'DJI000016',
                'productID'      => $request->dji_product_id,
-               'accountID'      => '081932058111',
-               'counterID'      => '1',
                'customerID'     => $request->customer_number,
-               'pin'            => md5('879123'),
                'referenceID'    => $request->reference_id, 
                'tagihan'        => $request->tagihan,
                'admin'          => $request->admin,
