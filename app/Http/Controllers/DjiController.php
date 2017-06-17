@@ -86,7 +86,11 @@ class DjiController extends Controller
         $body   = $response->getBody()->read(1024);
         $result = json_decode((string)$body);
 
-        return response()->json($result);
+        if ($request->wantsJson()) {
+            return response()->json($result);
+        } else {
+            return $result;
+        }
     }
 
     public function inquiry(Request $request)
@@ -110,7 +114,11 @@ class DjiController extends Controller
         $body   = $response->getBody()->read(1024);
         $result = json_decode((string)$body);
 
-        return response()->json($result);
+        if ($request->wantsJson()) {
+            return response()->json($result);
+        } else {
+            return $result;
+        }
     }
 
     public function payment(Request $request)
@@ -137,6 +145,10 @@ class DjiController extends Controller
         $body   = $response->getBody()->read(1024);
         $result = json_decode((string)$body);
 
-        return response()->json($result);
+        if ($request->wantsJson()) {
+            return response()->json($result);
+        } else {
+            return $result;
+        }
     }
 }

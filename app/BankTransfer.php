@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TopUpBankTransfer extends Model
+class BankTransfer extends Model
 {
     /**
      * The attributes that are mass assignable.

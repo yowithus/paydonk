@@ -44,10 +44,11 @@ Route::post('/topup/confirm-order', 'OrderController@confirmTopUpOrder');
 Route::post('/topup/verify-order', 'OrderController@verifyTopUpOrder');
 
 // products
-Route::get('/products/{product_code}/get-nominals', 'OrderController@getNominals');
-Route::post('/products/{product_code}/get-invoice', 'OrderController@getInvoice');
-Route::post('/products/{product_code}/create-order', 'OrderController@createOrder');
-Route::post('/products/{product_code}/confirm-order', 'OrderController@confirmOrder');
-Route::post('/products/{product_code}/verify-order', 'OrderController@verifyOrder');
+Route::get('/products/{product}/get-nominals', 'OrderController@getNominals');
+Route::post('/products/{product}/check-invoice', 'OrderController@checkInvoice');
+Route::post('/products/{product}/use-promo-code', 'OrderController@usePromoCode');
+Route::post('/products/{product}/create-order', 'OrderController@createOrder');
+Route::post('/products/{product}/confirm-order', 'OrderController@confirmOrder');
+Route::post('/products/{product}/verify-order', 'OrderController@verifyOrder');
 
 

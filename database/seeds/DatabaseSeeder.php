@@ -14,5 +14,6 @@ class DatabaseSeeder extends Seeder
     	$this->call(RecipientBanksTableSeeder::class);
         $this->call(SenderBanksTableSeeder::class);
         $this->call(TopUpNominalsTableSeeder::class);
+        $this->call(ProductsTableSeeder::class);
     }
 }

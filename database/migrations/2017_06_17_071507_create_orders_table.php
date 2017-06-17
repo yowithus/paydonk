@@ -27,7 +27,7 @@ class CreateOrdersTable extends Migration
             $table->double('payment_amount');
             $table->integer('payment_status');
             $table->string('payment_method');
-            $table->string('promo_code');
+            $table->string('promo_code')->nullable();
             $table->timestamps();
         });
     }

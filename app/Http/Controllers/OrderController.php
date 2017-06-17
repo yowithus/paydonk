@@ -11,13 +11,14 @@ use App\TopUpBankTransfer;
 use App\DepositDetail;
 use App\Order;
 use App\BankTransfer;
+use App\Product;
 use DB;
 
 class OrderController extends Controller
 {
     public function __construct()
     {
-    	$this->middleware('jwt.auth', ['except' => ['getRecipientBanks', 'getSenderBanks', 'getTopUpNominals']]);
+    	$this->middleware('jwt.auth', ['except' => ['getRecipientBanks', 'getSenderBanks', 'getTopUpNominals', 'getNominals']]);
     }  
 
     public function getRecipientBanks()
@@ -73,12 +74,14 @@ class OrderController extends Controller
         }
 
     	$user = JWTAuth::parseToken()->authenticate();
-
         $user_id = $user->id;
+
+        $now_id = TopUpOrder::latest()->value('id') + 1;
+        $reference_id = sprintf("101%09d", $now_id);
 
     	$topup_order = TopUpOrder::create([
             'user_id'           => $user_id,
-            'reference_id'      => 'TLT' . $this->generateReferenceId(5),
+            'reference_id'      => $reference_id,
             'order_amount'      => $request->topup_nominal,
             'order_status' 	    => 0,
             'payment_amount'    => $request->topup_nominal,
@@ -130,27 +133,51 @@ class OrderController extends Controller
     }
 
 
-    public function getNominals($product_code) 
+    public function getNominals(Product $product) 
     {
-        $topup_nominals = DB::table('topup_nominals')
-            ->where('status', 1)
-            ->get();
+        $nominals = [
+        [
+            'name'      => 'Rp 20.000',
+            'price'     => 20000,
+            'real_price' => 22000
+        ],
+        [
+            'name'      => 'Rp 50.000',
+            'price'     => 50000,
+            'real_price' => 52000
+        ],
+        [
+            'name'      => 'Rp 100.000',
+            'price'     => 100000,
+            'real_price' => 102000
+        ],
+        [
+            'name'      => 'Rp 200.000',
+            'price'     => 200000,
+            'real_price' => 202000
+        ],
+        [
+            'name'      => 'Rp 500.000',
+            'price'     => 500000,
+            'real_price' => 502000
+        ],
+        [
+            'name'      => 'Rp 1.000.000',
+            'price'     => 1000000,
+            'real_price' => 1002000
+        ]];
 
-        return response()->json(compact('topup_nominals'));
+        return response()->json([
+            'status'    => 1,
+            'message'   => 'Get product nominals successful',
+            'nominals'  => $nominals,
+        ]);
     }
 
 
-    public function getInvoice($product_code) 
-    {
-
-    }
-
-
-    public function createOrder(Request $request)
+    public function checkInvoice(Request $request, Product $product) 
     {
         $validator = validator()->make($request->all(), [
-            'product_code'  => 'required',
-            'order_amount'  => 'required',
             'customer_number' => 'required'
         ]);
 
@@ -161,19 +188,110 @@ class OrderController extends Controller
             ]);
         }
 
-        $user = JWTAuth::parseToken()->authenticate();
+        $product_code   = $product->code;
+        $dji_product_id = $product->dji_product_id;
+        $customer_number = $request->customer_number;
 
+        $now_id = Order::latest()->value('id') + 1;
+        $reference_id = sprintf("%s%09d", $product_code, $now_id);
+
+        $request->request->add(['dji_product_id' => $dji_product_id]);
+        $request->request->add(['customer_number' => $customer_number]);
+        $request->request->add(['reference_id' => $reference_id]);
+
+        // call dji inquiry and return tagihan
+        $result = app('App\Http\Controllers\DjiController')->inquiry($request);
+        if ($result->rc != '00') {
+            return response()->json([
+                'status'    => 0,
+                'message'   => $result->description,
+            ]);
+        }
+
+        return response()->json([
+            'status'    => 1,
+            'message'   => 'Check invoice successful',
+        ]);
+    }
+
+    public function usePromoCode(Request $request, Product $product) 
+    {
+        $validator = validator()->make($request->all(), [
+            'promo_code'  => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => $validator->errors()->first()
+            ]);
+        }
+
+        // promo code
+
+
+        return response()->json([
+            'status'    => 1,
+            'message'   => 'Use promo code successful',
+        ]);
+    }
+
+
+    public function createOrder(Request $request, Product $product)
+    {
+        $validator = validator()->make($request->all(), [
+            'product_price'     => 'required',
+            'admin_fee'         => 'required',
+            'customer_number'   => 'required',
+            'payment_method'    => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => $validator->errors()->first()
+            ]);
+        }
+
+        $product_code    = $product->code;
+        $customer_number = $request->customer_number;
+        $product_price   = $request->product_price;
+        $admin_fee       = $request->admin_fee;
+        $discount_amount = $request->discount_amount;
+        $payment_method  = $request->payment_method;
+        $promo_code      = $request->promo_code;
+
+        $order_amount   = $product_price + $admin_fee;
+        $payment_amount = $order_amount - $discount_amount;
+
+        $user    = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
+        $deposit = $user->deposit;
+
+        if ($deposit < $payment_amount) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => 'Saldo anda tidak mencukupi'
+            ]);
+        }
+
+        $now_id = Order::latest()->value('id') + 1;
+        $reference_id = sprintf("%s%09d", $product_code, $now_id);
 
         $order = Order::create([
             'user_id'           => $user_id,
-            'product_code'      => $request->product_code,
-            'reference_id'      => 'TLT' . $this->generateReferenceId(5),
-            'order_amount'      => $request->order_amount,
+            'product_code'      => $product_code,
+            'reference_id'      => $reference_id,
+            'customer_number'   => $customer_number,
+            'product_price'     => $product_price,
+            'admin_fee'         => $admin_fee,
+            'order_amount'      => $order_amount,
             'order_status'      => 0,
-            'payment_amount'    => $request->order_amount,
+            'discount_amount'   => $discount_amount,
+            'payment_amount'    => $payment_amount,
             'payment_status'    => 0,
-            'payment_method'    => 'Bank Transfer'
+            'payment_method'    => $payment_method,
+            'promo_code'        => $promo_code
         ]);
 
         return response()->json([
@@ -183,21 +301,78 @@ class OrderController extends Controller
         ]);
     }
 
-    public function confirmOrder(Request $request) 
+    public function confirmOrder(Request $request, Product $product) 
     {
+        $user    = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
 
-    }
+        $order_id = $request->order_id;
+        $order = Order::find($order_id);
 
-
-    private function generateReferenceId($length) 
-    {
-        $key = '';
-        $keys = array_merge(range(0, 9));
-
-        for ($i = 0; $i < $length; $i++) {
-            $key .= $keys[array_rand($keys)];
+        if (!$order) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => 'Order does not exist'
+            ]);
         }
 
-        return $key;
+        $payment_method = $order->payment_method;
+
+        if ($payment_method == 'Bank Transfer') {
+            $validator = validator()->make($request->all(), [
+                'recipient_bank_id'     => 'required',
+                'sender_account_name'   => 'required',
+                'sender_account_number' => 'required',
+                'sender_bank_name'      => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status'    => 0,
+                    'message'   => $validator->errors()->first()
+                ]);
+            }
+
+            BankTransfer::create([
+                'order_id'              => $order_id,
+                'recipient_bank_id'     => $request->recipient_bank_id,
+                'sender_account_name'   => $request->sender_account_name,
+                'sender_account_number' => $request->sender_account_number,
+                'sender_bank_name'      => $request->sender_bank_name,
+            ]);
+
+        } else if ($payment_method == 'Saldo') {
+            $deposit         = $user->deposit;
+            $payment_amount  = $order->payment_amount;
+            $current_amount  = $deposit - $payment_amount;
+
+            // update user deposit
+            $user->deposit = $current_amount;
+            $user->save();
+
+            // update top up order status
+            $order->order_status = 1;
+            $order->save();
+
+            // create deposit detail
+            DepositDetail::create([
+                'user_id'           => $user_id,
+                'topup_order_id'    => 0,
+                'order_id'          => $order_id,
+                'amount'            => $payment_amount,
+                'previous_amount'   => $deposit,
+                'current_amount'    => $current_amount,
+                'type'              => 'Payment'
+            ]);
+
+        }
+
+        $order->payment_status = 1;
+        $order->save();
+
+        return response()->json([
+            'status'    => 1,
+            'message'   => 'Confirm order successful'
+        ]);
     }
 }

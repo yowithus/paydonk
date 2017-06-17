@@ -56,17 +56,17 @@ class TopUpNominalsTableSeeder extends Seeder
                 'status'   => 1
             ],
             [
-                'name'     => 'Rp 1000.000',
+                'name'     => 'Rp 1.000.000',
                 'price'    => 1000000,
                 'status'   => 1
             ],
             [
-                'name'     => 'Rp 2000.000',
+                'name'     => 'Rp 2.000.000',
                 'price'    => 2000000,
                 'status'   => 1
             ],
             [
-                'name'     => 'Rp 5000.000',
+                'name'     => 'Rp 5.000.000',
                 'price'    => 5000000,
                 'status'   => 1
             ],

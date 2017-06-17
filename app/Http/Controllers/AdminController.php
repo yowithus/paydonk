@@ -7,6 +7,8 @@ use App\User;
 use App\TopUpOrder;
 use App\TopUpBankTransfer;
 use App\DepositDetail;
+use App\Order;
+use App\BankTransfer;
 
 class AdminController extends Controller
 {
@@ -22,8 +24,6 @@ class AdminController extends Controller
 
     /**
      * Show the application dashboard.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -32,8 +32,6 @@ class AdminController extends Controller
 
     /**
      * Show the user dashboard.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function getUsers()
     {
@@ -45,8 +43,6 @@ class AdminController extends Controller
 
     /**
      * Show the deposit details dashboard.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function getDepositDetails()
     {
@@ -56,10 +52,21 @@ class AdminController extends Controller
         ]);
     }
 
+
     /**
      * Show the top up orders dashboard.
-     *
-     * @return \Illuminate\Http\Response
+     */
+    public function getOrders()
+    {
+        return view('admin/order', [
+            'page_title'    => 'Product',
+            'orders'    => Order::all()
+        ]);
+    }
+
+
+    /**
+     * Show the top up orders dashboard.
      */
     public function getTopUpOrders()
     {
@@ -70,6 +77,9 @@ class AdminController extends Controller
     }
 
 
+    /**
+     * Verify the top up order.
+     */
     public function verifyTopUpOrder(Request $request) 
     {
         $validator = validator()->make($request->all(), [
@@ -81,7 +91,8 @@ class AdminController extends Controller
             return redirect('admin/topup-orders')->withErrors($validator);
         }
 
-        $user        = User::find($request->user_id);
+        $user_id     = $request->user_id;
+        $user        = User::find($user_id);
         $topup_order = TopUpOrder::find($request->topup_order_id);
         
         $deposit        = $user->deposit;
@@ -98,7 +109,7 @@ class AdminController extends Controller
 
         // create deposit detail
         DepositDetail::create([
-            'user_id'           => $request->topup_order_id,
+            'user_id'           => $user_id,
             'topup_order_id'    => $request->topup_order_id,
             'order_id'          => 0,
             'amount'            => $topup_amount,
