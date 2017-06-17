@@ -42,3 +42,12 @@ Route::get('/topup/get-orders', 'OrderController@getTopUpOrders');
 Route::post('/topup/create-order', 'OrderController@createTopUpOrder');
 Route::post('/topup/confirm-order', 'OrderController@confirmTopUpOrder');
 Route::post('/topup/verify-order', 'OrderController@verifyTopUpOrder');
+
+// products
+Route::get('/products/{product_code}/get-nominals', 'OrderController@getNominals');
+Route::post('/products/{product_code}/get-invoice', 'OrderController@getInvoice');
+Route::post('/products/{product_code}/create-order', 'OrderController@createOrder');
+Route::post('/products/{product_code}/confirm-order', 'OrderController@confirmOrder');
+Route::post('/products/{product_code}/verify-order', 'OrderController@verifyOrder');
+
+
