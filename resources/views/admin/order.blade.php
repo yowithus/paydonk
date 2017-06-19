@@ -67,12 +67,11 @@
                             <tr>
                                 <th width="5%">ID</th>
                                 <th width="11%">Order</th>
-                                <th width="11%">Payment</th>
-                                <th width="15%">Sender</th>
-                                <th width="15%">Recipient</th>
-                                <th width="20%">User</th>
+                                <th width="25%">Payment</th>
+                                <th width="15%">Product</th>
+                                <th width="15%">User</th>
                                 <th width="15%">Date</th>
-                                <th width="12%">Action</th>
+                                <th width="10%">Action</th>
                             </tr>
                         </thead>
                         <tbody style="font-weight: 400">
@@ -95,20 +94,28 @@
                                     @else
                                         Success
                                     @endif
-                                </td>
-                                <td>
+                                    <br>
+
                                     @if ($order->bank_transfer)
-                                        {{ $order->bank_transfer->sender_bank_name }}<br>
-                                        {{ $order->bank_transfer->sender_account_name }}<br>
-                                        {{ $order->bank_transfer->sender_account_number }}
+                                        <table>
+                                            <tr>
+                                                <td width="55%">
+                                                    {{ $order->bank_transfer->sender_bank_name }}<br>
+                                                    {{ $order->bank_transfer->sender_account_name }}<br>
+                                                    {{ $order->bank_transfer->sender_account_number }}
+                                                </td>
+                                                <td>
+                                                    {{ $order->bank_transfer->recipient_bank->name }}<br>
+                                                    {{ $order->bank_transfer->recipient_bank->account_name }}<br>
+                                                    {{ $order->bank_transfer->recipient_bank->account_number }}
+                                                </td>
+                                            </tr>
+                                        </table>
                                     @endif
                                 </td>
                                 <td>
-                                    @if ($order->bank_transfer)
-                                        {{ $order->bank_transfer->recipient_bank->name }}<br>
-                                        {{ $order->bank_transfer->recipient_bank->account_name }}<br>
-                                        {{ $order->bank_transfer->recipient_bank->account_number }}
-                                    @endif
+                                    {{ $order->product->name }}<br>
+                                    {{ $order->customer_number }}
                                 </td>
                                 <td>
                                     {{ $order->user->first_name . ' ' . $order->user->last_name }}<br>
@@ -141,10 +148,10 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Verify Top Up Order</h4>
+                    <h4 class="modal-title" id="myModalLabel">Verify Order</h4>
                 </div>
                 <div class="modal-body">
-                    Are you sure you want to verify this top up order ?
+                    Are you sure you want to verify this order ?
                     <input type="hidden" name="order_id" value="{{ $order->id }}">
                     <input type="hidden" name="user_id" value="{{ $order->user_id }}">
                 </div>

@@ -31,7 +31,7 @@ class TopUpOrder extends Model
     }
 
     /**
-     * Get the user that owns the order.
+     * Get the bank transfer of the order.
      */
     public function bank_transfer()
     {

@@ -6,9 +6,20 @@ use Illuminate\Http\Request;
 
 class DjiController extends Controller
 {
+    private $username;
+    private $password;
+    private $account_id;
+    private $merchant_id;
+    private $base_uri;
+
 	public function __construct()
     {
-       // $this->middleware('guest');
+        // $this->middleware('guest');
+        $this->username     = ENV('DJI_USERNAME');
+        $this->password     = ENV('DJI_PASSWORD');
+        $this->account_id   = ENV('DJI_ACCOUNT_ID');
+        $this->merchant_id  = ENV('DJI_MERCHANT_ID');
+        $this->base_uri     = ENV('DJI_BASE_URI');
     }
 
     private function parseHttpDigest($txt)
@@ -34,7 +45,7 @@ class DjiController extends Controller
 
     private function getAuthorization()
     {
-        $base_uri       = "https://182.253.236.154:32146";
+        $base_uri       = $this->base_uri;
         $request_uri    = '/auth/Sign-On';
         $request_method = 'POST';
 
@@ -47,8 +58,8 @@ class DjiController extends Controller
         }
 
         $data       = $this->parseHttpDigest($digest);
-        $username   = 'dji';
-        $password   = 'abcde';
+        $username   = $this->username;
+        $password   = $this->password;
         $realm      = $data['realm'];
         $qop        = $data['qop'];
         $nonce      = $data['nonce'];
@@ -67,7 +78,7 @@ class DjiController extends Controller
 
     public function signOn(Request $request)
     {
-        $base_uri       = "https://182.253.236.154:32146";
+        $base_uri       = $this->base_uri;
         $request_uri    = '/auth/Sign-On';
         $authorization  = $this->getAuthorization();
 
@@ -76,8 +87,8 @@ class DjiController extends Controller
             'headers'   => ['Authorization' => $authorization],
             'json' => [
                'mitra'  	  => 'DJI', 
-               'accountID' 	  => 'tester16',
-               'merchantID'   => 'DJI000016',
+               'accountID' 	  => $this->account_id,
+               'merchantID'   => $this->merchant_id,
                'merchantName' => 'allPay',
                'counterID' 	  => '1'
             ],
@@ -86,25 +97,29 @@ class DjiController extends Controller
         $body   = $response->getBody()->read(1024);
         $result = json_decode((string)$body);
 
-        if ($request->wantsJson()) {
-            return response()->json($result);
-        } else {
-            return $result;
-        }
+        return response()->json($result);
     }
 
     public function inquiry(Request $request)
     {
-        $base_uri       = "https://182.253.236.154:32146";
+        $base_uri       = $this->base_uri;
         $request_uri    = '/Services/Inquiry';
         $authorization  = $this->getAuthorization();
+
+        // get session id from sign on
+        $result = $this->signOn($request)->getData();
+        if (isset($result->rc) && $result->rc != '00') {
+            return response()->json($result);
+        }
+
+        $session_id = $result->SessionID;
 
         $client = new \GuzzleHttp\Client(['base_uri' => $base_uri, 'verify' => false, 'exceptions' => false]);
         $response   = $client->post($request_uri, [
             'headers'   => ['Authorization' => $authorization],
             'json' => [
-               'sessionID'      => $request->dji_session_id, 
-               'merchantID'     => 'DJI000016',
+               'sessionID'      => $session_id, 
+               'merchantID'     => $this->merchant_id,
                'productID'      => $request->dji_product_id,
                'customerID'     => $request->customer_number,
                'referenceID'    => $request->reference_id, 
@@ -114,25 +129,28 @@ class DjiController extends Controller
         $body   = $response->getBody()->read(1024);
         $result = json_decode((string)$body);
 
-        if ($request->wantsJson()) {
-            return response()->json($result);
-        } else {
-            return $result;
-        }
+        return response()->json($result);
     }
 
     public function payment(Request $request)
     {
-        $base_uri       = "https://182.253.236.154:32146";
+        $base_uri       = $this->base_uri;
         $request_uri    = '/Services/Payment';
         $authorization  = $this->getAuthorization();
+
+        $result = $this->inquiry($request)->getData();
+        if (isset($result->rc) && $result->rc != '00') {
+            return response()->json($result);
+        }
+
+        $session_id = $result->sessionID;
 
         $client = new \GuzzleHttp\Client(['base_uri' => $base_uri, 'verify' => false, 'exceptions' => false]);
         $response   = $client->post($request_uri, [
             'headers'   => ['Authorization' => $authorization],
             'json' => [
-               'sessionID'      => $request->dji_session_id, 
-               'merchantID'     => 'DJI000016',
+               'sessionID'      => $session_id, 
+               'merchantID'     => $this->merchant_id,
                'productID'      => $request->dji_product_id,
                'customerID'     => $request->customer_number,
                'referenceID'    => $request->reference_id, 
@@ -145,10 +163,6 @@ class DjiController extends Controller
         $body   = $response->getBody()->read(1024);
         $result = json_decode((string)$body);
 
-        if ($request->wantsJson()) {
-            return response()->json($result);
-        } else {
-            return $result;
-        }
+        return response()->json($result);
     }
 }

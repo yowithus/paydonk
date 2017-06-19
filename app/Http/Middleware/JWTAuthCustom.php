@@ -28,7 +28,7 @@ class JWTAuthCustom
             }
         } catch (TokenExpiredException $e) {
             return response()->json([
-                'status'    => 0,
+                'status'    => -1,
                 'message'   => 'token_expired'
             ]);
         } catch (TokenInvalidException $e) {

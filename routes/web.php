@@ -25,3 +25,5 @@ Route::get('/admin/users', 'AdminController@getUsers');
 Route::get('/admin/deposit-details', 'AdminController@getDepositDetails');
 Route::get('/admin/topup-orders', 'AdminController@getTopUpOrders');
 Route::post('/admin/topup-orders/verify', 'AdminController@verifyTopUpOrder');
+Route::get('/admin/orders', 'AdminController@getOrders');
+Route::post('/admin/orders/verify', 'AdminController@verifyOrder');

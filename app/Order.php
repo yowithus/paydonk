@@ -24,10 +24,18 @@ class Order extends Model
     }
 
     /**
-     * Get the user that owns the order.
+     * Get the bank transfer of the order.
      */
     public function bank_transfer()
     {
         return $this->hasOne(BankTransfer::class);
+    }
+
+    /**
+     * Get the product of the order.
+     */
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
     }
 }

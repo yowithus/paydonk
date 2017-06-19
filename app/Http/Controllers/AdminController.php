@@ -9,6 +9,7 @@ use App\TopUpBankTransfer;
 use App\DepositDetail;
 use App\Order;
 use App\BankTransfer;
+use App\Product;
 
 class AdminController extends Controller
 {
@@ -62,6 +63,59 @@ class AdminController extends Controller
             'page_title'    => 'Product',
             'orders'    => Order::all()
         ]);
+    }
+
+    /**
+     * Verify the order.
+     */
+    public function verifyOrder(Request $request) 
+    {
+        $validator = validator()->make($request->all(), [
+            'user_id'   => 'required',
+            'order_id'  => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect('admin/orders')->withErrors($validator);
+        }
+
+        $user_id    = $request->user_id;
+        $order_id   = $request->order_id;
+
+        $user       = User::find($user_id);
+        $order      = Order::find($order_id);
+
+        $product_code = $order->product_code;
+        $product    = Product::find($product_code);
+        
+        $dji_product_id = $product->dji_product_id;
+        $reference_id   = $order->reference_id;
+        $customer_number = $order->customer_number;
+        $product_price  = $order->product_price;
+        $admin_fee      = $order->admin_fee;
+        $order_amount   = $order->order_amount;
+
+        $request->request->add(['dji_product_id' => $dji_product_id]);
+        $request->request->add(['customer_number' => $customer_number]);
+        $request->request->add(['reference_id' => $reference_id]);
+        $request->request->add(['tagihan' => $product_price]);
+        $request->request->add(['admin' => $admin_fee]);
+        $request->request->add(['total' => $order_amount]);
+
+        // call dji inquiry and return tagihan
+        $result = app('App\Http\Controllers\DjiController')->payment($request)->getData();
+        if (isset($result->rc) && $result->rc != '00') {
+            return response()->json([
+                'status'    => 0,
+                'message'   => $result->rc . ': ' . trim($result->description),
+            ]);
+        }
+
+        // update top up order status
+        $order->order_status = 1;
+        $order->save();
+
+        return redirect('admin/orders');
     }
 
 

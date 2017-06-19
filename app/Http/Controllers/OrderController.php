@@ -200,17 +200,27 @@ class OrderController extends Controller
         $request->request->add(['reference_id' => $reference_id]);
 
         // call dji inquiry and return tagihan
-        $result = app('App\Http\Controllers\DjiController')->inquiry($request);
-        if ($result->rc != '00') {
+        $result = app('App\Http\Controllers\DjiController')->inquiry($request)->getData();
+        if (isset($result->rc) && $result->rc != '00') {
             return response()->json([
                 'status'    => 0,
-                'message'   => $result->description,
+                'message'   => $result->rc . ': ' . trim($result->description),
             ]);
         }
+
+        $customer_name  = trim($result->data->NM);
+        $admin_fee      = (int)$result->data->AB;
+        $product_price  = isset($result->data->TG) ? (int)$result->data->TG : 0;
+        $order_amount   = isset($result->data->TT) ? (int)$result->data->TT : 0; 
 
         return response()->json([
             'status'    => 1,
             'message'   => 'Check invoice successful',
+            'customer_number' => $customer_number,
+            'customer_name'   => $customer_name,
+            'product_price' => $product_price,
+            'admin_fee'     => $admin_fee,
+            'order_amount'  => $order_amount
         ]);
     }
 
@@ -340,8 +350,32 @@ class OrderController extends Controller
                 'sender_account_number' => $request->sender_account_number,
                 'sender_bank_name'      => $request->sender_bank_name,
             ]);
+        } 
 
-        } else if ($payment_method == 'Saldo') {
+        if ($payment_method == 'Saldo') {
+            $dji_product_id = $product->dji_product_id;
+            $reference_id   = $order->reference_id;
+            $customer_number = $order->customer_number;
+            $product_price  = $order->product_price;
+            $admin_fee      = $order->admin_fee;
+            $order_amount   = $order->order_amount;
+
+            $request->request->add(['dji_product_id' => $dji_product_id]);
+            $request->request->add(['customer_number' => $customer_number]);
+            $request->request->add(['reference_id' => $reference_id]);
+            $request->request->add(['tagihan' => $product_price]);
+            $request->request->add(['admin' => $admin_fee]);
+            $request->request->add(['total' => $order_amount]);
+
+            // call dji inquiry and return tagihan
+            $result = app('App\Http\Controllers\DjiController')->payment($request)->getData();
+            if (isset($result->rc) && $result->rc != '00') {
+                return response()->json([
+                    'status'    => 0,
+                    'message'   => $result->rc . ': ' . trim($result->description),
+                ]);
+            }
+
             $deposit         = $user->deposit;
             $payment_amount  = $order->payment_amount;
             $current_amount  = $deposit - $payment_amount;
