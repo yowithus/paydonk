@@ -38,10 +38,8 @@ Route::get('/banks/get-sender', 'OrderController@getSenderBanks');
 
 // top up
 Route::get('/topup/get-nominals', 'OrderController@getTopUpNominals');
-Route::get('/topup/get-orders', 'OrderController@getTopUpOrders');
 Route::post('/topup/create-order', 'OrderController@createTopUpOrder');
 Route::post('/topup/confirm-order', 'OrderController@confirmTopUpOrder');
-Route::post('/topup/verify-order', 'OrderController@verifyTopUpOrder');
 
 // products
 Route::get('/products/{product}/get-nominals', 'OrderController@getNominals');
@@ -49,6 +47,5 @@ Route::post('/products/{product}/check-invoice', 'OrderController@checkInvoice')
 Route::post('/products/{product}/use-promo-code', 'OrderController@usePromoCode');
 Route::post('/products/{product}/create-order', 'OrderController@createOrder');
 Route::post('/products/{product}/confirm-order', 'OrderController@confirmOrder');
-Route::post('/products/{product}/verify-order', 'OrderController@verifyOrder');
 
 

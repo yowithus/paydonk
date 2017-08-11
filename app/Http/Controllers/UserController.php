@@ -8,6 +8,7 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use App\User;
 use Twilio;
 use DB;
+use Auth;
 
 
 class UserController extends Controller
@@ -15,14 +16,24 @@ class UserController extends Controller
 	public function __construct()
     {
        // $this->middleware('guest');
-       $this->middleware('jwt.auth', ['except' => ['login', 'register', 'sendVerificationCode', 'verify', 'resetPassword']]);
+       $this->middleware('jwt.auth', ['except' => [
+            'login', 
+            'register', 
+            'sendVerificationCode', 
+            'verify', 
+            'resetPassword'
+        ]]);
     }  
 
     public function show()
     {
         $user = JWTAuth::parseToken()->authenticate();
 
-        return response()->json(compact('user'));
+        return response()->json([
+            'status'    => 1,
+            'message'   => 'Get user successful',
+            'user'      => $user
+        ]);
     }
 
     public function register(Request $request)
@@ -83,10 +94,13 @@ class UserController extends Controller
             ]);
         }
 
+        $user = Auth::User();
+
         return response()->json([
             'status'    => 1,
             'message'   => 'Login successful',
-            'token'     => $token
+            'token'     => $token,
+            'user'      => $user
         ]);
     }
 
