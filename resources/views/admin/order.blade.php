@@ -28,7 +28,7 @@
                             <label class="col-sm-2 control-label">Order Status</label>
                             <div class="col-sm-2">
                                 <select class="form-control" name="order_status">
-                                    <option value="all" @if (Request::get('order_status') == 'all') selected @endif>All</option>
+                                    <option value="" @if (Request::get('order_status') == '') selected @endif>All</option>
                                     <option value="0" @if (Request::get('order_status') == '0') selected @endif>Pending</option>
                                     <option value="1" @if (Request::get('order_status') == '1') selected @endif>Success</option>
                                 </select>
@@ -43,7 +43,7 @@
                             <label class="col-sm-2 control-label">Payment Status</label>
                             <div class="col-sm-2">
                                 <select class="form-control" name="payment_status">
-                                    <option value="all" @if (Request::get('payment_status') == 'all') selected @endif>All</option>
+                                    <option value="" @if (Request::get('payment_status') == '') selected @endif>All</option>
                                     <option value="0" @if (Request::get('payment_status') == '0') selected @endif>Pending</option>
                                     <option value="1" @if (Request::get('payment_status') == '1') selected @endif>Success</option>
                                 </select>
@@ -79,7 +79,7 @@
                             <tr>
                                 <td>{{ $order->id }}</td>
                                 <td>
-                                    {{ $order->reference_id }}<br>
+                                    #{{ $order->reference_id }}<br>
                                     {{ 'Rp ' . number_format($order->order_amount) }}<br>
                                     @if ($order->order_status == 0)
                                         Pending
@@ -114,7 +114,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    {{ $order->product->name }}<br>
+                                    {{ $order->product->category }}<br>
                                     {{ $order->customer_number }}
                                 </td>
                                 <td>
@@ -132,7 +132,7 @@
                     </table>
                 </div>
                 <div class="box-footer clearfix">
-    
+                    {{ $orders->links() }}
                 </div>
             </div>
         </div>
@@ -171,6 +171,14 @@
 <script>
 $(function () {
     $('.pagination').addClass('pagination-sm no-margin pull-right');
+
+    $('.order-time').daterangepicker({
+        locale: {
+            format: 'YYYY-MM-DD'
+        },
+        startDate: moment().subtract(29, 'days'),
+        endDate: moment()
+    });
 });
 </script>
 @endsection

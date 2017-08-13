@@ -17,7 +17,7 @@
                     </div>
                 @endif
 
-                <form action="{{ url('admin/orders') }}" method="GET" class="form-horizontal" style="margin-top: 10px;">
+                <form action="{{ url('admin/topup-orders') }}" method="GET" class="form-horizontal" style="margin-top: 10px;">
                     <div class="box-body">
                         <div class="form-group">
                             <label class="col-sm-1 control-label">Order</label>
@@ -28,7 +28,7 @@
                             <label class="col-sm-2 control-label">Order Status</label>
                             <div class="col-sm-2">
                                 <select class="form-control" name="order_status">
-                                    <option value="all" @if (Request::get('order_status') == 'all') selected @endif>All</option>
+                                    <option value="" @if (Request::get('order_status') == '') selected @endif>All</option>
                                     <option value="0" @if (Request::get('order_status') == '0') selected @endif>Pending</option>
                                     <option value="1" @if (Request::get('order_status') == '1') selected @endif>Success</option>
                                 </select>
@@ -43,7 +43,7 @@
                             <label class="col-sm-2 control-label">Payment Status</label>
                             <div class="col-sm-2">
                                 <select class="form-control" name="payment_status">
-                                    <option value="all" @if (Request::get('payment_status') == 'all') selected @endif>All</option>
+                                    <option value="" @if (Request::get('payment_status') == '') selected @endif>All</option>
                                     <option value="0" @if (Request::get('payment_status') == '0') selected @endif>Pending</option>
                                     <option value="1" @if (Request::get('payment_status') == '1') selected @endif>Success</option>
                                 </select>
@@ -52,7 +52,7 @@
                         <div class="form-group">
                             <label class="col-sm-1 control-label">Date</label>
                             <div class="col-sm-3">
-                                <input type="text" class="form-control order-time" name="order_date" value="{{ Request::get('order_date') }}" required>
+                                <input type="text" class="form-control order-time" name="order_date" value="{{ Request::get('order_date') }}">
                             </div>
                         </div>
                         <a href="{{ url('/admin/topup-orders') }}"><button type="button" class="btn btn-primary">Clear</button></a>
@@ -80,7 +80,7 @@
                             <tr>
                                 <td>{{ $topup_order->id }}</td>
                                 <td>
-                                    {{ $topup_order->reference_id }}<br>
+                                    #{{ $topup_order->reference_id }}<br>
                                     {{ 'Rp ' . number_format($topup_order->order_amount) }}<br>
                                     @if ($topup_order->order_status == 0)
                                         Pending
@@ -125,7 +125,7 @@
                     </table>
                 </div>
                 <div class="box-footer clearfix">
-    
+                    {{ $topup_orders->links() }}
                 </div>
             </div>
         </div>
@@ -164,6 +164,14 @@
 <script>
 $(function () {
     $('.pagination').addClass('pagination-sm no-margin pull-right');
+
+    $('.order-time').daterangepicker({
+        locale: {
+            format: 'YYYY-MM-DD'
+        },
+        startDate: moment().subtract(29, 'days'),
+        endDate: moment()
+    });
 });
 </script>
 @endsection

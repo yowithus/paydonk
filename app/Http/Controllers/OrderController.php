@@ -18,7 +18,13 @@ class OrderController extends Controller
 {
     public function __construct()
     {
-    	$this->middleware('jwt.auth', ['except' => ['getRecipientBanks', 'getSenderBanks', 'getTopUpNominals', 'getNominals', 'getPDAMProducts']]);
+    	$this->middleware('jwt.auth', ['except' => [
+            'getRecipientBanks', 
+            'getSenderBanks', 
+            'getTopUpNominals', 
+            'getPLNProducts', 
+            'getPDAMProducts']
+        ]);
     }  
 
     public function getRecipientBanks()
@@ -77,7 +83,7 @@ class OrderController extends Controller
         $user_id = $user->id;
 
         $now_id = TopUpOrder::latest()->value('id') + 1;
-        $reference_id = sprintf("1001%09d", $now_id);
+        $reference_id = sprintf("%07d", $now_id);
 
     	$topup_order = TopUpOrder::create([
             'user_id'           => $user_id,
@@ -115,8 +121,19 @@ class OrderController extends Controller
 
     	$user = JWTAuth::parseToken()->authenticate();
 
-        TopUpOrder::where('id', $request->topup_order_id)
-            ->update(['payment_status' => 1]);
+        $topup_order = TopUpOrder::where('id', $request->topup_order_id)
+            ->where('payment_status', 0)
+            ->first();
+
+        if (!$topup_order) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => 'Top up not found or already confirmed'
+            ]);
+        }
+
+        $topup_order->payment_status = 1;
+        $topup_order->save();
 
         TopUpBankTransfer::create([
             'topup_order_id'        => $request->topup_order_id,
@@ -134,7 +151,8 @@ class OrderController extends Controller
 
     public function getPDAMProducts() 
     {
-        $pdam_products = Product::where('name', 'PDAM')
+        $pdam_products = Product::selectRaw('name, province, region, code')
+            ->where('category', 'PDAM')
             ->get();
 
         return response()->json([
@@ -144,48 +162,18 @@ class OrderController extends Controller
         ]);
     }
 
-
-    public function getNominals(Product $product) 
+    public function getPLNProducts() 
     {
-        $nominals = [
-        [
-            'name'      => 'Rp 20.000',
-            'price'     => 20000,
-            'real_price' => 22000
-        ],
-        [
-            'name'      => 'Rp 50.000',
-            'price'     => 50000,
-            'real_price' => 52000
-        ],
-        [
-            'name'      => 'Rp 100.000',
-            'price'     => 100000,
-            'real_price' => 102000
-        ],
-        [
-            'name'      => 'Rp 200.000',
-            'price'     => 200000,
-            'real_price' => 202000
-        ],
-        [
-            'name'      => 'Rp 500.000',
-            'price'     => 500000,
-            'real_price' => 502000
-        ],
-        [
-            'name'      => 'Rp 1.000.000',
-            'price'     => 1000000,
-            'real_price' => 1002000
-        ]];
+        $pln_products = Product::selectRaw('replace(name, "Token Listrik ", "") as name, price')
+            ->where('category', 'Token Listrik')
+            ->get();
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Get product nominals successful',
-            'nominals'  => $nominals,
+            'message'   => 'Get token listrik products successful',
+            'pln_products'  => $pln_products,
         ]);
     }
-
 
     public function checkInvoice(Request $request, Product $product) 
     {
@@ -298,7 +286,7 @@ class OrderController extends Controller
         }
 
         $now_id = Order::latest()->value('id') + 1;
-        $reference_id = sprintf("%s%09d", $product_code, $now_id);
+        $reference_id = sprintf("%07d", $now_id);
 
         $order = Order::create([
             'user_id'           => $user_id,

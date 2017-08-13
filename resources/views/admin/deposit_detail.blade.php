@@ -18,7 +18,7 @@
             </div>
             <div class="box-body">
                 <div class="box-body">
-                    <table id="example1" class="table table-bordered table-striped">
+                    <table class="table table-bordered table-striped">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -30,13 +30,13 @@
                                 <th>Date</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody style="font-weight: 400">
                             @foreach ($deposit_details as $deposit_detail)
                             <tr>
                                 <td>{{ $deposit_detail->id }}</td>
                                 <td>{{ $deposit_detail->type }}</td>
                                 <td>
-                                    {{ $deposit_detail->topup_order->reference_id }}<br>
+                                    #{{ $deposit_detail->topup_order->reference_id }}<br>
                                     {{ 'Rp '.number_format($deposit_detail->amount) }}
                                 </td>
                                 <td>{{ 'Rp '.number_format($deposit_detail->previous_amount) }}</td>
@@ -53,7 +53,7 @@
                     </table>
                 </div>
                 <div class="box-footer clearfix">
-
+                    {{ $deposit_details->links() }}
                 </div>
             </div>
         </div>
@@ -69,6 +69,8 @@ $(function () {
     $(".status").on('switchChange.bootstrapSwitch', function(event, state) {
         $(this).closest('form').submit();
     });
+
+    $('.pagination').addClass('pagination-sm no-margin pull-right');
 });
 </script>
 @endsection

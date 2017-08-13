@@ -16,9 +16,11 @@ class CreateProductsTable extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+            $table->string('category');
             $table->string('code');
             $table->string('province')->nullable();
             $table->string('region')->nullable();
+            $table->double('price')->nullable();
             $table->integer('status');
             $table->string('dji_product_id');
             $table->timestamp('created_at')->default(\DB::raw('CURRENT_TIMESTAMP'));

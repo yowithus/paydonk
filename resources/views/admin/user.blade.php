@@ -18,7 +18,7 @@
             </div>
             <div class="box-body">
                 <div class="box-body">
-                    <table id="example1" class="table table-bordered table-striped">
+                    <table class="table table-bordered">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -31,7 +31,7 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody style="font-weight: 400">
                             @foreach ($users as $user)
                             <tr>
                                 <td>{{ $user->id }}</td>
@@ -58,7 +58,7 @@
                     </table>
                 </div>
                 <div class="box-footer clearfix">
-
+                {{ $users->links() }}
                 </div>
             </div>
         </div>
@@ -74,6 +74,8 @@ $(function () {
     $(".status").on('switchChange.bootstrapSwitch', function(event, state) {
         $(this).closest('form').submit();
     });
+
+    $('.pagination').addClass('pagination-sm no-margin pull-right');
 });
 </script>
 @endsection

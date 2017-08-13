@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/adminlte/dist/css/AdminLTE.min.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/adminlte/dist/css/skins/skin-blue.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/adminlte/plugins/daterangepicker/daterangepicker.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/bootstrap-switch-master/dist/css/bootstrap3/bootstrap-switch.min.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/adminlte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css') }}">
 
@@ -47,7 +48,9 @@
 
 <script type="text/javascript" src="{{ asset('js/jquery.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('js/bootstrap.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset ('plugins/adminlte/dist/js/app.min.js') }}" ></script>
+<script type="text/javascript" src="{{ asset ('plugins/adminlte/dist/js/app.min.js') }}"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+<script type="text/javascript" src="{{ asset ('plugins/adminlte/plugins/daterangepicker/daterangepicker.js') }}"></script>
 <script type="text/javascript" src="{{ asset ('plugins/bootstrap-switch-master/dist/js/bootstrap-switch.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset ('plugins/adminlte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js') }}"></script>
 

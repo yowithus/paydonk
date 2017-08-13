@@ -36,9 +36,13 @@ class AdminController extends Controller
      */
     public function getUsers()
     {
+        $users = User::orderBy('created_at', 'desc');
+
+        $users = $users->paginate(10);
+
         return view('admin/user', [
             'page_title'    => 'User',
-            'users'         => User::all()
+            'users'         => $users
         ]);
     }
 
@@ -47,21 +51,61 @@ class AdminController extends Controller
      */
     public function getDepositDetails()
     {
+        $deposit_details = DepositDetail::orderBy('created_at', 'desc');
+
+        $deposit_details = $deposit_details->paginate(10);
+
         return view('admin/deposit_detail', [
             'page_title'      => 'Deposit Detail',
-            'deposit_details' => DepositDetail::all()
+            'deposit_details' => $deposit_details
         ]);
     }
 
 
     /**
-     * Show the top up orders dashboard.
+     * Show the orders dashboard.
      */
-    public function getOrders()
+    public function getOrders(Request $request)
     {
+        $order_id       = $request->order_id;
+        $email          = $request->email;
+        $order_status   = $request->order_status;
+        $payment_status = $request->payment_status;
+        $order_date     = $request->order_date;
+
+        $orders = Order::join('users', 'orders.user_id', '=', 'users.id')
+            ->select('orders.*', 'users.email')
+            ->orderBy('orders.created_at', 'desc');
+            
+        if ($order_id) {
+            $orders->where('orders.reference_id', $order_id);
+        }
+
+        if ($email) {
+            $orders->where('users.email', $email);
+        }
+
+        if ($order_status) {
+            $orders->where('orders.order_status', $order_status);
+        }
+
+        if ($payment_status) {
+            $orders->where('orders.payment_status', $payment_status);
+        }
+
+        if ($order_date) {
+            $start_date     = substr($order_date, 0, 10);
+            $end_date       = substr($order_date, 13, 19);
+
+            $orders->whereDate('orders.created_at', '>=', $start_date);
+            $orders->whereDate('orders.created_at', '<=', $end_date);
+        }
+
+        $orders = $orders->paginate(10);
+
         return view('admin/order', [
             'page_title'    => 'Product',
-            'orders'    => Order::all()
+            'orders'  => $orders
         ]);
     }
 
@@ -122,11 +166,47 @@ class AdminController extends Controller
     /**
      * Show the top up orders dashboard.
      */
-    public function getTopUpOrders()
+    public function getTopUpOrders(Request $request)
     {
+        $order_id       = $request->order_id;
+        $email          = $request->email;
+        $order_status   = $request->order_status;
+        $payment_status = $request->payment_status;
+        $order_date     = $request->order_date;
+
+        $topup_orders = TopUpOrder::join('users', 'topup_orders.user_id', '=', 'users.id')
+            ->select('topup_orders.*', 'users.email')
+            ->orderBy('topup_orders.created_at', 'desc');
+            
+        if ($order_id) {
+            $topup_orders->where('topup_orders.reference_id', $order_id);
+        }
+
+        if ($email) {
+            $topup_orders->where('users.email', $email);
+        }
+
+        if ($order_status) {
+            $topup_orders->where('topup_orders.order_status', $order_status);
+        }
+
+        if ($payment_status) {
+            $topup_orders->where('topup_orders.payment_status', $payment_status);
+        }
+
+        if ($order_date) {
+            $start_date     = substr($order_date, 0, 10);
+            $end_date       = substr($order_date, 13, 19);
+
+            $topup_orders->whereDate('topup_orders.created_at', '>=', $start_date);
+            $topup_orders->whereDate('topup_orders.created_at', '<=', $end_date);
+        }
+
+        $topup_orders = $topup_orders->paginate(10);
+
         return view('admin/order_topup', [
             'page_title'    => 'Top up',
-            'topup_orders'  => TopUpOrder::all()
+            'topup_orders'  => $topup_orders
         ]);
     }
 
