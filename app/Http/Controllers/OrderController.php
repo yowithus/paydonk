@@ -137,6 +137,8 @@ class OrderController extends Controller
         $pdam_products = Product::where('name', 'PDAM')
             ->get();
 
+        dd($pdam_products);
+
         return response()->json([
             'status'    => 1,
             'message'   => 'Get pdam products successful',
