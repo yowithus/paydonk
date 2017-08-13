@@ -12,7 +12,7 @@ class Product extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'code', 'status', 'dji_product_id'
+        'name', 'province', 'region', 'code', 'status', 'dji_product_id'
     ];
 
     /**

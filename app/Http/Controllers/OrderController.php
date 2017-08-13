@@ -18,7 +18,7 @@ class OrderController extends Controller
 {
     public function __construct()
     {
-    	$this->middleware('jwt.auth', ['except' => ['getRecipientBanks', 'getSenderBanks', 'getTopUpNominals', 'getNominals']]);
+    	$this->middleware('jwt.auth', ['except' => ['getRecipientBanks', 'getSenderBanks', 'getTopUpNominals', 'getNominals', 'getPDAMProducts']]);
     }  
 
     public function getRecipientBanks()
@@ -77,7 +77,7 @@ class OrderController extends Controller
         $user_id = $user->id;
 
         $now_id = TopUpOrder::latest()->value('id') + 1;
-        $reference_id = sprintf("101%09d", $now_id);
+        $reference_id = sprintf("1001%09d", $now_id);
 
     	$topup_order = TopUpOrder::create([
             'user_id'           => $user_id,
@@ -129,6 +129,18 @@ class OrderController extends Controller
     	return response()->json([
             'status'    => 1,
             'message'   => 'Confirm top up order successful'
+        ]);
+    }
+
+    public function getPDAMProducts() 
+    {
+        $pdam_products = Product::where('name', 'PDAM')
+            ->get();
+
+        return response()->json([
+            'status'    => 1,
+            'message'   => 'Get pdam products successful',
+            'pdam_products'  => $pdam_products,
         ]);
     }
 

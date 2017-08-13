@@ -42,6 +42,7 @@ Route::post('/topup/create-order', 'OrderController@createTopUpOrder');
 Route::post('/topup/confirm-order', 'OrderController@confirmTopUpOrder');
 
 // products
+Route::get('/products/get-pdam', 'OrderController@getPDAMProducts');
 Route::get('/products/{product}/get-nominals', 'OrderController@getNominals');
 Route::post('/products/{product}/check-invoice', 'OrderController@checkInvoice');
 Route::post('/products/{product}/use-promo-code', 'OrderController@usePromoCode');
