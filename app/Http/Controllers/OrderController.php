@@ -278,10 +278,19 @@ class OrderController extends Controller
         $user_id = $user->id;
         $deposit = $user->deposit;
 
-        if ($deposit < $payment_amount) {
+        if ($payment_method == 'Saldo') {
+            if ($deposit < $payment_amount) {
+                return response()->json([
+                    'status'    => 0,
+                    'message'   => 'Saldo anda tidak mencukupi'
+                ]);
+            }
+        } else if ($payment_method == 'Bank Transfer') {
+
+        } else {
             return response()->json([
                 'status'    => 0,
-                'message'   => 'Saldo anda tidak mencukupi'
+                'message'   => 'Metode pembayaran tidak ada'
             ]);
         }
 
@@ -350,9 +359,7 @@ class OrderController extends Controller
                 'sender_account_number' => $request->sender_account_number,
                 'sender_bank_name'      => $request->sender_bank_name,
             ]);
-        } 
-
-        if ($payment_method == 'Saldo') {
+        } else if ($payment_method == 'Saldo') {
             $dji_product_id = $product->dji_product_id;
             $reference_id   = $order->reference_id;
             $customer_number = $order->customer_number;
