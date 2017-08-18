@@ -12,6 +12,7 @@ use App\DepositDetail;
 use App\Order;
 use App\BankTransfer;
 use App\Product;
+use App\Promo;
 use DB;
 
 class OrderController extends Controller
@@ -202,9 +203,14 @@ class OrderController extends Controller
         // call dji inquiry and return tagihan
         $result = app('App\Http\Controllers\DjiController')->inquiry($request)->getData();
         if (isset($result->rc) && $result->rc != '00') {
+
+            $error_message = 'Terjadi kendala pada server, silakan coba beberapa saat lagi';
+            if ($result->rc == '04') {
+                $error_message = 'ID Pelanggan tidak ditemukan';
+            }
             return response()->json([
                 'status'    => 0,
-                'message'   => $result->rc . ': ' . trim($result->description),
+                'message'   => $error_message,
             ]);
         }
 
@@ -227,7 +233,9 @@ class OrderController extends Controller
     public function usePromoCode(Request $request, Product $product) 
     {
         $validator = validator()->make($request->all(), [
-            'promo_code'  => 'required',
+            'product_price' => 'required',
+            'admin_fee'     => 'required',
+            'promo_code'    => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -237,12 +245,35 @@ class OrderController extends Controller
             ]);
         }
 
-        // promo code
+        $product_price  = $request->product_price;
+        $promo_code     = $request->promo_code;
 
+        $promo = Promo::find($promo_code);
+        if (!$promo) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => 'Promo tidak ditemukan'
+            ]);
+        }
+
+        $discount_percentage = $promo->discount_percentage;
+        $max_discount = $promo->max_discount;
+        $min_usage = $promo->min_usage;
+
+        if ($product_price < $min_usage) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => "Minimum pembelian adalah Rp $min_usage"
+            ]);
+        }
+
+        $discount_amount = ceil(($discount_percentage / 100) * $product_price);
+        $discount_amount = ($discount_amount > $max_discount) ? $max_discount : $discount_amount;
 
         return response()->json([
             'status'    => 1,
             'message'   => 'Use promo code successful',
+            'discount_amount' => $discount_amount
         ]);
     }
 
@@ -312,6 +343,11 @@ class OrderController extends Controller
             'payment_method'    => $payment_method,
             'promo_code'        => $promo_code
         ]);
+
+        if ($payment_method == 'Bank Transfer') {
+            $transfer_deadline = date('Y-m-d H:i:s', strtotime('+1 days'));
+            $order->transfer_deadline = $transfer_deadline;
+        }
 
         return response()->json([
             'status'    => 1,
