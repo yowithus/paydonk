@@ -14,7 +14,7 @@ use App\BankTransfer;
 use App\Product;
 use App\Promo;
 use DB;
-use Carbon\Carbon;
+use Jenssegers\Date\Date;
 
 class OrderController extends Controller
 {
@@ -157,6 +157,16 @@ class OrderController extends Controller
             ->where('category', 'PDAM')
             ->get();
 
+        foreach ($pdam_products as $pdam_product) {
+            if ($pdam_product->region == 'AETRA') {
+                $pdam_product->image_name = 'aetra.png';
+            } else if ($pdam_product->region == 'PALYJA') {
+                $pdam_product->image_name = 'palyja.png';
+            } else {
+                $pdam_product->image_name = 'pam.png';
+            }
+        }
+
         return response()->json([
             'status'    => 1,
             'message'   => 'Get pdam products successful',
@@ -216,8 +226,6 @@ class OrderController extends Controller
             ]);
         }
 
-        // dd($result);
-
         $customer_name  = '';
         $admin_fee      = 0;
         $product_price  = 0;
@@ -252,7 +260,7 @@ class OrderController extends Controller
             $year   = substr($broken_period, 0, 4);
             $month  = substr($broken_period, 4, 2);
 
-            $period = Carbon::create($year, $month)->format('F Y');
+            $period = Date::create($year, $month)->format('F Y');
         }
 
         return response()->json([

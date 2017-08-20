@@ -77,7 +77,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => 'id',
 
     /*
     |--------------------------------------------------------------------------
@@ -181,6 +181,8 @@ return [
 
         Aloha\Twilio\Support\Laravel\ServiceProvider::class,
 
+        Jenssegers\Date\DateServiceProvider::class,
+
     ],
 
     /*
@@ -232,6 +234,7 @@ return [
         'JWTAuth'   => Tymon\JWTAuth\Facades\JWTAuth::class,
         'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
         'Twilio' => Aloha\Twilio\Support\Laravel\Facade::class,
+        'Date' => Jenssegers\Date\Date::class,
     ],
 
 ];
