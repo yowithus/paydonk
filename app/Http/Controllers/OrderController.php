@@ -14,6 +14,7 @@ use App\BankTransfer;
 use App\Product;
 use App\Promo;
 use DB;
+use Carbon\Carbon;
 
 class OrderController extends Controller
 {
@@ -189,9 +190,10 @@ class OrderController extends Controller
             ]);
         }
 
-        $product_code   = $product->code;
-        $dji_product_id = $product->dji_product_id;
-        $customer_number = $request->customer_number;
+        $product_code       = $product->code;
+        $product_category   = $product->category;
+        $dji_product_id     = $product->dji_product_id;
+        $customer_number    = $request->customer_number;
 
         $now_id = Order::latest()->value('id') + 1;
         $reference_id = sprintf("%s%09d", $product_code, $now_id);
@@ -214,10 +216,44 @@ class OrderController extends Controller
             ]);
         }
 
-        $customer_name  = trim($result->data->NM);
-        $admin_fee      = (int)$result->data->AB;
-        $product_price  = isset($result->data->TG) ? (int)$result->data->TG : 0;
-        $order_amount   = isset($result->data->TT) ? (int)$result->data->TT : 0; 
+        // dd($result);
+
+        $customer_name  = '';
+        $admin_fee      = 0;
+        $product_price  = 0;
+        $order_amount   = 0;
+        $period         = '';
+
+        if ($product_category == 'Token Listrik' || $product_category == 'Tagihan Listrik') {
+            $customer_name  = trim($result->data->NM);
+            $admin_fee      = (int)$result->data->AB;
+            $product_price  = (int)$result->data->TG;
+            $order_amount   = (int)$result->data->TT; 
+
+            for ($i=1; $i<=4; $i++) {
+                if (isset($result->data->{"I$i"})) {
+                    $broken_period = $result->data->{"I$i"}->BT;
+                    $month  = preg_replace("/[^A-Z]+/", "", $broken_period);
+                    $year   = preg_replace("/[^0-9]/","", $broken_period);
+
+                    $period = ucfirst(strtolower($month)) . " 20$year";
+                } else {
+                    break;
+                }
+            }
+
+        } else if ($product_category == 'PDAM') {
+            $customer_name  = trim($result->data->nama);
+            $admin_fee      = (int)$result->data->admin;
+            $product_price  = (int)$result->data->tagihan;
+            $order_amount   = (int)$result->data->total; 
+
+            $broken_period = $result->data->rincian[0]->periode;
+            $year   = substr($broken_period, 0, 4);
+            $month  = substr($broken_period, 4, 2);
+
+            $period = Carbon::create($year, $month)->format('F Y');
+        }
 
         return response()->json([
             'status'    => 1,
@@ -226,7 +262,8 @@ class OrderController extends Controller
             'customer_name'   => $customer_name,
             'product_price' => $product_price,
             'admin_fee'     => $admin_fee,
-            'order_amount'  => $order_amount
+            'order_amount'  => $order_amount,
+            'period'        => $period
         ]);
     }
 
