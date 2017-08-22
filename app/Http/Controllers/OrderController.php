@@ -234,9 +234,9 @@ class OrderController extends Controller
 
         if ($product_category == 'Token Listrik' || $product_category == 'Tagihan Listrik') {
             $customer_name  = trim($result->data->NM);
-            $admin_fee      = (int)$result->data->AB;
-            $product_price  = (int)$result->data->TG;
-            $order_amount   = (int)$result->data->TT; 
+            $admin_fee      = isset($result->data->AB) ? (int)$result->data->AB : 0;
+            $product_price  = isset($result->data->TG) ? (int)$result->data->TG : 0;
+            $order_amount   = isset($result->data->TT) ? (int)$result->data->TT : 0; 
 
             for ($i=1; $i<=4; $i++) {
                 if (isset($result->data->{"I$i"})) {
