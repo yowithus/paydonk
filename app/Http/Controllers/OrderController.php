@@ -216,7 +216,7 @@ class OrderController extends Controller
         $result = app('App\Http\Controllers\DjiController')->inquiry($request)->getData();
         if (isset($result->rc) && $result->rc != '00') {
 
-            $error_message = 'Terjadi kendala pada server, silakan coba beberapa saat lagi';
+            $error_message = isset($result->description) ? ucfirst(strtolower(trim($result->description))) : 'Terjadi kendala pada server, silakan coba beberapa saat lagi';
             if ($result->rc == '04') {
                 $error_message = 'ID Pelanggan tidak ditemukan';
             }
