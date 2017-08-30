@@ -25,8 +25,9 @@ class OrderController extends Controller
             'getSenderBanks', 
             'getTopUpNominals', 
             'getPLNProducts', 
-            'getPDAMProducts']
-        ]);
+            'getPDAMProducts',
+            'getTVProducts'
+        ]]);
     }  
 
     public function getRecipientBanks()
@@ -187,6 +188,19 @@ class OrderController extends Controller
         ]);
     }
 
+    public function getTVProducts() 
+    {
+        $tv_products = Product::selectRaw('name, code')
+            ->where('category', 'TV Kabel')
+            ->get();
+
+        return response()->json([
+            'status'    => 1,
+            'message'   => 'Get tv kabel products successful',
+            'tv_products'  => $tv_products,
+        ]);
+    }
+
     public function checkInvoice(Request $request, Product $product) 
     {
         $validator = validator()->make($request->all(), [
@@ -202,6 +216,7 @@ class OrderController extends Controller
 
         $product_code       = $product->code;
         $product_category   = $product->category;
+        $product_name       = $product->name;
         $dji_product_id     = $product->dji_product_id;
         $customer_number    = $request->customer_number;
 
@@ -261,6 +276,59 @@ class OrderController extends Controller
             $month  = substr($broken_period, 4, 2);
 
             $period = Date::create($year, $month)->format('F Y');
+        } else if ($product_category == 'TV Kabel') {
+            $customer_name  = isset($result->data->nama) ? trim($result->data->nama) : '';
+            $broken_period  = '';
+
+            // Nex Media
+            if ($product_code == '1401') {
+                $admin_fee      = (int)$result->data->adminBank;
+                $product_price  = (int)$result->data->tagihan;
+                $order_amount   = (int)$result->data->total; 
+                $broken_period  = $result->data->jatuhTempo;
+            } 
+            // Orange TV Postpaid
+            else if ($product_code == '1402') {
+                $admin_fee      = 0;
+                $product_price  = (int)$result->data->totalTagihan;
+                $order_amount   = (int)$result->data->totalTagihan; 
+                $broken_period  = $result->data->jatuhTempo;
+            } 
+            // Skynindo & Orange TV Prepaid
+            else if ($product_code == '1403' || $product_code == '1409') {
+                $admin_fee      = 0;
+                $product_price  = (int)$result->data->harga;
+                $order_amount   = (int)$result->data->harga; 
+            } 
+            // K-Vision
+            else if ($product_code == '1404') {
+                $admin_fee      = 0;
+                $product_price  = (int)$result->data->saldo;
+                $order_amount   = (int)$result->data->saldo;
+            }
+            // Big TV & Transvision & Topas TV
+            else if ($product_code == '1405' || $product_code == '1406' || $product_code == '1408') {
+                $admin_fee      = (int)$result->data->adminBank;
+                $product_price  = (int)$result->data->tagihan;
+                $order_amount   = (int)$result->data->total; 
+            }
+            // Indovision
+            else if ($product_code == '1407') {
+                $admin_fee      = (int)$result->data->adminBank;
+                $product_price  = (int)$result->data->tagihan;
+                $order_amount   = (int)$result->data->total; 
+                $broken_period  = str_replace('/', '-', $result->data->periodeAkhir);
+            }
+
+            if ($broken_period) {
+                $broken_periods = explode('-', $broken_period);
+
+                $date   = $broken_periods[0];
+                $month  = $broken_periods[1];
+                $year   = $broken_periods[2];
+
+                $period = Date::create($year, $month, $date)->format('d F Y');
+            }
         }
 
         return response()->json([
