@@ -17,76 +17,83 @@ class ProductsTableSeeder extends Seeder
     	DB::table('products')->insert([
             // Token Listrik
     		[
-	            'name'     => 'Token Listrik Rp 20.000',
-                'category' => 'Token Listrik',
+	            'name'     => 'Token Listrik',
+                'category' => 'PLN',
                 'price'    => 20000,
                 'province' => null,
                 'region'   => null,
 	            'code'     => '1101',
                 'status'   => 1,
                 'dji_product_id' => '100302',
+                'type'     => 'Prepaid',
             ],
             [
-                'name'     => 'Token Listrik Rp 50.000',
-                'category' => 'Token Listrik',
+                'name'     => 'Token Listrik',
+                'category' => 'PLN',
                 'price'    => 50000,
                 'province' => null,
                 'region'   => null,
                 'code'     => '1101',
                 'status'   => 1,
                 'dji_product_id' => '100302',
+                'type'     => 'Prepaid',
             ],
             [
-                'name'     => 'Token Listrik Rp 100.000',
-                'category' => 'Token Listrik',
+                'name'     => 'Token Listrik',
+                'category' => 'PLN',
                 'price'    => 100000,
                 'province' => null,
                 'region'   => null,
                 'code'     => '1101',
                 'status'   => 1,
                 'dji_product_id' => '100302',
+                'type'     => 'Prepaid',
             ],
             [
-                'name'     => 'Token Listrik Rp 200.000',
-                'category' => 'Token Listrik',
+                'name'     => 'Token Listrik',
+                'category' => 'PLN',
                 'price'    => 200000,
                 'province' => null,
                 'region'   => null,
                 'code'     => '1101',
                 'status'   => 1,
                 'dji_product_id' => '100302',
+                'type'     => 'Prepaid',
             ],
             [
-                'name'     => 'Token Listrik Rp 500.000',
-                'category' => 'Token Listrik',
+                'name'     => 'Token Listrik',
+                'category' => 'PLN',
                 'price'    => 500000,
                 'province' => null,
                 'region'   => null,
                 'code'     => '1101',
                 'status'   => 1,
                 'dji_product_id' => '100302',
+                'type'     => 'Prepaid',
             ],
             [
-                'name'     => 'Token Listrik Rp 1.000.000',
-                'category' => 'Token Listrik',
+                'name'     => 'Token Listrik',
+                'category' => 'PLN',
                 'price'    => 1000000,
                 'province' => null,
                 'region'   => null,
                 'code'     => '1101',
                 'status'   => 1,
                 'dji_product_id' => '100302',
+                'type'     => 'Prepaid',
             ],
 
             // Tagihan Listrik
             [
                 'name'     => 'Tagihan Listrik',
-                'category' => 'Tagihan Listrik',
+                'category' => 'PLN',
                 'price'    => null,
                 'province' => null,
                 'region'   => null,
                 'code'     => '1102',
                 'status'   => 1,
                 'dji_product_id' => '100301',
+                'type'     => 'Postpaid',
             ],
 
             // PDAM
@@ -99,6 +106,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1201',
                 'status'   => 1,
                 'dji_product_id' => '400011',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Kebumen',
@@ -109,6 +117,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1202',
                 'status'   => 1,
                 'dji_product_id' => '400021',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kota Magelang',
@@ -119,6 +128,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1203',
                 'status'   => 1,
                 'dji_product_id' => '400041',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Cilacap',
@@ -129,6 +139,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1204',
                 'status'   => 1,
                 'dji_product_id' => '400051',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kota Semarang',
@@ -139,6 +150,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1205',
                 'status'   => 1,
                 'dji_product_id' => '400061',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Sleman',
@@ -149,6 +161,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1206',
                 'status'   => 1,
                 'dji_product_id' => '400071',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Boyolali',
@@ -159,6 +172,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1207',
                 'status'   => 1,
                 'dji_product_id' => '400081',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Jepara',
@@ -169,6 +183,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1208',
                 'status'   => 1,
                 'dji_product_id' => '400091',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Pekalongan',
@@ -179,6 +194,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1209',
                 'status'   => 1,
                 'dji_product_id' => '400101',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kota Banjar',
@@ -189,6 +205,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1210',
                 'status'   => 1,
                 'dji_product_id' => '400111',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Karanganyar',
@@ -199,6 +216,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1211',
                 'status'   => 1,
                 'dji_product_id' => '400121',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Wonogiri',
@@ -209,6 +227,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1212',
                 'status'   => 1,
                 'dji_product_id' => '400141',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Magelang',
@@ -219,6 +238,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1213',
                 'status'   => 1,
                 'dji_product_id' => '400151',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Situbondo',
@@ -229,6 +249,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1214',
                 'status'   => 1,
                 'dji_product_id' => '400161',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Probolinggo',
@@ -239,6 +260,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1215',
                 'status'   => 1,
                 'dji_product_id' => '400171',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Sragen',
@@ -249,6 +271,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1216',
                 'status'   => 1,
                 'dji_product_id' => '400181',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Bondowoso',
@@ -259,6 +282,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1217',
                 'status'   => 1,
                 'dji_product_id' => '400191',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Semarang',
@@ -269,6 +293,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1218',
                 'status'   => 1,
                 'dji_product_id' => '400201',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Purworejo',
@@ -279,6 +304,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1219',
                 'status'   => 1,
                 'dji_product_id' => '400211',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Bandung',
@@ -289,6 +315,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1220',
                 'status'   => 1,
                 'dji_product_id' => '400221',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kota Banjarmasin',
@@ -299,6 +326,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1221',
                 'status'   => 1,
                 'dji_product_id' => '400231',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Kendal',
@@ -309,6 +337,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1222',
                 'status'   => 1,
                 'dji_product_id' => '400241',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kota Surakarta',
@@ -319,6 +348,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1223',
                 'status'   => 1,
                 'dji_product_id' => '400251',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kota Madiun',
@@ -329,6 +359,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1224',
                 'status'   => 1,
                 'dji_product_id' => '400261',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Purbalingga',
@@ -339,6 +370,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1225',
                 'status'   => 1,
                 'dji_product_id' => '400271',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Malang',
@@ -349,6 +381,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1226',
                 'status'   => 1,
                 'dji_product_id' => '400281',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Rembang',
@@ -359,6 +392,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1227',
                 'status'   => 1,
                 'dji_product_id' => '400301',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Lombok Tengah',
@@ -369,6 +403,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1228',
                 'status'   => 1,
                 'dji_product_id' => '400311',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kota Salatiga',
@@ -379,6 +414,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1229',
                 'status'   => 1,
                 'dji_product_id' => '400321',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Wonosobo',
@@ -389,6 +425,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1230',
                 'status'   => 1,
                 'dji_product_id' => '400331',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Brebes',
@@ -399,6 +436,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1231',
                 'status'   => 1,
                 'dji_product_id' => '400341',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Jember',
@@ -409,6 +447,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1232',
                 'status'   => 1,
                 'dji_product_id' => '400351',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Buleleng',
@@ -419,6 +458,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1233',
                 'status'   => 1,
                 'dji_product_id' => '400371',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Giri Menang Mataram',
@@ -429,6 +469,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1234',
                 'status'   => 1,
                 'dji_product_id' => '400381',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Intan Banjar',
@@ -439,6 +480,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1235',
                 'status'   => 1,
                 'dji_product_id' => '400401',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Temanggung',
@@ -449,6 +491,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1236',
                 'status'   => 1,
                 'dji_product_id' => '400411',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Blora',
@@ -459,6 +502,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1237',
                 'status'   => 1,
                 'dji_product_id' => '400421',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Kudus',
@@ -469,6 +513,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1238',
                 'status'   => 1,
                 'dji_product_id' => '400431',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Palyja',
@@ -479,6 +524,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1239',
                 'status'   => 1,
                 'dji_product_id' => '400441',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Aetra',
@@ -489,6 +535,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1240',
                 'status'   => 1,
                 'dji_product_id' => '400451',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kota Bandung',
@@ -499,6 +546,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1241',
                 'status'   => 1,
                 'dji_product_id' => '400461',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kota Palembang',
@@ -509,6 +557,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1242',
                 'status'   => 1,
                 'dji_product_id' => '400481',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kota Lampung',
@@ -519,6 +568,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1243',
                 'status'   => 1,
                 'dji_product_id' => '400501',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Sukoharjo',
@@ -529,6 +579,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1244',
                 'status'   => 1,
                 'dji_product_id' => '400511',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Grobogan',
@@ -539,6 +590,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1245',
                 'status'   => 1,
                 'dji_product_id' => '400521',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kota Denpasar',
@@ -549,6 +601,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1246',
                 'status'   => 1,
                 'dji_product_id' => '400541',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Pati',
@@ -559,6 +612,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1247',
                 'status'   => 1,
                 'dji_product_id' => '400591',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'PDAM Kab Klungkung',
@@ -569,18 +623,20 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1248',
                 'status'   => 1,
                 'dji_product_id' => '400601',
+                'type'     => 'Postpaid',
             ],
 
             // Telkom
             [
                 'name'     => 'Telkom',
-                'category' => 'Telkom',
+                'category' => 'Telepon',
                 'price'    => null,
                 'province' => null,
                 'region'   => null,
                 'code'     => '1301',
                 'status'   => 1,
                 'dji_product_id' => '520011',
+                'type'     => 'Postpaid',
             ],
 
             // TV Kabel
@@ -593,6 +649,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1401',
                 'status'   => 1,
                 'dji_product_id' => '540011',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'Orange TV Postpaid',
@@ -603,6 +660,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1402',
                 'status'   => 1,
                 'dji_product_id' => '560051',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'Skynindo',
@@ -613,6 +671,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1403',
                 'status'   => 1,
                 'dji_product_id' => '540121',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'K-Vision',
@@ -623,6 +682,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1404',
                 'status'   => 1,
                 'dji_product_id' => '560011',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'Big TV',
@@ -633,6 +693,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1405',
                 'status'   => 1,
                 'dji_product_id' => '520081',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'TransVision',
@@ -643,6 +704,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1406',
                 'status'   => 1,
                 'dji_product_id' => '520051',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'Indovision',
@@ -653,6 +715,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1407',
                 'status'   => 1,
                 'dji_product_id' => '520031',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'Topas TV',
@@ -663,16 +726,51 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1408',
                 'status'   => 1,
                 'dji_product_id' => '540021',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'Orange TV Prepaid',
                 'category' => 'TV Kabel',
-                'price'    => null,
+                'price'    => 50000,
                 'province' => null,
                 'region'   => null,
                 'code'     => '1409',
                 'status'   => 1,
                 'dji_product_id' => '770501',
+                'type'     => 'Prepaid',
+            ],
+            [
+                'name'     => 'Orange TV Prepaid',
+                'category' => 'TV Kabel',
+                'price'    => 100000,
+                'province' => null,
+                'region'   => null,
+                'code'     => '1409',
+                'status'   => 1,
+                'dji_product_id' => '770501',
+                'type'     => 'Prepaid',
+            ],
+            [
+                'name'     => 'Orange TV Prepaid',
+                'category' => 'TV Kabel',
+                'price'    => 200000,
+                'province' => null,
+                'region'   => null,
+                'code'     => '1409',
+                'status'   => 1,
+                'dji_product_id' => '770501',
+                'type'     => 'Prepaid',
+            ],
+            [
+                'name'     => 'Orange TV Prepaid',
+                'category' => 'TV Kabel',
+                'price'    => 300000,
+                'province' => null,
+                'region'   => null,
+                'code'     => '1409',
+                'status'   => 1,
+                'dji_product_id' => '770501',
+                'type'     => 'Prepaid',
             ],
 
             // Streaming
@@ -685,6 +783,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1501',
                 'status'   => 1,
                 'dji_product_id' => '570021',
+                'type'     => 'Postpaid',
             ],
 
             // Angsuran Kredit
@@ -697,6 +796,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1601',
                 'status'   => 1,
                 'dji_product_id' => '201111',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'WOM',
@@ -707,6 +807,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1602',
                 'status'   => 1,
                 'dji_product_id' => '212111',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'Columbia',
@@ -717,6 +818,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1603',
                 'status'   => 1,
                 'dji_product_id' => '206121',
+                'type'     => 'Postpaid',
             ],
             [
                 'name'     => 'FIF',
@@ -727,6 +829,7 @@ class ProductsTableSeeder extends Seeder
                 'code'     => '1604',
                 'status'   => 1,
                 'dji_product_id' => '204111',
+                'type'     => 'Postpaid',
             ],
         ]);
     }

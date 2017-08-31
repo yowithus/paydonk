@@ -21,6 +21,7 @@ class CreateProductsTable extends Migration
             $table->string('province')->nullable();
             $table->string('region')->nullable();
             $table->double('price')->nullable();
+            $table->string('type');
             $table->integer('status');
             $table->string('dji_product_id');
             $table->timestamp('created_at')->default(\DB::raw('CURRENT_TIMESTAMP'));

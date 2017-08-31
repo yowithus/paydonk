@@ -152,6 +152,20 @@ class OrderController extends Controller
         ]);
     }
 
+    public function getPLNProducts() 
+    {
+        $pln_products = Product::selectRaw('concat("Rp ", format(price, 0, "id_ID")) as name, price')
+            ->where('category', 'PLN')
+            ->where('type', 'Prepaid')
+            ->get();
+
+        return response()->json([
+            'status'    => 1,
+            'message'   => 'Get token listrik products successful',
+            'pln_products'  => $pln_products,
+        ]);
+    }
+
     public function getPDAMProducts() 
     {
         $pdam_products = Product::selectRaw('name, province, region, code')
@@ -175,23 +189,11 @@ class OrderController extends Controller
         ]);
     }
 
-    public function getPLNProducts() 
-    {
-        $pln_products = Product::selectRaw('replace(name, "Token Listrik ", "") as name, price')
-            ->where('category', 'Token Listrik')
-            ->get();
-
-        return response()->json([
-            'status'    => 1,
-            'message'   => 'Get token listrik products successful',
-            'pln_products'  => $pln_products,
-        ]);
-    }
-
     public function getTVProducts() 
     {
-        $tv_products = Product::selectRaw('name, code')
+        $tv_products = Product::selectRaw('name, code, type')
             ->where('category', 'TV Kabel')
+            ->groupBy('name', 'code', 'type')
             ->get();
 
         return response()->json([
@@ -276,6 +278,7 @@ class OrderController extends Controller
             $month  = substr($broken_period, 4, 2);
 
             $period = Date::create($year, $month)->format('F Y');
+
         } else if ($product_category == 'TV Kabel') {
             $customer_name  = isset($result->data->nama) ? trim($result->data->nama) : '';
             $broken_period  = '';
