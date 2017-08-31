@@ -43,8 +43,10 @@ Route::post('/topup/confirm-order', 'OrderController@confirmTopUpOrder');
 
 // products
 Route::get('/products/get-pdam', 'OrderController@getPDAMProducts');
-Route::get('/products/get-pln', 'OrderController@getPLNProducts');
+Route::get('/products/get-pln', 'OrderController@getPrepaidPLNProducts');
 Route::get('/products/get-tv', 'OrderController@getTVProducts');
+Route::get('/products/get-pulsa-postpaid', 'OrderController@getPostpaidPulsaProducts');
+Route::get('/products/get-finance', 'OrderController@getFinanceProducts');
 
 Route::get('/products/{product}/get-nominals', 'OrderController@getNominals');
 Route::post('/products/{product}/check-invoice', 'OrderController@checkInvoice');

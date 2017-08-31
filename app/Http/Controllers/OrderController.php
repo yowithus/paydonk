@@ -24,9 +24,11 @@ class OrderController extends Controller
             'getRecipientBanks', 
             'getSenderBanks', 
             'getTopUpNominals', 
-            'getPLNProducts', 
+            'getPrepaidPLNProducts', 
             'getPDAMProducts',
-            'getTVProducts'
+            'getTVProducts',
+            'getPostpaidPulsaProducts',
+            'getFinanceProducts', 
         ]]);
     }  
 
@@ -152,7 +154,7 @@ class OrderController extends Controller
         ]);
     }
 
-    public function getPLNProducts() 
+    public function getPrepaidPLNProducts() 
     {
         $pln_products = Product::selectRaw('variant_name as name, price')
             ->where('category', 'PLN')
@@ -199,6 +201,33 @@ class OrderController extends Controller
             'status'    => 1,
             'message'   => 'Get tv kabel products successful',
             'tv_products'  => $tv_products,
+        ]);
+    }
+
+    public function getPostpaidPulsaProducts() 
+    {
+        $pulsa_products = Product::selectRaw('name, code')
+            ->where('category', 'Pulsa')
+            ->where('type', 'Postpaid')
+            ->get();
+
+        return response()->json([
+            'status'    => 1,
+            'message'   => 'Get pulsa pascabayar products successful',
+            'pulsa_products'  => $pulsa_products,
+        ]);
+    }
+
+    public function getFinanceProducts() 
+    {
+        $finance_products = Product::selectRaw('name, code')
+            ->where('category', 'Angsuran Kredit')
+            ->get();
+
+        return response()->json([
+            'status'    => 1,
+            'message'   => 'Get angsuran kredit products successful',
+            'finance_products'  => $finance_products,
         ]);
     }
 
@@ -328,8 +357,6 @@ class OrderController extends Controller
                 $order_amount   = 0; 
             }
             
-            
-
             if ($broken_period) {
                 $broken_periods = explode('-', $broken_period);
 
@@ -339,6 +366,17 @@ class OrderController extends Controller
 
                 $period = Date::create($year, $month, $date)->format('d F Y');
             }
+        } else if ($product_category == 'Pulsa') {
+            $customer_name  = trim($result->data->nama);
+            $admin_fee      = (int)$result->data->adminBank;
+            $product_price  = (int)$result->data->tagihan;
+            $order_amount   = (int)$result->data->total; 
+
+        } else if ($product_category == 'Angsuran Kredit') {
+            $customer_name  = trim($result->data->nama);
+            $admin_fee      = (int)$result->data->adminBank;
+            $product_price  = (int)$result->data->tagihan;
+            $order_amount   = (int)$result->data->total; 
         }
 
         return response()->json([
