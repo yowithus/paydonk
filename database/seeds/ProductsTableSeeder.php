@@ -1067,7 +1067,7 @@ class ProductsTableSeeder extends Seeder
                 'price'         => null,
                 'province'      => null,
                 'region'        => null,
-                'code'          => '1501',
+                'code'          => '1601',
                 'status'        => 1,
                 'dji_product_id' => '570021',
                 'type'          => 'Postpaid',

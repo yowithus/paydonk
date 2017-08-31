@@ -313,48 +313,48 @@ class OrderController extends Controller
 
             // Transvision & Big TV & Topas TV
             if (in_array($product_code, ['1301', '1303', '1304'])) {
-                $admin_fee      = (int)$result->data->adminBank;
-                $product_price  = (int)$result->data->tagihan;
-                $order_amount   = (int)$result->data->total; 
+                $admin_fee      = isset($result->data->adminBank) ? (int)$result->data->adminBank : 0;
+                $product_price  = isset($result->data->tagihan) ? (int)$result->data->tagihan : 0;
+                $order_amount   = isset($result->data->total) ? (int)$result->data->total : 0; 
             }
             // Indovision
             else if ($product_code == '1302') {
-                $admin_fee      = (int)$result->data->adminBank;
-                $product_price  = (int)$result->data->tagihan;
-                $order_amount   = (int)$result->data->total; 
+                $admin_fee      = isset($result->data->adminBank) ? (int)$result->data->adminBank : 0;
+                $product_price  = isset($result->data->tagihan) ? (int)$result->data->tagihan : 0;
+                $order_amount   = isset($result->data->total) ? (int)$result->data->total : 0; 
                 $broken_period  = str_replace('/', '-', $result->data->periodeAkhir);
             }
             // Nex Media
             else if ($product_code == '1305') {
-                $admin_fee      = (int)$result->data->adminBank;
-                $product_price  = (int)$result->data->tagihan;
-                $order_amount   = (int)$result->data->total; 
+                $admin_fee      = isset($result->data->adminBank) ? (int)$result->data->adminBank : 0;
+                $product_price  = isset($result->data->tagihan) ? (int)$result->data->tagihan : 0;
+                $order_amount   = isset($result->data->total) ? (int)$result->data->total : 0;  
                 $broken_period  = $result->data->jatuhTempo;
             } 
             // K-Vision
             else if ($product_code == '1306') {
                 $admin_fee      = 0;
-                $product_price  = (int)$result->data->saldo;
-                $order_amount   = (int)$result->data->saldo;
+                $product_price  = 0;
+                $order_amount   = 0;
             }
             // Orange TV Postpaid
             else if ($product_code == '1307') {
                 $admin_fee      = 0;
-                $product_price  = (int)$result->data->totalTagihan;
-                $order_amount   = (int)$result->data->totalTagihan; 
+                $product_price  = isset($result->data->totalTagihan) ? (int)$result->data->totalTagihan : 0;
+                $order_amount   = $product_price; 
                 $broken_period  = $result->data->jatuhTempo;
             } 
             // Orange TV Prepaid
             else if (in_array($product_code, ['1308', '1309', '1310', '1311'])) {
                 $admin_fee      = 0;
-                $product_price  = (int)$result->data->harga;
-                $order_amount   = (int)$result->data->harga; 
+                $product_price  = isset($result->data->harga) ? (int)$result->data->harga : 0;
+                $order_amount   = $product_price; 
             } 
             // Skynindo
             else if (in_array($product_code, ['1312', '1313', '1314', '1315', '1316', '1317', '1318', '1319', '1320', '1321', '1322'])) {
                 $admin_fee      = 0;
-                $product_price  = 0;
-                $order_amount   = 0; 
+                $product_price  = isset($result->data->harga) ? (int)$result->data->harga : 0;
+                $order_amount   = $product_price; 
             }
             
             if ($broken_period) {
@@ -367,16 +367,16 @@ class OrderController extends Controller
                 $period = Date::create($year, $month, $date)->format('d F Y');
             }
         } else if ($product_category == 'Pulsa') {
-            $customer_name  = trim($result->data->nama);
-            $admin_fee      = (int)$result->data->adminBank;
-            $product_price  = (int)$result->data->tagihan;
-            $order_amount   = (int)$result->data->total; 
+            $customer_name  = isset($result->data->nama) ? trim($result->data->nama) : '';
+            $admin_fee      = isset($result->data->adminBank) ? (int)$result->data->adminBank : 0;
+            $product_price  = isset($result->data->tagihan) ? (int)$result->data->tagihan : 0;
+            $order_amount   = isset($result->data->total) ? (int)$result->data->total : 0; 
 
         } else if ($product_category == 'Angsuran Kredit') {
-            $customer_name  = trim($result->data->nama);
-            $admin_fee      = (int)$result->data->adminBank;
-            $product_price  = (int)$result->data->tagihan;
-            $order_amount   = (int)$result->data->total; 
+            $customer_name  = isset($result->data->nama) ? trim($result->data->nama) : '';
+            $admin_fee      = isset($result->data->adminBank) ? (int)$result->data->adminBank : 0;
+            $product_price  = isset($result->data->tagihan) ? (int)$result->data->tagihan : 0;
+            $order_amount   = isset($result->data->total) ? (int)$result->data->total : 0;  
         }
 
         return response()->json([
