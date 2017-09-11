@@ -259,6 +259,7 @@ class OrderController extends Controller
 
         // call dji inquiry and return tagihan
         $result = app('App\Http\Controllers\DjiController')->inquiry($request)->getData();
+        dd($result);
         if (isset($result->rc) && $result->rc != '00') {
 
             $error_message = isset($result->description) ? ucfirst(strtolower(trim($result->description))) : 'Terjadi kendala pada server, silakan coba beberapa saat lagi';
@@ -366,17 +367,11 @@ class OrderController extends Controller
 
                 $period = Date::create($year, $month, $date)->format('d F Y');
             }
-        } else if ($product_category == 'Pulsa') {
+        } else if ($product_category == 'Pulsa' || $product_category == 'Telepon' || $product_category == 'Angsuran Kredit') {
             $customer_name  = isset($result->data->nama) ? trim($result->data->nama) : '';
             $admin_fee      = isset($result->data->adminBank) ? (int)$result->data->adminBank : 0;
             $product_price  = isset($result->data->tagihan) ? (int)$result->data->tagihan : 0;
             $order_amount   = isset($result->data->total) ? (int)$result->data->total : 0; 
-
-        } else if ($product_category == 'Angsuran Kredit') {
-            $customer_name  = isset($result->data->nama) ? trim($result->data->nama) : '';
-            $admin_fee      = isset($result->data->adminBank) ? (int)$result->data->adminBank : 0;
-            $product_price  = isset($result->data->tagihan) ? (int)$result->data->tagihan : 0;
-            $order_amount   = isset($result->data->total) ? (int)$result->data->total : 0;  
         }
 
         return response()->json([
