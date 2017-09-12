@@ -259,7 +259,6 @@ class OrderController extends Controller
 
         // call dji inquiry and return tagihan
         $result = app('App\Http\Controllers\DjiController')->inquiry($request)->getData();
-        dd($result);
         if (isset($result->rc) && $result->rc != '00') {
 
             $error_message = isset($result->description) ? ucfirst(strtolower(trim($result->description))) : 'Terjadi kendala pada server, silakan coba beberapa saat lagi';
