@@ -1060,6 +1060,20 @@ class ProductsTableSeeder extends Seeder
                 'dji_product_id' => '212121',
                 'type'          => 'Postpaid',
             ],
+
+            // BPJS
+            [
+                'name'          => 'BPJS Kesehatan',
+                'variant_name'  => null,
+                'category'      => 'BPJS',
+                'price'         => null,
+                'province'      => null,
+                'region'        => null,
+                'code'          => '1701',
+                'status'        => 1,
+                'dji_product_id' => '900001',
+                'type'          => 'Postpaid',
+            ],
             
             // Streaming
             [
@@ -1069,7 +1083,7 @@ class ProductsTableSeeder extends Seeder
                 'price'         => null,
                 'province'      => null,
                 'region'        => null,
-                'code'          => '1701',
+                'code'          => '1801',
                 'status'        => 1,
                 'dji_product_id' => '570021',
                 'type'          => 'Postpaid',

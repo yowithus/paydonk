@@ -371,6 +371,11 @@ class OrderController extends Controller
             $admin_fee      = isset($result->data->adminBank) ? (int)$result->data->adminBank : 0;
             $product_price  = isset($result->data->tagihan) ? (int)$result->data->tagihan : 0;
             $order_amount   = isset($result->data->total) ? (int)$result->data->total : 0; 
+        } else if ($product_category == 'BPJS') {
+            $customer_name  = isset($result->data->nama) ? trim($result->data->nama) : '';
+            $admin_fee      = isset($result->data->adminBank) ? (int)$result->data->adminBank : 0;
+            $order_amount   = isset($result->data->total) ? (int)$result->data->total : 0; 
+            $product_price  = $order_amount - $admin_fee;
         }
 
         return response()->json([
