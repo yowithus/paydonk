@@ -87,10 +87,14 @@ class AdminController extends Controller
 
         if ($order_status) {
             $orders->where('orders.order_status', $order_status);
+        } else {
+            $orders->where('orders.order_status', 1);
         }
 
         if ($payment_status) {
             $orders->where('orders.payment_status', $payment_status);
+        } else {
+            $orders->where('orders.order_status', 2);
         }
 
         if ($order_date) {
@@ -188,10 +192,14 @@ class AdminController extends Controller
 
         if ($order_status) {
             $topup_orders->where('topup_orders.order_status', $order_status);
+        } else {
+            $topup_orders->where('topup_orders.order_status', 1);
         }
 
         if ($payment_status) {
             $topup_orders->where('topup_orders.payment_status', $payment_status);
+        } else {
+            $topup_orders->where('topup_orders.payment_status', 2);
         }
 
         if ($order_date) {
