@@ -28,7 +28,6 @@
                             <label class="col-sm-2 control-label">Order Status</label>
                             <div class="col-sm-2">
                                 <select class="form-control" name="order_status">
-                                    <option value="" @if (Request::get('order_status') == '') selected @endif>All</option>
                                     <option value="0" @if (Request::get('order_status') == '0' || Request::get('order_status') == '') selected @endif>Pending</option>
                                     <option value="1" @if (Request::get('order_status') == '1') selected @endif>Success</option>
                                 </select>
@@ -43,7 +42,6 @@
                             <label class="col-sm-2 control-label">Payment Status</label>
                             <div class="col-sm-2">
                                 <select class="form-control" name="payment_status">
-                                    <option value="" @if (Request::get('payment_status') == '') selected @endif>All</option>
                                     <option value="0" @if (Request::get('payment_status') == '0') selected @endif>Pending</option>
                                     <option value="1" @if (Request::get('payment_status') == '1' || Request::get('payment_status') == '') selected @endif>Success</option>
                                 </select>
