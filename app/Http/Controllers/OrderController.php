@@ -170,7 +170,7 @@ class OrderController extends Controller
 
     public function getPDAMProducts() 
     {
-        $pdam_products = Product::selectRaw('variant_name as name, province, region, code')
+        $pdam_products = Product::selectRaw('name, province, region, code')
             ->where('category', 'PDAM')
             ->get();
 
