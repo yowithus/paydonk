@@ -96,6 +96,18 @@ class UserController extends Controller
 
         $user = Auth::User();
 
+        // save fcm token
+        $fcm_token_android  = $request->fcm_token_android;
+        $fcm_token_ios      = $request->fcm_token_ios;
+
+        if ($fcm_token_android) {
+            $user->fcm_token_android = $fcm_token_android;
+        } else if ($fcm_token_ios) {
+            $user->fcm_token_ios = $fcm_token_ios;
+        }
+
+        $user->save();
+
         return response()->json([
             'status'    => 1,
             'message'   => 'Login successful',
@@ -104,7 +116,7 @@ class UserController extends Controller
         ]);
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         JWTAuth::invalidate(JWTAuth::getToken());
 

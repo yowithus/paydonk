@@ -33,22 +33,24 @@ Route::post('/dji/inquiry', 'DjiController@inquiry');
 Route::post('/dji/payment', 'DjiController@payment');
 
 // banks
-Route::get('/banks/get-recipient', 'OrderController@getRecipientBanks');
-Route::get('/banks/get-sender', 'OrderController@getSenderBanks');
+Route::get('/banks/get-recipient', 'ProductController@getRecipientBanks');
+Route::get('/banks/get-sender', 'ProductController@getSenderBanks');
 
 // top up
-Route::get('/topup/get-nominals', 'OrderController@getTopUpNominals');
+Route::get('/topup/get-nominals', 'ProductController@getTopUpNominals');
+
+// products
+Route::get('/products/get-pdam', 'ProductController@getPDAMProducts');
+Route::get('/products/get-pln', 'ProductController@getPrepaidPLNProducts');
+Route::get('/products/get-tv', 'ProductController@getTVProducts');
+Route::get('/products/get-finance', 'ProductController@getFinanceProducts');
+Route::post('/products/get-pulsa-postpaid', 'ProductController@getPostpaidPulsaProduct');
+
+// order - top up
 Route::post('/topup/create-order', 'OrderController@createTopUpOrder');
 Route::post('/topup/confirm-order', 'OrderController@confirmTopUpOrder');
 
-// products
-Route::get('/products/get-pdam', 'OrderController@getPDAMProducts');
-Route::get('/products/get-pln', 'OrderController@getPrepaidPLNProducts');
-Route::get('/products/get-tv', 'OrderController@getTVProducts');
-Route::get('/products/get-pulsa-postpaid', 'OrderController@getPostpaidPulsaProducts');
-Route::get('/products/get-finance', 'OrderController@getFinanceProducts');
-
-Route::get('/products/{product}/get-nominals', 'OrderController@getNominals');
+// order - product
 Route::post('/products/{product}/check-invoice', 'OrderController@checkInvoice');
 Route::post('/products/{product}/use-promo-code', 'OrderController@usePromoCode');
 Route::post('/products/{product}/create-order', 'OrderController@createOrder');

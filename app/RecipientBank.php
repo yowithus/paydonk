@@ -11,7 +11,5 @@ class RecipientBank extends Model
      *
      * @var array
      */
-    protected $fillable = [
-        'name', 'account_name', 'account_number'
-    ];
+    protected $fillable = [];
 }

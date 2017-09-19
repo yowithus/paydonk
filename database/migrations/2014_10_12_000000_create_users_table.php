@@ -22,6 +22,8 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->double('deposit');
             $table->integer('status');
+            $table->string('fcm_token_android')->nullable();
+            $table->string('fcm_token_ios')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

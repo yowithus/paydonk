@@ -11,9 +11,7 @@ class Product extends Model
      *
      * @var array
      */
-    protected $fillable = [
-        'name', 'province', 'region', 'code', 'status', 'dji_product_id'
-    ];
+    protected $fillable = [];
 
     /**
      * The primary key associated with the model.

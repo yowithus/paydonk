@@ -20,56 +20,8 @@ class OrderController extends Controller
 {
     public function __construct()
     {
-    	$this->middleware('jwt.auth', ['except' => [
-            'getRecipientBanks', 
-            'getSenderBanks', 
-            'getTopUpNominals', 
-            'getPrepaidPLNProducts', 
-            'getPDAMProducts',
-            'getTVProducts',
-            'getPostpaidPulsaProducts',
-            'getFinanceProducts', 
-        ]]);
+    	$this->middleware('jwt.auth');
     }  
-
-    public function getRecipientBanks()
-    {
-    	$recipient_banks = DB::table('recipient_banks')
-    		->where('status', 1)
-    		->get();
-
-        return response()->json([
-            'status'      => 1,
-            'message'     => 'Get recipient banks successful',
-            'recipient_banks' => $recipient_banks,
-        ]);
-    }
-
-    public function getSenderBanks()
-    {
-    	$sender_banks = DB::table('sender_banks')
-    		->where('status', 1)
-    		->get();
-
-        return response()->json([
-            'status'      => 1,
-            'message'     => 'Get sender banks successful',
-            'sender_banks' => $sender_banks,
-        ]);
-    }
-
-    public function getTopUpNominals() 
-    {
-    	$topup_nominals = DB::table('topup_nominals')
-    		->where('status', 1)
-    		->get();
-
-    	return response()->json([
-            'status'      => 1,
-            'message'     => 'Get top up nominals successful',
-            'topup_nominals' => $topup_nominals,
-        ]);
-    }
 
     public function createTopUpOrder(Request $request) 
     {
@@ -151,83 +103,6 @@ class OrderController extends Controller
     	return response()->json([
             'status'    => 1,
             'message'   => 'Confirm top up order successful'
-        ]);
-    }
-
-    public function getPrepaidPLNProducts() 
-    {
-        $pln_products = Product::selectRaw('variant_name as name, price')
-            ->where('category', 'PLN')
-            ->where('type', 'Prepaid')
-            ->get();
-
-        return response()->json([
-            'status'    => 1,
-            'message'   => 'Get token listrik products successful',
-            'pln_products'  => $pln_products,
-        ]);
-    }
-
-    public function getPDAMProducts() 
-    {
-        $pdam_products = Product::selectRaw('name, province, region, code')
-            ->where('category', 'PDAM')
-            ->get();
-
-        foreach ($pdam_products as $pdam_product) {
-            if ($pdam_product->region == 'AETRA') {
-                $pdam_product->image_name = 'aetra.png';
-            } else if ($pdam_product->region == 'PALYJA') {
-                $pdam_product->image_name = 'palyja.png';
-            } else {
-                $pdam_product->image_name = 'pam.png';
-            }
-        }
-
-        return response()->json([
-            'status'    => 1,
-            'message'   => 'Get pdam products successful',
-            'pdam_products'  => $pdam_products,
-        ]);
-    }
-
-    public function getTVProducts() 
-    {
-        $tv_products = Product::selectRaw('name, variant_name, code, type')
-            ->where('category', 'TV Kabel')
-            ->get();
-
-        return response()->json([
-            'status'    => 1,
-            'message'   => 'Get tv kabel products successful',
-            'tv_products'  => $tv_products,
-        ]);
-    }
-
-    public function getPostpaidPulsaProducts() 
-    {
-        $pulsa_products = Product::selectRaw('name, code')
-            ->where('category', 'Pulsa')
-            ->where('type', 'Postpaid')
-            ->get();
-
-        return response()->json([
-            'status'    => 1,
-            'message'   => 'Get pulsa pascabayar products successful',
-            'pulsa_products'  => $pulsa_products,
-        ]);
-    }
-
-    public function getFinanceProducts() 
-    {
-        $finance_products = Product::selectRaw('name, code')
-            ->where('category', 'Angsuran Kredit')
-            ->get();
-
-        return response()->json([
-            'status'    => 1,
-            'message'   => 'Get angsuran kredit products successful',
-            'finance_products'  => $finance_products,
         ]);
     }
 

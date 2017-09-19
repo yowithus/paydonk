@@ -19,12 +19,11 @@ class CreateProductsTable extends Migration
             $table->string('variant_name')->nullable();
             $table->string('category');
             $table->string('code');
-            $table->string('province')->nullable();
-            $table->string('region')->nullable();
             $table->double('price')->nullable();
             $table->string('type');
-            $table->integer('status');
             $table->string('dji_product_id');
+            $table->string('image_name')->nullable();
+            $table->integer('status');
             $table->timestamp('created_at')->default(\DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(\DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
         });
