@@ -547,6 +547,7 @@ class OrderController extends Controller
 
                 // hit xendit
                 $token = $request->token;
+                $reference_id = ENV('XENDIT_PREFIX') . $reference_id;
                 $options['secret_api_key'] = ENV('XENDIT_SECRET_KEY');
                 $xenditPHPClient = new \XenditClient\XenditPHPClient($options);
                 $response = $xenditPHPClient->captureCreditCardPayment($reference_id, $token, $payment_amount);
