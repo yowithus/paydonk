@@ -8,8 +8,8 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use App\User;
 use Twilio;
 use DB;
-use Auth;
-
+use Mail;
+use App\Mail\Welcome;
 
 class UserController extends Controller
 {
@@ -29,6 +29,8 @@ class UserController extends Controller
     {
         $user = JWTAuth::parseToken()->authenticate();
 
+        // Mail::to($user->email)->queue(new Welcome($user));
+
         return response()->json([
             'status'    => 1,
             'message'   => 'Get user successful',
@@ -41,8 +43,8 @@ class UserController extends Controller
         $validator = validator()->make($request->all(), [
             'first_name'    => 'required|regex:/^[\pL\s\-]+$/u|min:2|max:30',
             'last_name'     => 'required|regex:/^[\pL\s\-]+$/u|min:2|max:30',
-            'phone_number'  => 'required|max:80|unique:users',
-            'email'         => 'required|email|max:80|unique:users',
+            'phone_number'  => 'required|regex:/^(\+62)[0-9]{9,11}$/|unique:users',
+            'email'         => 'required|email|max:50|unique:users',
             'password'      => 'required|string|min:6',
         ]);
 
@@ -75,8 +77,11 @@ class UserController extends Controller
     public function login(Request $request)
     {
         $validator = validator()->make($request->all(), [
-            'phone_number'  => 'required|max:80',
+            'phone_number'  => 'required|regex:/^(\+62)[0-9]{9,11}$/',
             'password'      => 'required|string|min:6',
+            'device_type'   => 'required|in:Android,iOS',
+            'fcm_token_android' => 'required_if:device_type,==,Android',
+            'fcm_token_ios' => 'required_if:device_type,==,iOS',
         ]);
 
         if ($validator->fails()) {
@@ -94,15 +99,16 @@ class UserController extends Controller
             ]);
         }
 
-        $user = Auth::User();
+        $user = auth()->User();
 
-        // save fcm token
+        // update fcm token
+        $device_type        = $request->device_type;
         $fcm_token_android  = $request->fcm_token_android;
         $fcm_token_ios      = $request->fcm_token_ios;
 
-        if ($fcm_token_android) {
+        if ($device_type == 'Android') {
             $user->fcm_token_android = $fcm_token_android;
-        } else if ($fcm_token_ios) {
+        } else if ($device_type == 'iOS') {
             $user->fcm_token_ios = $fcm_token_ios;
         }
 
@@ -118,6 +124,30 @@ class UserController extends Controller
 
     public function logout(Request $request)
     {
+        $validator = validator()->make($request->all(), [
+            'device_type'   => 'required|in:Android,iOS',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => $validator->errors()->first()
+            ]);
+        }
+
+        $user = JWTAuth::parseToken()->authenticate();
+
+        // empty fcm token
+        $device_type        = $request->device_type;
+
+        if ($device_type == 'Android') {
+            $user->fcm_token_android = null;
+        } else if ($device_type == 'iOS') {
+            $user->fcm_token_ios = null;
+        }
+
+        $user->save();
+
         JWTAuth::invalidate(JWTAuth::getToken());
 
         return response()->json([
@@ -130,11 +160,11 @@ class UserController extends Controller
     {
         if ($request->is_register) {
             $validator = validator()->make($request->all(), [
-                'phone_number'  => 'required|max:80|unique:users'
+                'phone_number'  => 'required|regex:/^(\+62)[0-9]{9,11}$/|unique:users',
             ]);  
         } else {
             $validator = validator()->make($request->all(), [
-                'phone_number'  => 'required|max:80'
+                'phone_number'  => 'required|regex:/^(\+62)[0-9]{9,11}$/'
             ]); 
         }
 
@@ -164,7 +194,7 @@ class UserController extends Controller
     public function verify(Request $request)
     {
         $validator = validator()->make($request->all(), [
-            'phone_number'      => 'required|max:80',
+            'phone_number'      => 'required|regex:/^(\+62)[0-9]{9,11}$/',
             'verification_code' => 'required|digits:4',
         ]);
 
@@ -199,7 +229,7 @@ class UserController extends Controller
     public function resetPassword(Request $request)
     {
         $validator = validator()->make($request->all(), [
-            'phone_number'  => 'required|max:80',
+            'phone_number'  => 'required|regex:/^(\+62)[0-9]{9,11}$/',
             'password'      => 'required|string|min:6|confirmed',
         ]);
 
@@ -226,6 +256,42 @@ class UserController extends Controller
         return response()->json([
             'status'    => 1,
             'message'   => 'Successfully reset password'
+        ]);
+    }
+
+    public function updateFCMToken(Request $request)
+    {
+        $validator = validator()->make($request->all(), [
+            'device_type'       => 'required|in:Android,iOS',
+            'fcm_token_android' => 'required_if:device_type,==,Android',
+            'fcm_token_ios'     => 'required_if:device_type,==,iOS',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => $validator->errors()->first()
+            ]);
+        }
+
+        $user = JWTAuth::parseToken()->authenticate();
+
+        // update fcm token
+        $device_type        = $request->device_type;
+        $fcm_token_android  = $request->fcm_token_android;
+        $fcm_token_ios      = $request->fcm_token_ios;
+
+        if ($device_type == 'Android') {
+            $user->fcm_token_android = $fcm_token_android;
+        } else if ($device_type == 'iOS') {
+            $user->fcm_token_ios = $fcm_token_ios;
+        }
+
+        $user->save();
+
+        return response()->json([
+            'status'    => 1,
+            'message'   => 'Update fcm token successful',
         ]);
     }
 }

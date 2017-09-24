@@ -24,6 +24,7 @@ Route::post('/logout', 'UserController@logout');
 Route::post('/send-verification-code', 'UserController@sendVerificationCode');
 Route::post('/verify', 'UserController@verify');
 Route::post('/reset-password', 'UserController@resetPassword');
+Route::post('/update-fcm-token', 'UserController@updateFCMToken');
 
 Route::get('/user', 'UserController@show');
 

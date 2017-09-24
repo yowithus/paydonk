@@ -15,21 +15,6 @@ class TopUpNominalsTableSeeder extends Seeder
     {
 
     	DB::table('topup_nominals')->insert([
-    		[
-	            'name'     => 'Rp 5.000',
-	            'price'    => 5000,
-	            'status'   => 1
-            ],
-            [
-                'name'     => 'Rp 10.000',
-                'price'    => 10000,
-                'status'   => 1
-            ],
-            [
-                'name'     => 'Rp 20.000',
-                'price'    => 20000,
-                'status'   => 1
-            ],
             [
                 'name'     => 'Rp 25.000',
                 'price'    => 25000,
@@ -58,21 +43,6 @@ class TopUpNominalsTableSeeder extends Seeder
             [
                 'name'     => 'Rp 1.000.000',
                 'price'    => 1000000,
-                'status'   => 1
-            ],
-            [
-                'name'     => 'Rp 2.000.000',
-                'price'    => 2000000,
-                'status'   => 1
-            ],
-            [
-                'name'     => 'Rp 5.000.000',
-                'price'    => 5000000,
-                'status'   => 1
-            ],
-            [
-                'name'     => 'Rp 10.000.000',
-                'price'    => 10000000,
                 'status'   => 1
             ],
         ]);

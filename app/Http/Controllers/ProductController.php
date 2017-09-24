@@ -135,65 +135,74 @@ class ProductController extends Controller
 
         $prefixes = [
             // Indosat
-            '+62814' => 'Indosat',
-            '+62815' => 'Indosat',
-            '+62816' => 'Indosat',
-            '+62855' => 'Indosat',
-            '+62856' => 'Indosat',
-            '+62857' => 'Indosat',
-            '+62858' => 'Indosat',
-            '+62817' => 'Indosat',
-            '+62817' => 'Indosat',
-            '+62817' => 'Indosat',
+            '0814' => 'Indosat',
+            '0815' => 'Indosat',
+            '0816' => 'Indosat',
+            '0855' => 'Indosat',
+            '0856' => 'Indosat',
+            '0857' => 'Indosat',
+            '0858' => 'Indosat',
+            '0817' => 'Indosat',
+            '0817' => 'Indosat',
+            '0817' => 'Indosat',
+
+            // Telkomsel Halo
+            '0811' => 'Telkomsel Halo',
 
             // Telkomsel
-            '+62811' => 'Telkomsel',
-            '+62812' => 'Telkomsel',
-            '+62813' => 'Telkomsel',
-            '+62821' => 'Telkomsel',
-            '+62822' => 'Telkomsel',
-            '+62823' => 'Telkomsel',
-            '+62851' => 'Telkomsel',
-            '+62852' => 'Telkomsel',
-            '+62853' => 'Telkomsel',
+            '0812' => 'Telkomsel',
+            '0813' => 'Telkomsel',
+            '0821' => 'Telkomsel',
+            '0822' => 'Telkomsel',
+            '0823' => 'Telkomsel',
+            '0851' => 'Telkomsel',
+            '0852' => 'Telkomsel',
+            '0853' => 'Telkomsel',
 
             // XL
-            '+62817' => 'XL',
-            '+62818' => 'XL',
-            '+62819' => 'XL',
-            '+62859' => 'XL',
-            '+62877' => 'XL',
-            '+62878' => 'XL',
+            '0817' => 'XL',
+            '0818' => 'XL',
+            '0819' => 'XL',
+            '0859' => 'XL',
+            '0877' => 'XL',
+            '0878' => 'XL',
 
             // Axis
-            '+62831' => 'Axis',
-            '+62832' => 'Axis',
-            '+62833' => 'Axis',
-            '+62838' => 'Axis',
+            '0831' => 'Axis',
+            '0832' => 'Axis',
+            '0833' => 'Axis',
+            '0838' => 'Axis',
 
             // Smartfren
-            '+62881' => 'Smartfren',
-            '+62882' => 'Smartfren',
-            '+62883' => 'Smartfren',
-            '+62884' => 'Smartfren',
-            '+62885' => 'Smartfren',
-            '+62886' => 'Smartfren',
-            '+62887' => 'Smartfren',
-            '+62888' => 'Smartfren',
-            '+62889' => 'Smartfren',
+            '0881' => 'Smartfren',
+            '0882' => 'Smartfren',
+            '0883' => 'Smartfren',
+            '0884' => 'Smartfren',
+            '0885' => 'Smartfren',
+            '0886' => 'Smartfren',
+            '0887' => 'Smartfren',
+            '0888' => 'Smartfren',
+            '0889' => 'Smartfren',
 
             // 3
-            '+62895' => '3',
-            '+62896' => '3',
-            '+62897' => '3',
-            '+62898' => '3',
-            '+62899' => '3',
+            '0895' => '3',
+            '0896' => '3',
+            '0897' => '3',
+            '0898' => '3',
+            '0899' => '3',
         ];
 
         $customer_number = $request->customer_number;
-        $prefix = substr($customer_number, 0, 6);
+        $prefix = substr($customer_number, 0, 4);
 
-        $operator = $prefixes[$prefix];
+        if (isset($prefixes[$prefix])) {
+            $operator = $prefixes[$prefix];
+        } else {
+            return response()->json([
+                'status'    => 0,
+                'message'   => 'The number is currently not supported.'
+            ]);
+        }
 
         $pulsa_product = Product::selectRaw('name, code, image_name')
             ->where('name', $operator)

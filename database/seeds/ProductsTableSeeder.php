@@ -938,7 +938,7 @@ class ProductsTableSeeder extends Seeder
 
             // Pulsa Pascabayar
             [
-                'name'          => 'Telkomsel',
+                'name'          => 'Telkomsel Halo',
                 'variant_name'  => null,
                 'category'      => 'Pulsa',
                 'price'         => null,
