@@ -113,6 +113,8 @@
                                 </td>
                                 <td>
                                     {{ $order->product->category }}<br>
+                                    {{ $order->product->name }}<br>
+                                    @if ($order->product->variant_name) {{ $order->product->name }}<br>@endif
                                     {{ $order->customer_number }}
                                 </td>
                                 <td>
