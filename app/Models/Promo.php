@@ -14,11 +14,4 @@ class Promo extends Model
     protected $fillable = [
         'name', 'code', 'discount_percentage', 'max_discount', 'min_usage', 'started_at', 'ended_at', 'status'
     ];
-
-    /**
-     * The primary key associated with the model.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'code';
 }

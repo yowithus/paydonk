@@ -10,6 +10,7 @@ use Twilio;
 use DB;
 use Mail;
 use App\Mail\Welcome;
+use Carbon\Carbon;
 
 class UserController extends Controller
 {
@@ -95,7 +96,7 @@ class UserController extends Controller
         if (! $token = JWTAuth::attempt($credentials)) {
             return response()->json([
                 'status'    => 0,
-                'message'   => 'Incorrect phone number or password.'
+                'message'   => 'Nomor telepon atau password salah.'
             ]);
         }
 
@@ -112,6 +113,7 @@ class UserController extends Controller
             $user->fcm_token_ios = $fcm_token_ios;
         }
 
+        $user->updated_at = Carbon::now();
         $user->save();
 
         return response()->json([
@@ -146,6 +148,7 @@ class UserController extends Controller
             $user->fcm_token_ios = null;
         }
 
+        $user->updated_at = Carbon::now();
         $user->save();
 
         JWTAuth::invalidate(JWTAuth::getToken());
@@ -216,7 +219,7 @@ class UserController extends Controller
         if ($verification_code != $phone_verification->verification_code) {
             return response()->json([
                 'status'    => 0,
-                'message'   => 'Verify failed'
+                'message'   => 'Kode verifikasi yang ada masukan salah.'
             ]);
         }
 
@@ -246,11 +249,12 @@ class UserController extends Controller
         if (!$user) {
             return response()->json([
                 'status'    => 0,
-                'message'   => 'User does not exist'
+                'message'   => 'User tidak ditemukan.'
             ]);
         }
 
         $user->password = bcrypt($request->password);
+        $user->updated_at = Carbon::now();
         $user->save();
 
         return response()->json([
@@ -287,6 +291,7 @@ class UserController extends Controller
             $user->fcm_token_ios = $fcm_token_ios;
         }
 
+        $user->updated_at = Carbon::now();
         $user->save();
 
         return response()->json([

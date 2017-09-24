@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "77d0a870a9ddda92a578f840a64652c1",
+    "content-hash": "62779a771a1cd0aeda78eb6e3c1d836b",
     "packages": [
         {
             "name": "aloha/twilio",
@@ -2471,6 +2471,37 @@
                 "environment"
             ],
             "time": "2016-09-01T10:05:43+00:00"
+        },
+        {
+            "name": "xendit/xendit-php-clients",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/xendit/xendit-php-clients.git",
+                "reference": "d59c59c8ae437592ed1cbe69b3b79cce2b195e6a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/xendit/xendit-php-clients/zipball/d59c59c8ae437592ed1cbe69b3b79cce2b195e6a",
+                "reference": "d59c59c8ae437592ed1cbe69b3b79cce2b195e6a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "XenditClient\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "PHP clients for xendit api version 2",
+            "homepage": "https://github.com/xendit/xendit-php-clients",
+            "keywords": [
+                "xendit"
+            ],
+            "time": "2017-08-09T06:56:54+00:00"
         }
     ],
     "packages-dev": [

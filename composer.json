@@ -11,7 +11,8 @@
         "jenssegers/date": "^3.2",
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
-        "tymon/jwt-auth": "0.5.*"
+        "tymon/jwt-auth": "0.5.*",
+        "xendit/xendit-php-clients": "^1.2"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
