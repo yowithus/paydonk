@@ -35,6 +35,6 @@ class TopUpOrder extends Model
      */
     public function bank_transfer()
     {
-        return $this->hasOne(TopUpBankTransfer::class, 'topup_order_id');
+        return $this->hasOne(BankTransfer::class, 'topup_order_id');
     }
 }

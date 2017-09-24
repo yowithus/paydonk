@@ -6,15 +6,29 @@
         <div class="box">
             <div class="box-header with-border">
                 <h3 class="box-title">User List</h3>
-                <div class="box-tools">
-                    <div class="input-group input-group-sm" style="width: 150px;">
-                        <input type="text" name="table_search" class="form-control pull-right" placeholder="Search">
+                <form action="{{ url('admin/users') }}" method="GET" class="form-horizontal" style="margin-top: 10px;">
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">Email</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" name="email" value="{{ Request::get('email') }}" placeholder="Email">
+                            </div>
 
-                        <div class="input-group-btn">
-                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                            <label class="col-sm-2 control-label">Phone Number</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" name="phone_number" value="{{ Request::get('phone_number') }}" placeholder="Phone Number">
+                            </div>
                         </div>
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">Date</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="join-date" name="join_date" value="{{ Request::get('join_date') }}" required>
+                            </div>
+                        </div>
+                        <a href="{{ url('/admin/users') }}"><button type="button" class="btn btn-primary">Clear</button></a>
+                        <button type="submit" class="btn btn-success">Search</button>
                     </div>
-                </div>
+                </form>
             </div>
             <div class="box-body">
                 <div class="box-body">
@@ -41,10 +55,10 @@
                                 <td>{{ $user->phone_number }}</td>
                                 <td>{{ 'Rp '.number_format($user->deposit) }}</td>
                                 <td>
-                                    <form action="{{ url('users/'.$user->id.'/update-status-user') }}" method="POST">
+                                    <form action="{{ url('admin/users/'.$user->id.'/status') }}" method="POST">
                                         {!! csrf_field() !!}
                                         {{ method_field('PATCH') }}
-                                        <input type="checkbox" name="status" id="{{ $user->id }}" class="status" data-size="mini" @if ($user->status > 0) checked @endif ><br>
+                                        <input type="checkbox" name="status" class="status" data-size="mini" @if ($user->status > 0) checked @endif ><br>
                                     </form>
                                 </td>
                                 <td>
@@ -69,13 +83,20 @@
 @section('scripts')
 <script>
 $(function () {
-    // status switcher
-    $(".status").bootstrapSwitch();
-    $(".status").on('switchChange.bootstrapSwitch', function(event, state) {
+    $('.status').bootstrapSwitch();
+    $('.status').on('switchChange.bootstrapSwitch', function(event, state) {
         $(this).closest('form').submit();
     });
 
     $('.pagination').addClass('pagination-sm no-margin pull-right');
+
+    $('#join-date').daterangepicker({
+        locale: {
+            format: 'YYYY-MM-DD'
+        },
+        startDate: moment().subtract(29, 'days'),
+        endDate: moment()
+    });
 });
 </script>
 @endsection

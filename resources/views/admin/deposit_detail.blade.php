@@ -6,15 +6,29 @@
         <div class="box">
             <div class="box-header with-border">
                 <h3 class="box-title">Deposit Details</h3>
-                <div class="box-tools">
-                    <div class="input-group input-group-sm" style="width: 150px;">
-                        <input type="text" name="table_search" class="form-control pull-right" placeholder="Search">
+                <form action="{{ url('admin/deposit-details') }}" method="GET" class="form-horizontal" style="margin-top: 10px;">
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">Email</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" name="email" value="{{ Request::get('email') }}" placeholder="Email">
+                            </div>
 
-                        <div class="input-group-btn">
-                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                            <label class="col-sm-2 control-label">Phone Number</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" name="phone_number" value="{{ Request::get('phone_number') }}" placeholder="Phone Number">
+                            </div>
                         </div>
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">Date</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="deposit-date" name="deposit_date" value="{{ Request::get('deposit_date') }}" required>
+                            </div>
+                        </div>
+                        <a href="{{ url('/admin/deposit-details') }}"><button type="button" class="btn btn-primary">Clear</button></a>
+                        <button type="submit" class="btn btn-success">Search</button>
                     </div>
-                </div>
+                </form>
             </div>
             <div class="box-body">
                 <div class="box-body">
@@ -36,7 +50,12 @@
                                 <td>{{ $deposit_detail->id }}</td>
                                 <td>{{ $deposit_detail->type }}</td>
                                 <td>
-                                    #{{ $deposit_detail->topup_order->reference_id }}<br>
+                                    @if ($deposit_detail->topup_order_id)
+                                        #{{ $deposit_detail->topup_order->reference_id }}
+                                    @else
+                                        #{{ $deposit_detail->order->reference_id }}
+                                    @endif
+                                    <br>
                                     {{ 'Rp '.number_format($deposit_detail->amount) }}
                                 </td>
                                 <td>{{ 'Rp '.number_format($deposit_detail->previous_amount) }}</td>
@@ -64,13 +83,15 @@
 @section('scripts')
 <script>
 $(function () {
-    // status switcher
-    $(".status").bootstrapSwitch();
-    $(".status").on('switchChange.bootstrapSwitch', function(event, state) {
-        $(this).closest('form').submit();
-    });
-
     $('.pagination').addClass('pagination-sm no-margin pull-right');
+
+    $('#deposit-date').daterangepicker({
+        locale: {
+            format: 'YYYY-MM-DD'
+        },
+        startDate: moment().subtract(29, 'days'),
+        endDate: moment()
+    });
 });
 </script>
 @endsection

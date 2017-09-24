@@ -11,7 +11,7 @@ class Product extends Model
      *
      * @var array
      */
-    protected $fillable = [];
+    protected $fillable = ['status'];
 
     /**
      * The primary key associated with the model.
@@ -34,5 +34,31 @@ class Product extends Model
     public function bank_transfer()
     {
         return $this->hasOne(TopUpBankTransfer::class, 'topup_order_id');
+    }
+
+    /**
+     * Get the image for the product.
+     */
+    public function image()
+    {
+        $image_name = $this->image_name;
+        $category   = $this->category;
+
+        if ($category == 'Pulsa') {
+            $folder_name = 'pulsa';
+        } else if ($category == 'PDAM') {
+            $folder_name = 'pdam';
+        } else if ($category == 'TV Kabel') {
+            $folder_name = 'tv';
+        } else if ($category == 'Angsuran Kredit') {
+            $folder_name = 'finance';
+        } else {
+            return null;
+        }
+
+        $file_path =  "/images/products/$folder_name/$image_name";
+        if (file_exists(public_path() . $file_path)) {
+            return $file_path;
+        }
     }
 }

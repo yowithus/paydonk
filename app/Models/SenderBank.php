@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class RecipientBank extends Model
+class SenderBank extends Model
 {
     /**
      * The attributes that are mass assignable.

@@ -7,7 +7,6 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\User;
 use App\TopUpOrder;
-use App\TopUpBankTransfer;
 use App\DepositDetail;
 use App\Order;
 use App\BankTransfer;
@@ -95,7 +94,7 @@ class OrderController extends Controller
         $topup_order->save();
 
         // create bank transfer data
-        TopUpBankTransfer::create([
+        BankTransfer::create([
             'topup_order_id'        => $request->topup_order_id,
             'recipient_bank_id'     => $request->recipient_bank_id,
             'sender_account_name'   => $request->sender_account_name,
@@ -289,7 +288,7 @@ class OrderController extends Controller
         $promo_code     = strtoupper($request->promo_code);
 
         // validate promo
-        $promo = Promo::find($promo_code);
+        $promo = Promo::where('code', '=', $promo_code)->first();
         if (!$promo) {
             return response()->json([
                 'status'    => 0,
@@ -352,7 +351,7 @@ class OrderController extends Controller
 
         // validate promo
         if ($promo_code) {
-            $promo = Promo::find($promo_code);
+            $promo = Promo::where('code', '=', $promo_code)->first();
             if (!$promo) {
                 return response()->json([
                     'status'    => 0,

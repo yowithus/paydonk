@@ -40,6 +40,16 @@
                     <li><a href="{{ url('admin/orders') }}"><i class="fa fa-circle-o"></i>Product</a></li>
                 </ul>
             </li>
+            <li class="treeview">
+                <a href="{{ url('admin/products') }}"><i class="fa fa-beer"></i> <span>Products</span> <i class="fa fa-angle-left pull-right"></i></a>
+            </li>
+            <li class="treeview">
+                <a href="#"><i class="fa fa-bank"></i> <span>Banks</span> <i class="fa fa-angle-left pull-right"></i></a>
+                <ul class="treeview-menu">
+                    <li><a href="{{ url('admin/recipient-banks') }}"><i class="fa fa-circle-o"></i>Recipient Banks</a></li>
+                    <li><a href="{{ url('admin/sender-banks') }}"><i class="fa fa-circle-o"></i>Sender Banks</a></li>
+                </ul>
+            </li>
         </ul>
     </section>
 

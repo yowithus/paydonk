@@ -8,7 +8,7 @@
 
             <div class="info-box-content">
                 <span class="info-box-text">New Users</span>
-                <span class="info-box-number">5</span>
+                <span class="info-box-number">{{ $users_count }}</span>
             </div>
         </div>
     </div>
@@ -18,8 +18,8 @@
             <span class="info-box-icon bg-red"><i class="fa fa-rocket"></i></span>
 
             <div class="info-box-content">
-                <span class="info-box-text">Recent Events</span>
-                <span class="info-box-number">5</span>
+                <span class="info-box-text">Top Ups</span>
+                <span class="info-box-number">{{ $topup_orders_count }}</span>
             </div>
         </div>
     </div>
@@ -32,7 +32,7 @@
 
             <div class="info-box-content">
                 <span class="info-box-text">Orders Success</span>
-                <span class="info-box-number">5</span>
+                <span class="info-box-number">{{ $orders_count }}</span>
             </div>
         </div>
     </div>
@@ -42,8 +42,8 @@
             <span class="info-box-icon bg-yellow"><i class="fa fa-hand-peace-o"></i></span>
 
             <div class="info-box-content">
-                <span class="info-box-text">Tickets Sold</span>
-                <span class="info-box-number">5</span>
+                <span class="info-box-text">GMV</span>
+                <span class="info-box-number">Rp {{ number_format($total_revenue, 0, '', '.') }}</span>
             </div>
         </div>
     </div>
@@ -74,50 +74,12 @@
             </div>
             <div class="box-body">
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-md-12">
                         <p class="text-center">
-                            <strong>Sales: 5</strong>
+                            <strong>Sales: {{ $orders_count }}</strong>
                         </p>
                         <div class="chart">
                             <canvas id="salesChart" style="height: 180px;"></canvas>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <p class="text-center">
-                            <strong>Goal Completion</strong>
-                        </p>
-
-                        <div class="progress-group">
-                            <span class="progress-text">Acquire New Users</span>
-                            <span class="progress-number"><b>5</b>/20</span>
-
-                            <div class="progress sm">
-                                <div class="progress-bar progress-bar-aqua" style="width: 20%"></div>
-                            </div>
-                        </div>
-                        <div class="progress-group">
-                            <span class="progress-text">Collect Events</span>
-                            <span class="progress-number"><b>5</b>/20</span>
-
-                            <div class="progress sm">
-                                <div class="progress-bar progress-bar-red" style="width: 20%"></div>
-                            </div>
-                        </div>
-                        <div class="progress-group">
-                            <span class="progress-text">Complete Purchase</span>
-                            <span class="progress-number"><b>5</b>/20</span>
-
-                            <div class="progress sm">
-                                <div class="progress-bar progress-bar-green" style="width: 20%"></div>
-                            </div>
-                        </div>
-                        <div class="progress-group">
-                            <span class="progress-text">Sell Tickets</span>
-                            <span class="progress-number"><b>5</b>/20</span>
-
-                            <div class="progress sm">
-                                <div class="progress-bar progress-bar-yellow" style="width: 20%"></div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -165,7 +127,7 @@
 $(function () {
 
     $.ajax({
-        url: '/admin/statistic',
+        url: '/admin/monthly-statistic',
         type: 'GET',
         success: function(result) {
             var dates = [];

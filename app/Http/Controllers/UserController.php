@@ -30,6 +30,15 @@ class UserController extends Controller
     {
         $user = JWTAuth::parseToken()->authenticate();
 
+        $asd = sendPushNotification([
+            'fcm_token' => '',
+            'title' => 'asd',
+            'body' => 'asd',
+            'type' => 'asd'
+        ]);
+
+        dd($asd);
+
         // Mail::to($user->email)->queue(new Welcome($user));
 
         return response()->json([

@@ -22,7 +22,7 @@
                         <div class="form-group">
                             <label class="col-sm-1 control-label">Order</label>
                             <div class="col-sm-2">
-                                <input type="number" class="form-control" name="order_id" value="{{ Request::get('order_id') }}" placeholder="Order ID">
+                                <input type="text" class="form-control" name="reference_id" value="{{ Request::get('reference_id') }}" placeholder="Reference ID">
                             </div>
 
                             <label class="col-sm-2 control-label">Order Status</label>
@@ -50,7 +50,7 @@
                         <div class="form-group">
                             <label class="col-sm-1 control-label">Date</label>
                             <div class="col-sm-3">
-                                <input type="text" class="form-control order-time" name="order_date" value="{{ Request::get('order_date') }}">
+                                <input type="text" class="form-control" id="order-date" name="order_date" value="{{ Request::get('order_date') }}">
                             </div>
                         </div>
                         <a href="{{ url('/admin/topup-orders') }}"><button type="button" class="btn btn-primary">Clear</button></a>
@@ -115,7 +115,7 @@
                                 </td>
                                 <td>{{ Carbon\Carbon::parse($topup_order->created_at)->format('M d, Y | g.i A') }}</td>
                                 <td>
-                                    <button type="button" class="btn btn-primary btn-sm @if ($topup_order->order_status == 1) disabled @endif" data-toggle="modal" data-target="#verify-topup-order-{{ $topup_order->id }}">Verify</button>
+                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#verify-topup-order-{{ $topup_order->id }}" @if ($topup_order->order_status == 1) disabled @endif>Verify</button>
                                 </td>
                             </tr>
                             @endforeach
@@ -163,7 +163,7 @@
 $(function () {
     $('.pagination').addClass('pagination-sm no-margin pull-right');
 
-    $('.order-time').daterangepicker({
+    $('#order-date').daterangepicker({
         locale: {
             format: 'YYYY-MM-DD'
         },
