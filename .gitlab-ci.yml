@@ -1,5 +1,5 @@
 before_script:
-    - which php
+    - php -v
 
 stages:
     - test
