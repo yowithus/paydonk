@@ -1,0 +1,18 @@
+before_script:
+    - which php
+
+stages:
+    - test
+    - deploy
+
+basic_tests:
+    stage: test
+    script:
+        - /usr/local/bin/composer install
+
+deploy_to_staging:
+    stage: deploy
+    only:
+        - dev
+    script:
+        - git push dev HEAD:dev
