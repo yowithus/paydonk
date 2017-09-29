@@ -242,7 +242,7 @@ class OrderController extends Controller
         if ($product_category == 'Saldo') {
             // validate request data
             $validator = validator()->make($request->all(), [
-                'payment_method'    => 'required|in:Bank Transfer,Credit Card',
+                'payment_method'    => 'required|in:Bank Transfer',
             ]);
 
             if ($validator->fails()) {
@@ -500,34 +500,13 @@ class OrderController extends Controller
                 $payment_external_id = $response['id'];
                 $order->payment_external_id = $payment_external_id;
 
-
-                if ($product_category == 'Saldo') {
-                    $deposit        = $user->deposit;
-                    $topup_amount   = $order->order_amount;
-                    $current_amount = $deposit + $topup_amount;
-
-                    // update user deposit
-                    $user->deposit = $current_amount;
-                    $user->save();
-
-                    // create deposit detail
-                    DepositDetail::create([
-                        'user_id'           => $user_id,
-                        'order_id'          => $order_id,
-                        'amount'            => $topup_amount,
-                        'previous_amount'   => $deposit,
-                        'current_amount'    => $current_amount,
-                        'type'              => 'Top up'
+                // hit dji
+                $result = app('App\Http\Controllers\DjiController')->payment($request)->getData();
+                if (isset($result->rc) && $result->rc != '00') {
+                    return response()->json([
+                        'status'    => 0,
+                        'message'   => $result->rc . ': ' . trim($result->description),
                     ]);
-                } else {
-                    // hit dji
-                    $result = app('App\Http\Controllers\DjiController')->payment($request)->getData();
-                    if (isset($result->rc) && $result->rc != '00') {
-                        return response()->json([
-                            'status'    => 0,
-                            'message'   => $result->rc . ': ' . trim($result->description),
-                        ]);
-                    }
                 }
             }
 
