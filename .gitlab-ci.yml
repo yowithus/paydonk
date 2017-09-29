@@ -6,11 +6,6 @@ stages:
     - test
     - deploy
 
-test:
-    stage: test
-    script:
-        - /usr/local/bin/composer install
-
 deploy:
     stage: deploy
     only:
