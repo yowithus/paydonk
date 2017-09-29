@@ -1,16 +1,17 @@
 before_script:
-    - php -v
+    - pwd
+    - git status
 
 stages:
     - test
     - deploy
 
-basic_tests:
+test:
     stage: test
     script:
         - /usr/local/bin/composer install
 
-deploy_to_staging:
+deploy:
     stage: deploy
     only:
         - dev
