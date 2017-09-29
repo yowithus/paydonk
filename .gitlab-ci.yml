@@ -4,11 +4,15 @@ before_script:
 deploy_staging:
     stage: deploy
     before_script:
+        - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+        - eval $(ssh-agent -s)
+        - ssh-add <(echo "$SSH_PRIVATE_KEY")
         - mkdir -p ~/.ssh
-        - echo -e "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-        - chmod 600 ~/.ssh/id_rsa
         - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     script:
         - ssh root@104.236.115.202 "cd ~/var/www/PayDonk && git pull origin dev && ~/bin/composer install"
+    environment:
+        name: staging
+        url: https://104.236.115.202
     only:
         - dev
