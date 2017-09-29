@@ -1,6 +1,7 @@
 before_script:
     - pwd
     - git status
+    - ssh-keyscan -t rsa gitlab.com >> ~/.ssh/known_hosts
 
 stages:
     - test
