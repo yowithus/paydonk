@@ -11,4 +11,6 @@ deploy:
     only:
         - dev
     script:
-        - git push dev HEAD:dev
+        - git remote -v
+        - git remote add staging root@104.236.115.202:/var/www/PayDonk.git 
+        - git push staging dev
