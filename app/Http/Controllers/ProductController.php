@@ -60,7 +60,7 @@ class ProductController extends Controller
     	return response()->json([
             'status'      => 1,
             'message'     => 'Get saldo products successful',
-            'topup_nominals' => $saldo_products,
+            'saldo_products' => $saldo_products,
         ]);
     }
 

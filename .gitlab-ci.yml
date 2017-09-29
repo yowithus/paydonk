@@ -10,7 +10,8 @@ deploy_staging:
         - mkdir -p ~/.ssh
         - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     script:
-        - ssh yonatan@104.236.115.202 "cd /var/www/PayDonk && git pull origin dev && composer install"
+        #- ssh yonatan@104.236.115.202 "cd /var/www/PayDonk && git pull origin dev && composer install"
+        - git push yonatan@104.236.115.202:/var/www/PayDonk.git dev 
     environment:
         name: staging
         url: https://104.236.115.202
