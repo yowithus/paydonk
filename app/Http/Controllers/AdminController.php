@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
-use App\TopUpOrder;
 use App\DepositDetail;
 use App\Order;
 use App\Product;
@@ -36,11 +35,13 @@ class AdminController extends Controller
         $users_count = User::whereBetween('created_at', [$last_month, $today])
             ->count();
 
-        $topup_orders_count = TopUpOrder::where('order_status', 1)
+        $topup_orders_count = Order::where('order_status', 1)
+            ->where('product_code', 'like', '%10%')
             ->whereBetween('created_at', [$last_month, $today])
             ->count();
 
         $orders_count = Order::where('order_status', 1)
+            ->where('product_code', 'not like', '%10%')
             ->whereBetween('created_at', [$last_month, $today])
             ->count();
 
@@ -209,7 +210,7 @@ class AdminController extends Controller
         if ($payment_status) {
             $orders->where('orders.payment_status', $payment_status);
         } else {
-            $orders->where('orders.order_status', 1);
+            $orders->where('orders.payment_status', 1);
         }
 
         if ($order_date) {
@@ -224,7 +225,7 @@ class AdminController extends Controller
         $orders->withPath("/admin/orders?reference_id=$reference_id&email=$email&order_status=$order_status&payment_status=$payment_status&order_date=$order_date");
 
         return view('admin/order', [
-            'page_title'    => 'Product Orders',
+            'page_title'    => 'Orders',
             'orders'  => $orders
         ]);
     }
@@ -251,134 +252,59 @@ class AdminController extends Controller
 
         $product_code = $order->product_code;
         $product    = Product::find($product_code);
-        
-        $dji_product_id = $product->dji_product_id;
-        $reference_id   = $order->reference_id;
-        $customer_number = $order->customer_number;
-        $product_price  = $order->product_price;
-        $admin_fee      = $order->admin_fee;
-        $order_amount   = $order->order_amount;
+        $product_category    = $product->category;
 
-        $request->request->add(['dji_product_id' => $dji_product_id]);
-        $request->request->add(['customer_number' => $customer_number]);
-        $request->request->add(['reference_id' => $reference_id]);
-        $request->request->add(['tagihan' => $product_price]);
-        $request->request->add(['admin' => $admin_fee]);
-        $request->request->add(['total' => $order_amount]);
+        if ($product_category == 'Saldo') {
+            $deposit        = $user->deposit;
+            $topup_amount   = $order->order_amount;
+            $current_amount = $deposit + $topup_amount;
 
-        // call dji inquiry and return tagihan
-        $result = app('App\Http\Controllers\DjiController')->payment($request)->getData();
-        if (isset($result->rc) && $result->rc != '00') {
-            return response()->json([
-                'status'    => 0,
-                'message'   => $result->rc . ': ' . trim($result->description),
+            // update user deposit
+            $user->deposit = $current_amount;
+            $user->save();
+
+            // create deposit detail
+            DepositDetail::create([
+                'user_id'           => $user_id,
+                'order_id'          => $order_id,
+                'amount'            => $topup_amount,
+                'previous_amount'   => $deposit,
+                'current_amount'    => $current_amount,
+                'type'              => 'Top up'
             ]);
+
+        } else {
+            $dji_product_id = $product->dji_product_id;
+            $reference_id   = $order->reference_id;
+            $customer_number = $order->customer_number;
+            $product_price  = $order->product_price;
+            $admin_fee      = $order->admin_fee;
+            $order_amount   = $order->order_amount;
+
+            $request->request->add(['dji_product_id' => $dji_product_id]);
+            $request->request->add(['customer_number' => $customer_number]);
+            $request->request->add(['reference_id' => $reference_id]);
+            $request->request->add(['tagihan' => $product_price]);
+            $request->request->add(['admin' => $admin_fee]);
+            $request->request->add(['total' => $order_amount]);
+
+            // call dji inquiry and return tagihan
+            $result = app('App\Http\Controllers\DjiController')->payment($request)->getData();
+            if (isset($result->rc) && $result->rc != '00') {
+                return response()->json([
+                    'status'    => 0,
+                    'message'   => $result->rc . ': ' . trim($result->description),
+                ]);
+            }
         }
 
-        // update top up order status
+        // update order status
         $order->order_status = 1;
         $order->save();
 
         return redirect('admin/orders');
     }
 
-
-    /**
-     * Show the top up orders dashboard.
-     */
-    public function getTopUpOrders(Request $request)
-    {
-        $reference_id   = $request->reference_id;
-        $email          = $request->email;
-        $order_status   = $request->order_status;
-        $payment_status = $request->payment_status;
-        $order_date     = $request->order_date;
-
-        $topup_orders = TopUpOrder::join('users', 'topup_orders.user_id', '=', 'users.id')
-            ->select('topup_orders.*', 'users.email')
-            ->orderBy('topup_orders.created_at', 'desc');
-            
-        if ($reference_id) {
-            $topup_orders->where('topup_orders.reference_id', $reference_id);
-        }
-
-        if ($email) {
-            $topup_orders->where('users.email', $email);
-        }
-
-        if ($order_status) {
-            $topup_orders->where('topup_orders.order_status', $order_status);
-        } else {
-            $topup_orders->where('topup_orders.order_status', 0);
-        }
-
-        if ($payment_status) {
-            $topup_orders->where('topup_orders.payment_status', $payment_status);
-        } else {
-            $topup_orders->where('topup_orders.payment_status', 1);
-        }
-
-        if ($order_date) {
-            $start_date     = substr($order_date, 0, 10);
-            $end_date       = substr($order_date, 13, 19);
-
-            $topup_orders->whereDate('topup_orders.created_at', '>=', $start_date);
-            $topup_orders->whereDate('topup_orders.created_at', '<=', $end_date);
-        }
-
-        $topup_orders = $topup_orders->paginate(10);
-        $topup_orders->withPath("/admin/topup-orders?reference_id=$reference_id&email=$email&order_status=$order_status&payment_status=$payment_status&order_date=$order_date");
-
-        return view('admin/order_topup', [
-            'page_title'    => 'Top Up Orders',
-            'topup_orders'  => $topup_orders
-        ]);
-    }
-
-
-    /**
-     * Verify the top up order.
-     */
-    public function verifyTopUpOrder(Request $request) 
-    {
-        $validator = validator()->make($request->all(), [
-            'user_id'        => 'required',
-            'topup_order_id' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect('admin/topup-orders')->withErrors($validator);
-        }
-
-        $user_id     = $request->user_id;
-        $user        = User::find($user_id);
-        $topup_order = TopUpOrder::find($request->topup_order_id);
-        
-        $deposit        = $user->deposit;
-        $topup_amount   = $topup_order->order_amount;
-        $current_amount = $deposit + $topup_amount;
-
-        // update user deposit
-        $user->deposit = $current_amount;
-        $user->save();
-
-        // update top up order status
-        $topup_order->order_status = 1;
-        $topup_order->save();
-
-        // create deposit detail
-        DepositDetail::create([
-            'user_id'           => $user_id,
-            'topup_order_id'    => $request->topup_order_id,
-            'order_id'          => 0,
-            'amount'            => $topup_amount,
-            'previous_amount'   => $deposit,
-            'current_amount'    => $current_amount,
-            'type'              => 'Top up'
-        ]);
-
-        return redirect('admin/topup-orders');
-    }
 
     /**
      * Show the products dashboard.
@@ -393,7 +319,7 @@ class AdminController extends Controller
         if ($category) {
             $products->where('category', $category);
         } else {
-            $products->where('category', 'PLN');
+            $products->where('category', 'Saldo');
         }
 
         if ($type && $type != 'All') {

@@ -50,11 +50,7 @@
                                 <td>{{ $deposit_detail->id }}</td>
                                 <td>{{ $deposit_detail->type }}</td>
                                 <td>
-                                    @if ($deposit_detail->topup_order_id)
-                                        #{{ $deposit_detail->topup_order->reference_id }}
-                                    @else
-                                        #{{ $deposit_detail->order->reference_id }}
-                                    @endif
+                                    #{{ $deposit_detail->order->reference_id }}
                                     <br>
                                     {{ 'Rp '.number_format($deposit_detail->amount) }}
                                 </td>

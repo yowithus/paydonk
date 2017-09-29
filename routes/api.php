@@ -40,9 +40,10 @@ Route::get('/banks/get-recipient', 'ProductController@getRecipientBanks');
 Route::get('/banks/get-sender', 'ProductController@getSenderBanks');
 
 // top up
-Route::get('/topup/get-nominals', 'ProductController@getTopUpNominals');
+Route::get('/topup/get-nominals', 'ProductController@getSaldoProducts');
 
 // products
+Route::get('/products/get-saldo', 'ProductController@getSaldoProducts');
 Route::get('/products/get-pdam', 'ProductController@getPDAMProducts');
 Route::get('/products/get-pln', 'ProductController@getPrepaidPLNProducts');
 Route::get('/products/get-tv', 'ProductController@getTVProducts');

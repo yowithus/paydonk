@@ -30,11 +30,7 @@ Route::patch('/admin/users/{user}/status', 'AdminController@updateStatusUser');
 // deposit details
 Route::get('/admin/deposit-details', 'AdminController@getDepositDetails');
 
-// top up orders
-Route::get('/admin/topup-orders', 'AdminController@getTopUpOrders');
-Route::post('/admin/topup-orders/verify', 'AdminController@verifyTopUpOrder');
-
-// product orders
+// orders
 Route::get('/admin/orders', 'AdminController@getOrders');
 Route::post('/admin/orders/verify', 'AdminController@verifyOrder');
 

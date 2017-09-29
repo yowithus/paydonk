@@ -15,7 +15,7 @@ class ProductController extends Controller
     	$this->middleware('jwt.auth', ['except' => [
             'getRecipientBanks', 
             'getSenderBanks', 
-            'getTopUpNominals', 
+            'getSaldoProducts', 
             'getPrepaidPLNProducts', 
             'getPDAMProducts',
             'getTVProducts',
@@ -50,16 +50,17 @@ class ProductController extends Controller
         ]);
     }
 
-    public function getTopUpNominals() 
+    public function getSaldoProducts() 
     {
-    	$topup_nominals = DB::table('topup_nominals')
-    		->where('status', 1)
-    		->get();
+    	$saldo_products = Product::selectRaw('variant_name as name, price, code')
+            ->where('category', 'Saldo')
+            ->where('status', 1)
+            ->get();
 
     	return response()->json([
             'status'      => 1,
-            'message'     => 'Get top up nominals successful',
-            'topup_nominals' => $topup_nominals,
+            'message'     => 'Get saldo products successful',
+            'topup_nominals' => $saldo_products,
         ]);
     }
 

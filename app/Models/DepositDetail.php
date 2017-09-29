@@ -12,7 +12,7 @@ class DepositDetail extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'topup_order_id', 'order_id', 'amount', 'previous_amount', 'current_amount', 'type'
+        'user_id', 'order_id', 'amount', 'previous_amount', 'current_amount', 'type'
     ];
 
     /**
@@ -21,14 +21,6 @@ class DepositDetail extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    /**
-     * Get the top up order that owns the deposit detail.
-     */
-    public function topup_order()
-    {
-        return $this->belongsTo(TopUpOrder::class);
     }
 
     /**

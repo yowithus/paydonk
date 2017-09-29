@@ -18,7 +18,7 @@ class CreateOrdersTable extends Migration
             $table->integer('user_id');
             $table->string('product_code');
             $table->string('reference_id');
-            $table->string('customer_number');
+            $table->string('customer_number')->nullable();
             $table->double('product_price');
             $table->double('admin_fee');
             $table->double('order_amount');

@@ -22,92 +22,6 @@ class OrderController extends Controller
     	$this->middleware('jwt.auth');
     }  
 
-    public function createTopUpOrder(Request $request) 
-    {
-        // validate request data
-        $validator = validator()->make($request->all(), [
-            'topup_nominal'  => 'required'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status'    => 0,
-                'message'   => $validator->errors()->first()
-            ]);
-        }
-
-    	$user = JWTAuth::parseToken()->authenticate();
-        $user_id = $user->id;
-
-        $now_id = TopUpOrder::latest()->value('id') + 1;
-        $reference_id = sprintf("%07d", $now_id);
-
-        // create top up order
-    	$topup_order = TopUpOrder::create([
-            'user_id'           => $user_id,
-            'reference_id'      => $reference_id,
-            'order_amount'      => $request->topup_nominal,
-            'order_status' 	    => 0,
-            'payment_amount'    => $request->topup_nominal,
-            'payment_status'    => 0,
-            'payment_method'    => 'Bank Transfer'
-        ]);
-
-        return response()->json([
-            'status'      => 1,
-            'message'     => 'Create top up order successful',
-            'topup_order' => $topup_order,
-        ]);
-    }
-
-    public function confirmTopUpOrder(Request $request) 
-    {
-        // validate request data
-    	$validator = validator()->make($request->all(), [
-            'topup_order_id'        => 'required',
-            'recipient_bank_id'     => 'required',
-            'sender_account_name' 	=> 'required',
-            'sender_account_number' => 'required',
-            'sender_bank_name' 		=> 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status'    => 0,
-                'message'   => $validator->errors()->first()
-            ]);
-        }
-
-        // update top up order
-        $topup_order = TopUpOrder::where('id', $request->topup_order_id)
-            ->where('payment_status', 0)
-            ->first();
-
-        if (!$topup_order) {
-            return response()->json([
-                'status'    => 0,
-                'message'   => 'Top up order tidak ditemukan atau sudah dikonfirmasi'
-            ]);
-        }
-
-        $topup_order->payment_status = 1;
-        $topup_order->save();
-
-        // create bank transfer data
-        BankTransfer::create([
-            'topup_order_id'        => $request->topup_order_id,
-            'recipient_bank_id'     => $request->recipient_bank_id,
-            'sender_account_name'   => $request->sender_account_name,
-            'sender_account_number' => $request->sender_account_number,
-            'sender_bank_name'      => $request->sender_bank_name,
-        ]);
-
-    	return response()->json([
-            'status'    => 1,
-            'message'   => 'Confirm top up order successful'
-        ]);
-    }
-
     public function checkInvoice(Request $request, Product $product) 
     {
         // validate request data
@@ -321,30 +235,54 @@ class OrderController extends Controller
 
     public function createOrder(Request $request, Product $product)
     {
-        // validate request data
-        $validator = validator()->make($request->all(), [
-            'customer_number'   => 'required',
-            'product_price'     => 'required',
-            'admin_fee'         => 'required',
-            'payment_method'    => 'required|in:Saldo,Bank Transfer,Credit Card',
-        ]);
+        $product_code    = $product->code;
+        $product_category = $product->category;
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status'    => 0,
-                'message'   => $validator->errors()->first()
+        // top up
+        if ($product_category == 'Saldo') {
+            // validate request data
+            $validator = validator()->make($request->all(), [
+                'payment_method'    => 'required|in:Bank Transfer,Credit Card',
             ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status'    => 0,
+                    'message'   => $validator->errors()->first()
+                ]);
+            }
+
+            $product_price  = $product->price;
+            $admin_fee      = 0;
+        
+        // product
+        } else {
+             // validate request data
+            $validator = validator()->make($request->all(), [
+                'customer_number'   => 'required',
+                'product_price'     => 'required',
+                'admin_fee'         => 'required',
+                'payment_method'    => 'required|in:Saldo,Bank Transfer,Credit Card',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status'    => 0,
+                    'message'   => $validator->errors()->first()
+                ]);
+            }
+
+            $product_price   = $request->product_price;
+            $admin_fee       = $request->admin_fee;
         }
 
-        $product_code    = $product->code;
         $customer_number = $request->customer_number;
-        $product_price   = $request->product_price;
-        $admin_fee       = $request->admin_fee;
         $payment_method  = $request->payment_method;
         $promo_code      = strtoupper($request->promo_code);
-
-        $order_amount   = $product_price + $admin_fee;
-        $payment_amount = $order_amount;
+        $order_amount    = $product_price + $admin_fee;
+        $payment_amount  = $order_amount;
+        $discount_amount = 0;
+        $promo_id        = null;
 
         $user    = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
@@ -452,6 +390,7 @@ class OrderController extends Controller
             ]);
         }
 
+        $product_category = $product->category;
         $reference_id   = $order->reference_id;
         $customer_number = $order->customer_number;
         $product_price  = $order->product_price;
@@ -534,7 +473,7 @@ class OrderController extends Controller
             } else if ($payment_method == 'Credit Card') {
                 // validate credit card token
                 $validator = validator()->make($request->all(), [
-                    'token'     => 'required',
+                    'token_id'     => 'required',
                 ]);
 
                 if ($validator->fails()) {
@@ -545,11 +484,11 @@ class OrderController extends Controller
                 }
 
                 // hit xendit
-                $token = $request->token;
+                $token_id = $request->token_id;
                 $reference_id = ENV('XENDIT_PREFIX') . $reference_id;
                 $options['secret_api_key'] = ENV('XENDIT_SECRET_KEY');
                 $xenditPHPClient = new \XenditClient\XenditPHPClient($options);
-                $response = $xenditPHPClient->captureCreditCardPayment($reference_id, $token, $payment_amount);
+                $response = $xenditPHPClient->captureCreditCardPayment($reference_id, $token_id, $payment_amount);
 
                 if (!isset($response['id']) || $response['status'] != 'CAPTURED') {
                     return response()->json([
@@ -561,13 +500,34 @@ class OrderController extends Controller
                 $payment_external_id = $response['id'];
                 $order->payment_external_id = $payment_external_id;
 
-                // hit dji
-                $result = app('App\Http\Controllers\DjiController')->payment($request)->getData();
-                if (isset($result->rc) && $result->rc != '00') {
-                    return response()->json([
-                        'status'    => 0,
-                        'message'   => $result->rc . ': ' . trim($result->description),
+
+                if ($product_category == 'Saldo') {
+                    $deposit        = $user->deposit;
+                    $topup_amount   = $order->order_amount;
+                    $current_amount = $deposit + $topup_amount;
+
+                    // update user deposit
+                    $user->deposit = $current_amount;
+                    $user->save();
+
+                    // create deposit detail
+                    DepositDetail::create([
+                        'user_id'           => $user_id,
+                        'order_id'          => $order_id,
+                        'amount'            => $topup_amount,
+                        'previous_amount'   => $deposit,
+                        'current_amount'    => $current_amount,
+                        'type'              => 'Top up'
                     ]);
+                } else {
+                    // hit dji
+                    $result = app('App\Http\Controllers\DjiController')->payment($request)->getData();
+                    if (isset($result->rc) && $result->rc != '00') {
+                        return response()->json([
+                            'status'    => 0,
+                            'message'   => $result->rc . ': ' . trim($result->description),
+                        ]);
+                    }
                 }
             }
 

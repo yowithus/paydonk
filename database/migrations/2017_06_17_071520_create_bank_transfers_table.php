@@ -15,8 +15,7 @@ class CreateBankTransfersTable extends Migration
     {
         Schema::create('bank_transfers', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('order_id')->nullable();
-            $table->integer('topup_order_id')->nullable();
+            $table->integer('order_id');
             $table->integer('recipient_bank_id');
             $table->string('sender_bank_name');
             $table->string('sender_account_name');

@@ -12,6 +12,7 @@
                             <label class="col-sm-1 control-label">Category</label>
                             <div class="col-sm-2">
                                 <select class="form-control" name="category">
+                                    <option value="Saldo" @if (Request::get('category') == 'Saldo') selected @endif>Saldo</option>
                                     <option value="PLN" @if (Request::get('category') == 'PLN') selected @endif>PLN</option>
                                     <option value="PDAM" @if (Request::get('category') == 'PDAM') selected @endif>PDAM</option>
                                     <option value="TV Kabel" @if (Request::get('category') == 'TV Kabel') selected @endif>TV Kabel</option>

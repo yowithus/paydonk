@@ -15,6 +15,75 @@ class ProductsTableSeeder extends Seeder
     {
 
     	DB::table('products')->insert([
+            // Saldo
+            [
+                'name'          => 'Top Up Saldo',
+                'variant_name'  => 'Rp 25.000',
+                'category'      => 'Saldo',
+                'price'         => 25000,
+                'code'          => '1001',
+                'dji_product_id' => null,
+                'type'          => 'Prepaid',
+                'image_name'    => null,
+                'status'        => 1,
+            ],
+            [
+                'name'          => 'Top Up Saldo',
+                'variant_name'  => 'Rp 50.000',
+                'category'      => 'Saldo',
+                'price'         => 50000,
+                'code'          => '1002',
+                'dji_product_id' => null,
+                'type'          => 'Prepaid',
+                'image_name'    => null,
+                'status'        => 1,
+            ],
+            [
+                'name'          => 'Top Up Saldo',
+                'variant_name'  => 'Rp 100.000',
+                'category'      => 'Saldo',
+                'price'         => 100000,
+                'code'          => '1003',
+                'dji_product_id' => null,
+                'type'          => 'Prepaid',
+                'image_name'    => null,
+                'status'        => 1,
+            ],
+            [
+                'name'          => 'Top Up Saldo',
+                'variant_name'  => 'Rp 250.000',
+                'category'      => 'Saldo',
+                'price'         => 200000,
+                'code'          => '1004',
+                'dji_product_id' => null,
+                'type'          => 'Prepaid',
+                'image_name'    => null,
+                'status'        => 1,
+            ],
+            [
+                'name'          => 'Top Up Saldo',
+                'variant_name'  => 'Rp 500.000',
+                'category'      => 'Saldo',
+                'price'         => 500000,
+                'code'          => '1005',
+                'dji_product_id' => null,
+                'type'          => 'Prepaid',
+                'image_name'    => null,
+                'status'        => 1,
+            ],
+            [
+                'name'          => 'Top Up Saldo',
+                'variant_name'  => 'Rp 1.000.000',
+                'category'      => 'Saldo',
+                'price'         => 1000000,
+                'code'          => '1006',
+                'dji_product_id' => null,
+                'type'          => 'Prepaid',
+                'image_name'    => null,
+                'status'        => 1,
+            ],
+
+
             // Tagihan Listrik
             [
                 'name'          => 'Tagihan Listrik',

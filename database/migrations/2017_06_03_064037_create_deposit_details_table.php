@@ -16,7 +16,6 @@ class CreateDepositDetailsTable extends Migration
         Schema::create('deposit_details', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id');
-            $table->integer('topup_order_id');
             $table->integer('order_id');
             $table->double('amount');
             $table->double('previous_amount');

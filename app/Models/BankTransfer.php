@@ -12,7 +12,7 @@ class BankTransfer extends Model
      * @var array
      */
     protected $fillable = [
-        'order_id', 'topup_order_id', 'recipient_bank_id', 'sender_bank_name', 'sender_account_name', 'sender_account_number'
+        'order_id', 'recipient_bank_id', 'sender_bank_name', 'sender_account_name', 'sender_account_number'
     ];
 
     /**
