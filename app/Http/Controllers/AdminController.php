@@ -44,7 +44,7 @@ class AdminController extends Controller
             ->where('product_code', 'not like', '%10%')
             ->whereBetween('created_at', [$last_month, $today])
             ->count();
-
+ 
         $total_revenue = Order::select(DB::raw('sum(payment_amount) as total_revenue'))
             ->where('order_status', 1)
             ->where('payment_status', 1)
