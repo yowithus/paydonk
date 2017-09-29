@@ -1,18 +1,13 @@
-before_script:
-    - pwd
-    - git status
-    - mkdir ~/.ssh
-    - ssh-keyscan -t rsa 104.236.115.202 >> ~/.ssh/known_hosts
-
-stages:
-    - test
-    - deploy
-
-deploy:
+deploy_staging:
     stage: deploy
-    only:
-        - dev
+    before_script:
+        - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+        - mkdir -p ~/.ssh
+        - eval $(ssh-agent -s)
+        - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     script:
         - git remote -v
         - git remote add staging root@104.236.115.202:/var/www/PayDonk.git 
         - git push staging dev
+    only:
+        - dev
