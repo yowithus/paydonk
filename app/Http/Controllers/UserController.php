@@ -37,8 +37,6 @@ class UserController extends Controller
             'type' => 'asd'
         ]);
 
-        dd($asd);
-
         // Mail::to($user->email)->queue(new Welcome($user));
 
         return response()->json([
@@ -268,7 +266,36 @@ class UserController extends Controller
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Successfully reset password'
+            'message'   => 'Reset password successful'
+        ]);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+
+        $validator = validator()->make($request->all(), [
+            'first_name'    => 'required|regex:/^[\pL\s\-]+$/u|min:2|max:30',
+            'last_name'     => 'required|regex:/^[\pL\s\-]+$/u|min:2|max:30',
+            'email'         => 'required|email|max:50|unique:users,email,'.$user->id,
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => $validator->errors()->first()
+            ]);
+        }
+
+        $user->first_name   = $request->first_name;
+        $user->last_name    = $request->last_name;
+        $user->email        = $request->email;
+        $user->updated_at   = Carbon::now();
+        $user->save();
+
+        return response()->json([
+            'status'    => 1,
+            'message'   => 'Update profile successful'
         ]);
     }
 
