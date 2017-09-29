@@ -187,9 +187,11 @@ class AdminController extends Controller
         $email          = $request->email;
         $order_status   = $request->order_status;
         $payment_status = $request->payment_status;
+        $product_category = $request->product_category;
         $order_date     = $request->order_date;
 
         $orders = Order::join('users', 'orders.user_id', '=', 'users.id')
+            ->join('products', 'orders.product_code', '=', 'products.code')
             ->select('orders.*', 'users.email')
             ->orderBy('orders.created_at', 'desc');
             
@@ -211,6 +213,10 @@ class AdminController extends Controller
             $orders->where('orders.payment_status', $payment_status);
         } else {
             $orders->where('orders.payment_status', 1);
+        }
+
+        if ($product_category) {
+            $orders->where('products.category', $product_category);
         }
 
         if ($order_date) {

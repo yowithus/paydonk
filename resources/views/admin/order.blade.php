@@ -48,7 +48,20 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-1 control-label">Date</label>
+                            <label class="col-sm-1 control-label">Product</label>
+                            <div class="col-sm-2">
+                                <select class="form-control" name="product_category">
+                                    <option value="Saldo" @if (Request::get('product_category') == 'Saldo') selected @endif>Saldo</option>
+                                    <option value="PLN" @if (Request::get('product_category') == 'PLN') selected @endif>PLN</option>
+                                    <option value="PDAM" @if (Request::get('product_category') == 'PDAM') selected @endif>PDAM</option>
+                                    <option value="TV Kabel" @if (Request::get('product_category') == 'TV Kabel') selected @endif>TV Kabel</option>
+                                    <option value="Pulsa" @if (Request::get('product_category') == 'Pulsa') selected @endif>Pulsa</option>
+                                    <option value="TV Kabel" @if (Request::get('product_category') == 'Telepon') selected @endif>Telepon</option>
+                                    <option value="Angsuran Kredit" @if (Request::get('product_category') == 'Angsuran Kredit') selected @endif>Angsuran Kredit</option>
+                                </select>
+                            </div>
+
+                            <label class="col-sm-2 control-label">Order Date</label>
                             <div class="col-sm-3">
                                 <input type="text" class="form-control" id="order-date" name="order_date" value="{{ Request::get('order_date') }}" required>
                             </div>
