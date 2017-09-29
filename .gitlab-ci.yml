@@ -6,8 +6,6 @@ deploy_staging:
         - eval $(ssh-agent -s)
         - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     script:
-        - git remote -v
-        - git remote add staging root@104.236.115.202:/var/www/PayDonk.git 
-        - git push staging dev
+        - ssh root@http://104.236.115.202/ "cd ~/var/www/PayDonk && git pull origin dev && ~/bin/composer install"
     only:
         - dev
