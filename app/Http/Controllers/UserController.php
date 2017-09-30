@@ -335,4 +335,24 @@ class UserController extends Controller
             'message'   => 'Update fcm token successful',
         ]);
     }
+
+    public function getCreditCardToken() 
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        $credit_card_token = $user->credit_card_token;
+        
+        if ($credit_card_token) {
+
+            return response()->json([
+                'status'    => 1,
+                'message'   => 'Get credit card token successful',
+                'credit_card_token'  => $credit_card_token
+            ]);
+        } else {
+            return response()->json([
+                'status'    => 0,
+                'message'   => 'Get credit card token failed'
+            ]);
+        }
+    }
 }

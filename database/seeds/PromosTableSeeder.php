@@ -3,6 +3,7 @@
 use Illuminate\Database\Seeder;
 
 use Faker\Factory;
+use App\Promo;
 
 class PromosTableSeeder extends Seeder
 {
@@ -13,12 +14,12 @@ class PromosTableSeeder extends Seeder
      */
     public function run()
     {
-    	DB::table('promos')->insert([
+    	Promo::insert([
             [
                 'name'         => 'Allpay Launching Promo',
                 'code'         => 'ALLPAY',
-                'discount_percentage'   => 30,
-                'max_discount'  => 100000,
+                'discount_percentage'   => 20,
+                'max_discount'  => 25000,
                 'min_usage'     => 30000,
                 'started_at'    => '2017-09-01 12:00:00',
                 'ended_at'      => '2017-12-31 12:00:00',
@@ -27,8 +28,8 @@ class PromosTableSeeder extends Seeder
     		[
 	            'name'         => 'PayDonk',
 	            'code'         => 'PAYDONK',
-	            'discount_percentage'   => 30,
-                'max_discount'  => 100000,
+	            'discount_percentage'   => 15,
+                'max_discount'  => 45000,
                 'min_usage'     => 30000,
                 'started_at'    => '2017-09-01 12:00:00',
                 'ended_at'      => '2017-12-31 12:00:00',

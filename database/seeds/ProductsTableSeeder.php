@@ -3,6 +3,7 @@
 use Illuminate\Database\Seeder;
 
 use Faker\Factory;
+use App\Product;
 
 class ProductsTableSeeder extends Seeder
 {
@@ -13,8 +14,7 @@ class ProductsTableSeeder extends Seeder
      */
     public function run()
     {
-
-    	DB::table('products')->insert([
+    	Product::insert([
             // Saldo
             [
                 'name'          => 'Top Up Saldo',

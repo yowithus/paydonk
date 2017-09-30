@@ -12,6 +12,7 @@ use App\Order;
 use App\BankTransfer;
 use App\Product;
 use App\Promo;
+use App\CreditCardToken;
 use DB;
 use Jenssegers\Date\Date;
 
@@ -473,7 +474,9 @@ class OrderController extends Controller
             } else if ($payment_method == 'Credit Card') {
                 // validate credit card token
                 $validator = validator()->make($request->all(), [
-                    'token_id'     => 'required',
+                    'token_id' => 'required',
+                    'credit_card_number' => 'required',
+                    'credit_card_type'   => 'required',
                 ]);
 
                 if ($validator->fails()) {
@@ -483,8 +486,11 @@ class OrderController extends Controller
                     ]);
                 }
 
-                // hit xendit
                 $token_id = $request->token_id;
+                $credit_card_number = $request->credit_card_number;
+                $credit_card_type   = $request->credit_card_type;
+
+                // hit xendit
                 $reference_id = ENV('XENDIT_PREFIX') . $reference_id;
                 $options['secret_api_key'] = ENV('XENDIT_SECRET_KEY');
                 $xenditPHPClient = new \XenditClient\XenditPHPClient($options);
@@ -499,6 +505,16 @@ class OrderController extends Controller
 
                 $payment_external_id = $response['id'];
                 $order->payment_external_id = $payment_external_id;
+
+                // save credit card info
+                CreditCardToken::updateOrCreate([
+                    'user_id' => $user_id
+                ], [
+                    'token_id'  => $token_id,
+                    'credit_card_number' => $credit_card_number, 
+                    'credit_card_type'   => $credit_card_type
+                ]);
+
 
                 // hit dji
                 $result = app('App\Http\Controllers\DjiController')->payment($request)->getData();

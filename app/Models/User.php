@@ -57,4 +57,11 @@ class User extends Authenticatable
         return $this->hasMany(TopUpOrder::class);
     }
 
+    /**
+     * Get the credit card token for the user.
+     */
+    public function credit_card_token()
+    {
+        return $this->hasOne(CreditCardToken::class);
+    }
 }

@@ -17,7 +17,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// authentication
+// user
+Route::get('/user', 'UserController@show');
 Route::post('/login', 'UserController@login');
 Route::post('/register', 'UserController@register');
 Route::post('/logout', 'UserController@logout');
@@ -26,8 +27,7 @@ Route::post('/verify', 'UserController@verify');
 Route::post('/reset-password', 'UserController@resetPassword');
 Route::post('/update-profile', 'UserController@updateProfile');
 Route::post('/update-fcm-token', 'UserController@updateFCMToken');
-
-Route::get('/user', 'UserController@show');
+Route::get('/get-credit-card-token', 'UserController@getCreditCardToken');
 
 // dji
 Route::post('/dji/sign-on', 'DjiController@signOn');

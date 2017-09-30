@@ -3,6 +3,7 @@
 use Illuminate\Database\Seeder;
 
 use Faker\Factory;
+use App\RecipientBank;
 
 class RecipientBanksTableSeeder extends Seeder
 {
@@ -13,8 +14,7 @@ class RecipientBanksTableSeeder extends Seeder
      */
     public function run()
     {
-
-    	DB::table('recipient_banks')->insert([
+        RecipientBank::insert([
     		[
 	            'name'  			=> 'BCA',
 	            'account_name' 		=> 'PT Allpay Indonesia',

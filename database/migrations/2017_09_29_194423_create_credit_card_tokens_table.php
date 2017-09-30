@@ -17,8 +17,9 @@ class CreateCreditCardTokensTable extends Migration
             $table->increments('id');
             $table->integer('user_id');
             $table->string('token_id');
-            $table->timestamp('created_at')->default(\DB::raw('CURRENT_TIMESTAMP'));
-            $table->timestamp('updated_at')->default(\DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
+            $table->string('credit_card_number');
+            $table->string('credit_card_type');
+            $table->timestamps();
         });
     }
 
