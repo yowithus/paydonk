@@ -390,7 +390,7 @@ class OrderController extends Controller
         if (!$order) {
             return response()->json([
                 'status'    => 0,
-                'message'   => 'Order tidak ditemukan'
+                'message'   => 'Order tidak ditemukan atau sudah dikonfirmasi'
             ]);
         }
 

@@ -51,6 +51,7 @@
                             <label class="col-sm-1 control-label">Product</label>
                             <div class="col-sm-2">
                                 <select class="form-control" name="product_category">
+                                    <option value="" @if (Request::get('product_category') == '') selected @endif>All</option>
                                     <option value="Saldo" @if (Request::get('product_category') == 'Saldo') selected @endif>Saldo</option>
                                     <option value="PLN" @if (Request::get('product_category') == 'PLN') selected @endif>PLN</option>
                                     <option value="PDAM" @if (Request::get('product_category') == 'PDAM') selected @endif>PDAM</option>
