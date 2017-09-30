@@ -53,7 +53,7 @@ class ProductsTableSeeder extends Seeder
                 'name'          => 'Top Up Saldo',
                 'variant_name'  => 'Rp 250.000',
                 'category'      => 'Saldo',
-                'price'         => 200000,
+                'price'         => 250000,
                 'code'          => '1004',
                 'dji_product_id' => null,
                 'type'          => 'Prepaid',

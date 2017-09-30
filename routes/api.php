@@ -46,7 +46,7 @@ Route::get('/products/get-tv', 'ProductController@getTVProducts');
 Route::get('/products/get-finance', 'ProductController@getFinanceProducts');
 Route::post('/products/get-pulsa-postpaid', 'ProductController@getPostpaidPulsaProduct');
 
-// order - product
+// order
 Route::post('/products/{product}/check-invoice', 'OrderController@checkInvoice');
 Route::post('/products/{product}/use-promo-code', 'OrderController@usePromoCode');
 Route::post('/products/{product}/create-order', 'OrderController@createOrder');

@@ -381,8 +381,11 @@ class OrderController extends Controller
         $deposit = $user->deposit;
 
         // order
-        $order_id       = $request->order_id;
-        $order          = Order::find($order_id);
+        $order_id = $request->order_id;
+        $order    = Order::where('order_id', $order_id)
+            ->where('order_status', 0);
+            ->where('payment_status', 0)
+            ->first();
         
         if (!$order) {
             return response()->json([
