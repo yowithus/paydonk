@@ -382,7 +382,7 @@ class OrderController extends Controller
 
         // order
         $order_id = $request->order_id;
-        $order    = Order::where('order_id', $order_id)
+        $order    = Order::where('id', $order_id)
             ->where('order_status', 0)
             ->where('payment_status', 0)
             ->first();
