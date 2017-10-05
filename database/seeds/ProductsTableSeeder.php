@@ -17,7 +17,7 @@ class ProductsTableSeeder extends Seeder
     	Product::insert([
             // Saldo
             [
-                'name'          => 'Top Up Saldo',
+                'name'          => 'Donkpet',
                 'variant_name'  => 'Rp 25.000',
                 'category'      => 'Saldo',
                 'price'         => 25000,
@@ -28,7 +28,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'Top Up Saldo',
+                'name'          => 'Donkpet',
                 'variant_name'  => 'Rp 50.000',
                 'category'      => 'Saldo',
                 'price'         => 50000,
@@ -39,7 +39,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'Top Up Saldo',
+                'name'          => 'Donkpet',
                 'variant_name'  => 'Rp 100.000',
                 'category'      => 'Saldo',
                 'price'         => 100000,
@@ -50,7 +50,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'Top Up Saldo',
+                'name'          => 'Donkpet',
                 'variant_name'  => 'Rp 250.000',
                 'category'      => 'Saldo',
                 'price'         => 250000,
@@ -61,7 +61,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'Top Up Saldo',
+                'name'          => 'Donkpet',
                 'variant_name'  => 'Rp 500.000',
                 'category'      => 'Saldo',
                 'price'         => 500000,
@@ -72,7 +72,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'Top Up Saldo',
+                'name'          => 'Donkpet',
                 'variant_name'  => 'Rp 1.000.000',
                 'category'      => 'Saldo',
                 'price'         => 1000000,
@@ -770,7 +770,7 @@ class ProductsTableSeeder extends Seeder
                 'code'          => '1301',
                 'dji_product_id' => '520051',
                 'type'          => 'Postpaid',
-                'image_name'    => null,
+                'image_name'    => 'transvision.png',
                 'status'        => 1,
             ],
             [
@@ -781,7 +781,7 @@ class ProductsTableSeeder extends Seeder
                 'code'          => '1302',
                 'dji_product_id' => '520031',
                 'type'          => 'Postpaid',
-                'image_name'    => null,
+                'image_name'    => 'indovision.png',
                 'status'        => 1,
             ],
             [
@@ -792,7 +792,7 @@ class ProductsTableSeeder extends Seeder
                 'code'          => '1303',
                 'dji_product_id' => '540021',
                 'type'          => 'Postpaid',
-                'image_name'    => null,
+                'image_name'    => 'topas_tv.png',
                 'status'        => 1,
             ],
             [
@@ -803,7 +803,7 @@ class ProductsTableSeeder extends Seeder
                 'code'          => '1304',
                 'dji_product_id' => '520081',
                 'type'          => 'Postpaid',
-                'image_name'    => null,
+                'image_name'    => 'big_tv.png',
                 'status'        => 1,
             ],
             [
@@ -814,7 +814,7 @@ class ProductsTableSeeder extends Seeder
                 'code'          => '1305',
                 'dji_product_id' => '540011',
                 'type'          => 'Postpaid',
-                'image_name'    => null,
+                'image_name'    => 'nexmedia.png',
                 'status'        => 1,
             ],
             [
@@ -825,7 +825,7 @@ class ProductsTableSeeder extends Seeder
                 'code'          => '1306',
                 'dji_product_id' => '560011',
                 'type'          => 'Prepaid',
-                'image_name'    => null,
+                'image_name'    => 'k_vision.png',
                 'status'        => 1,
             ],
             [
@@ -836,7 +836,7 @@ class ProductsTableSeeder extends Seeder
                 'code'          => '1307',
                 'dji_product_id' => '560051',
                 'type'          => 'Postpaid',
-                'image_name'    => null,
+                'image_name'    => 'orange_tv.png',
                 'status'        => 1,
             ],
             [
@@ -847,7 +847,7 @@ class ProductsTableSeeder extends Seeder
                 'code'          => '1308',
                 'dji_product_id' => '770501',
                 'type'          => 'Prepaid',
-                'image_name'    => null,
+                'image_name'    => 'orange_tv.png',
                 'status'        => 1,
             ],
             [
@@ -858,7 +858,7 @@ class ProductsTableSeeder extends Seeder
                 'code'          => '1309',
                 'dji_product_id' => '771001',
                 'type'          => 'Prepaid',
-                'image_name'    => null,
+                'image_name'    => 'orange_tv.png',
                 'status'        => 1,
             ],
             [
@@ -869,7 +869,7 @@ class ProductsTableSeeder extends Seeder
                 'code'          => '1310',
                 'dji_product_id' => '772001',
                 'type'          => 'Prepaid',
-                'image_name'    => null,
+                'image_name'    => 'orange_tv.png',
                 'status'        => 1,
             ],
             [
@@ -880,7 +880,7 @@ class ProductsTableSeeder extends Seeder
                 'code'          => '1311',
                 'dji_product_id' => '770501',
                 'type'          => 'Prepaid',
-                'image_name'    => null,
+                'image_name'    => 'orange_tv.png',
                 'status'        => 1,
             ],
             [
@@ -890,8 +890,8 @@ class ProductsTableSeeder extends Seeder
                 'price'         => null,
                 'code'          => '1312',
                 'dji_product_id' => '560121',
-                'type'          => 'Postpaid',
-                'image_name'    => null,
+                'type'          => 'Prepaid',
+                'image_name'    => 'skynindo.png',
                 'status'        => 1,
             ],
             [
@@ -901,8 +901,8 @@ class ProductsTableSeeder extends Seeder
                 'price'         => null,
                 'code'          => '1313',
                 'dji_product_id' => '560221',
-                'type'          => 'Postpaid',
-                'image_name'    => null,
+                'type'          => 'Prepaid',
+                'image_name'    => 'skynindo.png',
                 'status'        => 1,
             ],
             [
@@ -912,8 +912,8 @@ class ProductsTableSeeder extends Seeder
                 'price'         => null,
                 'code'          => '1314',
                 'dji_product_id' => '560321',
-                'type'          => 'Postpaid',
-                'image_name'    => null,
+                'type'          => 'Prepaid',
+                'image_name'    => 'skynindo.png',
                 'status'        => 1,
             ],
             [
@@ -923,8 +923,8 @@ class ProductsTableSeeder extends Seeder
                 'price'         => null,
                 'code'          => '1315',
                 'dji_product_id' => '560421',
-                'type'          => 'Postpaid',
-                'image_name'    => null,
+                'type'          => 'Prepaid',
+                'image_name'    => 'skynindo.png',
                 'status'        => 1,
             ],
             [
@@ -934,8 +934,8 @@ class ProductsTableSeeder extends Seeder
                 'price'         => null,
                 'code'          => '1316',
                 'dji_product_id' => '560521',
-                'type'          => 'Postpaid',
-                'image_name'    => null,
+                'type'          => 'Prepaid',
+                'image_name'    => 'skynindo.png',
                 'status'        => 1,
             ],
             [
@@ -945,8 +945,8 @@ class ProductsTableSeeder extends Seeder
                 'price'         => null,
                 'code'          => '1317',
                 'dji_product_id' => '560621',
-                'type'          => 'Postpaid',
-                'image_name'    => null,
+                'type'          => 'Prepaid',
+                'image_name'    => 'skynindo.png',
                 'status'        => 1,
             ],
             [
@@ -956,8 +956,8 @@ class ProductsTableSeeder extends Seeder
                 'price'         => null,
                 'code'          => '1318',
                 'dji_product_id' => '560721',
-                'type'          => 'Postpaid',
-                'image_name'    => null,
+                'type'          => 'Prepaid',
+                'image_name'    => 'skynindo.png',
                 'status'        => 1,
             ],
             [
@@ -967,8 +967,8 @@ class ProductsTableSeeder extends Seeder
                 'price'         => null,
                 'code'          => '1319',
                 'dji_product_id' => '560821',
-                'type'          => 'Postpaid',
-                'image_name'    => null,
+                'type'          => 'Prepaid',
+                'image_name'    => 'skynindo.png',
                 'status'        => 1,
             ],
             [
@@ -978,8 +978,8 @@ class ProductsTableSeeder extends Seeder
                 'price'         => null,
                 'code'          => '1320',
                 'dji_product_id' => '560921',
-                'type'          => 'Postpaid',
-                'image_name'    => null,
+                'type'          => 'Prepaid',
+                'image_name'    => 'skynindo.png',
                 'status'        => 1,
             ],
             [
@@ -989,8 +989,8 @@ class ProductsTableSeeder extends Seeder
                 'price'         => null,
                 'code'          => '1321',
                 'dji_product_id' => '561021',
-                'type'          => 'Postpaid',
-                'image_name'    => null,
+                'type'          => 'Prepaid',
+                'image_name'    => 'skynindo.png',
                 'status'        => 1,
             ],
             [
@@ -1000,8 +1000,8 @@ class ProductsTableSeeder extends Seeder
                 'price'         => null,
                 'code'          => '1322',
                 'dji_product_id' => '561121',
-                'type'          => 'Postpaid',
-                'image_name'    => null,
+                'type'          => 'Prepaid',
+                'image_name'    => 'skynindo.png',
                 'status'        => 1,
             ],
 
@@ -1040,11 +1040,11 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
 
-            // Telepon (Telkom)
+            // Telkom
             [
                 'name'          => 'Telkom Group',
                 'variant_name'  => null,
-                'category'      => 'Telepon',
+                'category'      => 'Telkom',
                 'price'         => null,
                 'code'          => '1501',
                 'dji_product_id' => '520011',
@@ -1055,36 +1055,36 @@ class ProductsTableSeeder extends Seeder
 
             // Angsuran Kredit
             [
-                'name'          => 'FIF',
+                'name'          => 'FIF Finance',
                 'variant_name'  => null,
                 'category'      => 'Angsuran Kredit',
                 'price'         => null,
                 'code'          => '1601',
                 'dji_product_id' => '204111',
                 'type'          => 'Postpaid',
-                'image_name'    => null,
+                'image_name'    => 'fif.png',
                 'status'        => 1,
             ],
             [
-                'name'          => 'WOM',
+                'name'          => 'WOM Finance',
                 'variant_name'  => null,
                 'category'      => 'Angsuran Kredit',
                 'price'         => null,
                 'code'          => '1602',
                 'dji_product_id' => '212111',
                 'type'          => 'Postpaid',
-                'image_name'    => null,
+                'image_name'    => 'wom.png',
                 'status'        => 1,
             ],
             [
-                'name'          => 'Columbia',
+                'name'          => 'Columbia Finance',
                 'variant_name'  => null,
                 'category'      => 'Angsuran Kredit',
                 'price'         => null,
                 'code'          => '1603',
                 'dji_product_id' => '206121',
                 'type'          => 'Postpaid',
-                'image_name'    => null,
+                'image_name'    => 'columbia.png',
                 'status'        => 1,
             ],
             [
@@ -1095,18 +1095,18 @@ class ProductsTableSeeder extends Seeder
                 'code'          => '1604',
                 'dji_product_id' => '201111',
                 'type'          => 'Postpaid',
-                'image_name'    => null,
+                'image_name'    => 'mega.png',
                 'status'        => 1,
             ],
             [
-                'name'          => 'BAF',
+                'name'          => 'Bussan Auto Finance',
                 'variant_name'  => null,
                 'category'      => 'Angsuran Kredit',
                 'price'         => null,
                 'code'          => '1605',
                 'dji_product_id' => '212121',
                 'type'          => 'Postpaid',
-                'image_name'    => null,
+                'image_name'    => 'baf.png',
                 'status'        => 1,
             ],
 

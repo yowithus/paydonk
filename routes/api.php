@@ -28,6 +28,7 @@ Route::post('/reset-password', 'UserController@resetPassword');
 Route::post('/update-profile', 'UserController@updateProfile');
 Route::post('/update-fcm-token', 'UserController@updateFCMToken');
 Route::get('/get-credit-card-token', 'UserController@getCreditCardToken');
+Route::get('/get-deposit-details', 'UserController@getDepositDetails');
 
 // banks
 Route::get('/banks/get-recipient', 'ProductController@getRecipientBanks');

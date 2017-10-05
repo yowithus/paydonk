@@ -23,7 +23,7 @@ class OrderController extends Controller
     	$this->middleware('jwt.auth');
     }  
 
-    private function getInquiry($data)
+    private function getBill($data)
     {
         $customer_number = $data['customer_number'];
         $reference_id    = $data['reference_id'];
@@ -34,7 +34,7 @@ class OrderController extends Controller
         $product_name       = $product->name;
         $dji_product_id     = $product->dji_product_id;
 
-        $djiClient = new \App\Classes\DJIClient;
+        $djiClient = new \App\Classes\DJIClient();
         $result = $djiClient->inquiry($data);
         if (isset($result->rc) && $result->rc != '00') {
             return ([
@@ -160,7 +160,7 @@ class OrderController extends Controller
 
         return ([
             'status'    => 1,
-            'message'   => 'Get inquiry successful',
+            'message'   => 'Get bill successful',
             'customer_number' => $customer_number,
             'customer_name'   => $customer_name,
             'product_price' => $product_price,
@@ -318,25 +318,25 @@ class OrderController extends Controller
 
             $customer_number   = $request->customer_number;
 
-            $inquiry_result = $this->getInquiry([
+            $bill_result = $this->getBill([
                 'customer_number' => $customer_number,
                 'reference_id'   => $reference_id,
                 'dji_product_id' => $dji_product_id,
                 'product'        => $product
             ]);
 
-            if ($inquiry_result['status'] == 0) {
+            if ($bill_result['status'] == 0) {
                 return response()->json([
                     'status'    => 0,
-                    'message'   => $inquiry_result['message']
+                    'message'   => $bill_result['message']
                 ]);
             }
             
-            $customer_name = $inquiry_result['customer_name'];
-            $product_price = $inquiry_result['product_price'];
-            $admin_fee     = $inquiry_result['admin_fee'];
-            $order_amount  = $inquiry_result['order_amount'];
-            $period        = $inquiry_result['period'];
+            $customer_name = $bill_result['customer_name'];
+            $product_price = $bill_result['product_price'];
+            $admin_fee     = $bill_result['admin_fee'];
+            $order_amount  = $bill_result['order_amount'];
+            $period        = $bill_result['period'];
         }
 
         $order = Order::create([
@@ -494,7 +494,7 @@ class OrderController extends Controller
                     ]);
                 }
 
-                $djiClient = new \App\Classes\DJIClient;
+                $djiClient = new \App\Classes\DJIClient();
                 $result = $djiClient->payment([
                     'dji_product_id'    => $dji_product_id,
                     'customer_number'   => $customer_number,
@@ -585,7 +585,7 @@ class OrderController extends Controller
 
                 $payment_reference_id = ENV('XENDIT_PREFIX') . $reference_id;
                 $options['secret_api_key'] = ENV('XENDIT_SECRET_KEY');
-                $xenditPHPClient = new \XenditClient\XenditPHPClient($options);
+                $xenditPHPClient = new \XenditClient\XenditPHPClient();
                 $response = $xenditPHPClient->captureCreditCardPayment($payment_reference_id, $token_id, $payment_amount);
 
                 if (!isset($response['id']) || $response['status'] != 'CAPTURED') {
@@ -613,7 +613,7 @@ class OrderController extends Controller
                 $order->payment_status = 1;
                 $order->save();
 
-                $djiClient = new \App\Classes\DJIClient;
+                $djiClient = new \App\Classes\DJIClient();
                 $result = $djiClient->payment([
                     'dji_product_id'    => $dji_product_id,
                     'customer_number'   => $customer_number,

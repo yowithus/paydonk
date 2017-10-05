@@ -48,7 +48,6 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
-
     /**
      * Get the top up orders for the user.
      */
@@ -63,5 +62,13 @@ class User extends Authenticatable
     public function credit_card_token()
     {
         return $this->hasOne(CreditCardToken::class);
+    }
+
+    /**
+     * Get the deposit details for the user.
+     */
+    public function deposit_details()
+    {
+        return $this->hasMany(DepositDetail::class);
     }
 }

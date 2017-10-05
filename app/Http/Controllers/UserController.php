@@ -355,4 +355,15 @@ class UserController extends Controller
             ]);
         }
     }
+
+    public function getDepositDetails() 
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+
+        return response()->json([
+            'status'    => 1,
+            'message'   => 'Get deposit details successful',
+            'deposit_details'  => $user->deposit_details()->with('order.product')->get()
+        ]);
+    }
 }
