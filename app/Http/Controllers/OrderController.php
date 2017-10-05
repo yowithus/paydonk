@@ -52,19 +52,27 @@ class OrderController extends Controller
         if ($product_category == 'PLN') {
             $customer_name  = trim($result->data->NM);
             $admin_fee      = isset($result->data->AB) ? (int)$result->data->AB : 0;
-            $product_price  = isset($result->data->TG) ? (int)$result->data->TG : 0;
-            $order_amount   = isset($result->data->TT) ? (int)$result->data->TT : 0; 
 
-            for ($i=1; $i<=4; $i++) {
-                if (isset($result->data->{"I$i"})) {
-                    $broken_period = $result->data->{"I$i"}->BT;
-                    $month  = preg_replace("/[^A-Z]+/", "", $broken_period);
-                    $year   = preg_replace("/[^0-9]/","", $broken_period);
+            // Tagihan Listrik
+            if ($product_code == '1101') {
+                $product_price  = isset($result->data->TG) ? (int)$result->data->TG : 0;
+                $order_amount   = isset($result->data->TT) ? (int)$result->data->TT : 0; 
 
-                    $period = ucfirst(strtolower($month)) . " 20$year";
-                } else {
-                    break;
+                for ($i=1; $i<=4; $i++) {
+                    if (isset($result->data->{"I$i"})) {
+                        $broken_period = $result->data->{"I$i"}->BT;
+                        $month  = preg_replace("/[^A-Z]+/", "", $broken_period);
+                        $year   = preg_replace("/[^0-9]/","", $broken_period);
+
+                        $period = ucfirst(strtolower($month)) . " 20$year";
+                    } else {
+                        break;
+                    }
                 }
+            // Token Listrik
+            } else {
+                $product_price  = $product->price;
+                $order_amount   = $product_price + $admin_fee;
             }
 
         } else if ($product_category == 'PDAM') {
