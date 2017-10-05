@@ -287,15 +287,16 @@ class AdminController extends Controller
             $admin_fee      = $order->admin_fee;
             $order_amount   = $order->order_amount;
 
-            $request->request->add(['dji_product_id' => $dji_product_id]);
-            $request->request->add(['customer_number' => $customer_number]);
-            $request->request->add(['reference_id' => $reference_id]);
-            $request->request->add(['tagihan' => $product_price]);
-            $request->request->add(['admin' => $admin_fee]);
-            $request->request->add(['total' => $order_amount]);
+            $djiClient = new \App\Classes\DJIClient;
+            $result = $djiClient->payment([
+                'dji_product_id'    => $dji_product_id,
+                'customer_number'   => $customer_number,
+                'reference_id'      => $reference_id, 
+                'product_price'     => $product_price,
+                'admin_fee'         => $admin_fee,
+                'order_amount'      => $order_amount    
+            ]);
 
-            // call dji inquiry and return tagihan
-            $result = app('App\Http\Controllers\DjiController')->payment($request)->getData();
             if (isset($result->rc) && $result->rc != '00') {
                 return response()->json([
                     'status'    => 0,
