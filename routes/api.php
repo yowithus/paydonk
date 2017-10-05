@@ -29,11 +29,6 @@ Route::post('/update-profile', 'UserController@updateProfile');
 Route::post('/update-fcm-token', 'UserController@updateFCMToken');
 Route::get('/get-credit-card-token', 'UserController@getCreditCardToken');
 
-// dji
-Route::post('/dji/sign-on', 'DjiController@signOn');
-Route::post('/dji/inquiry', 'DjiController@inquiry');
-Route::post('/dji/payment', 'DjiController@payment');
-
 // banks
 Route::get('/banks/get-recipient', 'ProductController@getRecipientBanks');
 Route::get('/banks/get-sender', 'ProductController@getSenderBanks');
@@ -47,9 +42,8 @@ Route::get('/products/get-finance', 'ProductController@getFinanceProducts');
 Route::post('/products/get-pulsa-postpaid', 'ProductController@getPostpaidPulsaProduct');
 
 // order
-Route::post('/products/{product}/check-invoice', 'OrderController@checkInvoice');
-Route::post('/products/{product}/use-promo-code', 'OrderController@usePromoCode');
-Route::post('/products/{product}/create-order', 'OrderController@createOrder');
-Route::post('/products/{product}/confirm-order', 'OrderController@confirmOrder');
+Route::post('/use-promo-code', 'OrderController@usePromoCode');
+Route::post('/create-order', 'OrderController@createOrder');
+Route::post('/confirm-order', 'OrderController@confirmOrder');
 
 

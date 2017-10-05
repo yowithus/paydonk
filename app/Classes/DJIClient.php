@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Classes;
 
-use Illuminate\Http\Request;
-
-class DjiController extends Controller
+class DJIClient
 {
-    private $username;
+	private $username;
     private $password;
     private $account_id;
     private $merchant_id;
@@ -14,7 +12,6 @@ class DjiController extends Controller
 
 	public function __construct()
     {
-        // $this->middleware('guest');
         $this->username     = ENV('DJI_USERNAME');
         $this->password     = ENV('DJI_PASSWORD');
         $this->account_id   = ENV('DJI_ACCOUNT_ID');
@@ -76,7 +73,7 @@ class DjiController extends Controller
         return $authorization;
     }
 
-    public function signOn(Request $request)
+    public function signOn()
     {
         $base_uri       = $this->base_uri;
         $request_uri    = '/auth/Sign-On';
@@ -97,19 +94,19 @@ class DjiController extends Controller
         $body   = $response->getBody()->read(1024);
         $result = json_decode((string)$body);
 
-        return response()->json($result);
+        return $result;
     }
 
-    public function inquiry(Request $request)
+    public function inquiry($data)
     {
         $base_uri       = $this->base_uri;
         $request_uri    = '/Services/Inquiry';
         $authorization  = $this->getAuthorization();
 
         // get session id from sign on
-        $result = $this->signOn($request)->getData();
+        $result = $this->signOn();
         if (isset($result->rc) && $result->rc != '00') {
-            return response()->json($result);
+            return $result;
         }
 
         $session_id = $result->SessionID;
@@ -120,27 +117,27 @@ class DjiController extends Controller
             'json' => [
                'sessionID'      => $session_id, 
                'merchantID'     => $this->merchant_id,
-               'productID'      => $request->dji_product_id,
-               'customerID'     => $request->customer_number,
-               'referenceID'    => $request->reference_id, 
+               'productID'      => $data['dji_product_id'],
+               'customerID'     => $data['customer_number'],
+               'referenceID'    => $data['reference_id'], 
             ],
         ]);
 
         $body   = $response->getBody()->read(1024);
         $result = json_decode((string)$body);
 
-        return response()->json($result);
+        return $result;
     }
 
-    public function payment(Request $request)
+    public function payment($data)
     {
         $base_uri       = $this->base_uri;
         $request_uri    = '/Services/Payment';
         $authorization  = $this->getAuthorization();
 
-        $result = $this->inquiry($request)->getData();
+        $result = $this->inquiry($data);
         if (isset($result->rc) && $result->rc != '00') {
-            return response()->json($result);
+            return $result;
         }
 
         $session_id = $result->sessionID;
@@ -151,18 +148,19 @@ class DjiController extends Controller
             'json' => [
                'sessionID'      => $session_id, 
                'merchantID'     => $this->merchant_id,
-               'productID'      => $request->dji_product_id,
-               'customerID'     => $request->customer_number,
-               'referenceID'    => $request->reference_id, 
-               'tagihan'        => $request->tagihan,
-               'admin'          => $request->admin,
-               'total'          => $request->total
+               'productID'      => $data['dji_product_id'],
+               'customerID'     => $data['customer_number'],
+               'referenceID'    => $data['reference_id'], 
+               'tagihan'        => $data['product_price'],
+               'admin'          => $data['admin_fee'],
+               'total'          => $data['order_amount']
             ],
         ]);
 
         $body   = $response->getBody()->read(1024);
         $result = json_decode((string)$body);
 
-        return response()->json($result);
+        return $result;
     }
 }
+
