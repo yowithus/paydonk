@@ -29,6 +29,7 @@ class AdminController extends Controller
      */
     public function index()
     {
+        dd('a');
         $today      = Carbon::now();
         $last_month = Carbon::now()->subDays(30);
 
