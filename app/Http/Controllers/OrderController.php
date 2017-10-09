@@ -288,7 +288,9 @@ class OrderController extends Controller
         
         $dji_product_id    = $product->dji_product_id;
         $product_category  = $product->category;
-        $reference_id      = sprintf("%07d", (Order::latest()->value('id') + 1));
+
+        $now_id            = Order::latest()->value('id') + 1;
+        $reference_id      = sprintf("PD%s%05d", date('ym'), substr($now_id, -1, 5));
 
         $user       = JWTAuth::parseToken()->authenticate();
         $user_id    = $user->id;
@@ -446,9 +448,9 @@ class OrderController extends Controller
 
                 $validator = validator()->make($request->all(), [
                     'recipient_bank_id'     => 'required',
+                    'sender_bank_id'        => 'required',
                     'sender_account_name'   => 'required',
-                    'sender_account_number' => 'required',
-                    'sender_bank_name'      => 'required',
+                    'sender_account_number' => 'required'
                 ]);
 
                 if ($validator->fails()) {
@@ -461,9 +463,9 @@ class OrderController extends Controller
                 BankTransfer::create([
                     'order_id'              => $order_id,
                     'recipient_bank_id'     => $request->recipient_bank_id,
+                    'sender_bank_id'        => $request->sender_bank_id,
                     'sender_account_name'   => $request->sender_account_name,
-                    'sender_account_number' => $request->sender_account_number,
-                    'sender_bank_name'      => $request->sender_bank_name,
+                    'sender_account_number' => $request->sender_account_number
                 ]);
 
                 $order->payment_method = $payment_method;
@@ -552,9 +554,9 @@ class OrderController extends Controller
                 BankTransfer::create([
                     'order_id'              => $order_id,
                     'recipient_bank_id'     => $request->recipient_bank_id,
+                    'sender_bank_id'        => $request->sender_bank_id,
                     'sender_account_name'   => $request->sender_account_name,
-                    'sender_account_number' => $request->sender_account_number,
-                    'sender_bank_name'      => $request->sender_bank_name,
+                    'sender_account_number' => $request->sender_account_number
                 ]);
 
                 $order->payment_method = $payment_method;
@@ -583,10 +585,9 @@ class OrderController extends Controller
                 $credit_card_number = $request->credit_card_number;
                 $credit_card_type   = $request->credit_card_type;
 
-                $payment_reference_id = ENV('XENDIT_PREFIX') . $reference_id;
                 $options['secret_api_key'] = ENV('XENDIT_SECRET_KEY');
                 $xenditPHPClient = new \XenditClient\XenditPHPClient();
-                $response = $xenditPHPClient->captureCreditCardPayment($payment_reference_id, $token_id, $payment_amount);
+                $response = $xenditPHPClient->captureCreditCardPayment($reference_id, $token_id, $payment_amount);
 
                 if (!isset($response['id']) || $response['status'] != 'CAPTURED') {
                     return response()->json([

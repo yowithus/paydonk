@@ -77,21 +77,20 @@
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th width="5%">ID</th>
-                                <th width="11%">Order</th>
-                                <th width="25%">Payment</th>
-                                <th width="15%">Product</th>
-                                <th width="15%">User</th>
-                                <th width="15%">Date</th>
-                                <th width="10%">Action</th>
+                                <th>ID</th>
+                                <th>Order</th>
+                                <th>Payment</th>
+                                <th>Product</th>
+                                <th>User</th>
+                                <th>Date</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody style="font-weight: 400">
                             @foreach ($orders as $order)
                             <tr>
-                                <td>{{ $order->id }}</td>
+                                <td>{{ $order->reference_id }}</td>
                                 <td>
-                                    #{{ $order->reference_id }}<br>
                                     {{ 'Rp ' . number_format($order->order_amount) }}<br>
                                     @if ($order->order_status == 0)
                                         Pending
@@ -100,6 +99,7 @@
                                     @endif
                                 </td>
                                 <td>
+                                    {{ 'Rp ' . number_format($order->payment_amount) }}<br>
                                     {{ $order->payment_method }}<br>
                                     @if ($order->payment_status == 0)
                                         Pending
@@ -112,7 +112,7 @@
                                         <table>
                                             <tr>
                                                 <td width="55%">
-                                                    {{ $order->bank_transfer->sender_bank_name }}<br>
+                                                    {{ $order->bank_transfer->sender_bank->name }}<br>
                                                     {{ $order->bank_transfer->sender_account_name }}<br>
                                                     {{ $order->bank_transfer->sender_account_number }}
                                                 </td>

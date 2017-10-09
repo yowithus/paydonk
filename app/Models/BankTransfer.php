@@ -12,14 +12,22 @@ class BankTransfer extends Model
      * @var array
      */
     protected $fillable = [
-        'order_id', 'recipient_bank_id', 'sender_bank_name', 'sender_account_name', 'sender_account_number'
+        'order_id', 'recipient_bank_id', 'sender_bank_id', 'sender_account_name', 'sender_account_number'
     ];
 
     /**
-     * Get the user that owns the order.
+     * Get the recipient bank of the bank transfer.
      */
     public function recipient_bank()
     {
         return $this->belongsTo(RecipientBank::class);
+    }
+
+    /**
+     * Get the sender bank of the bank transfer.
+     */
+    public function sender_bank()
+    {
+        return $this->belongsTo(SenderBank::class);
     }
 }
