@@ -27,8 +27,8 @@ Route::get('/admin/monthly-statistic', 'AdminController@getMonthlyStatistic');
 Route::get('/admin/users', 'AdminController@getUsers');
 Route::patch('/admin/users/{user}/status', 'AdminController@updateStatusUser');
 
-// deposit details
-Route::get('/admin/deposit-details', 'AdminController@getDepositDetails');
+// balance details
+Route::get('/admin/balance-details', 'AdminController@getBalanceDetails');
 
 // orders
 Route::get('/admin/orders', 'AdminController@getOrders');

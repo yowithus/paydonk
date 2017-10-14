@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
-use App\DepositDetail;
+use App\BalanceDetail;
 use App\Order;
 use App\Product;
 use App\RecipientBank;
@@ -35,19 +35,18 @@ class AdminController extends Controller
         $users_count = User::whereBetween('created_at', [$last_month, $today])
             ->count();
 
-        $topup_orders_count = Order::where('order_status', 1)
+        $topup_orders_count = Order::where('status', 5)
             ->where('product_code', 'like', '%10%')
             ->whereBetween('created_at', [$last_month, $today])
             ->count();
 
-        $orders_count = Order::where('order_status', 1)
+        $orders_count = Order::where('status', 5)
             ->where('product_code', 'not like', '%10%')
             ->whereBetween('created_at', [$last_month, $today])
             ->count();
  
         $total_revenue = Order::select(DB::raw('sum(payment_amount) as total_revenue'))
-            ->where('order_status', 1)
-            ->where('payment_status', 1)
+            ->where('status', 5)
             ->whereBetween('created_at', [$last_month, $today])
             ->value('total_revenue');
 
@@ -71,7 +70,7 @@ class AdminController extends Controller
         $last_month = Carbon::now()->subDays(30);
 
         $sales = Order::select(DB::raw('date(created_at) as date, sum(payment_amount) as revenue'))
-            ->where('order_status', 1)
+            ->where('status', 5)
             ->whereBetween('created_at', [$last_month, $today])
             ->groupBy('date')
             ->pluck('revenue', 'date')
@@ -140,40 +139,40 @@ class AdminController extends Controller
     }
 
     /**
-     * Show the deposit details dashboard.
+     * Show the balance details dashboard.
      */
-    public function getDepositDetails(Request $request)
+    public function getBalanceDetails(Request $request)
     {
         $email         = $request->email;
         $phone_number  = $request->phone_number;
-        $deposit_date  = $request->deposit_date;
+        $date          = $request->date;
 
-        $deposit_details = DepositDetail::join('users', 'deposit_details.user_id', '=', 'users.id')
-            ->select('deposit_details.*')
+        $balance_details = BalanceDetail::join('users', 'balance_details.user_id', '=', 'users.id')
+            ->select('balance_details.*')
             ->orderBy('created_at', 'desc');
 
         if ($email) {
-            $deposit_details->where('users.email', $email);
+            $balance_details->where('users.email', $email);
         }
 
         if ($phone_number) {
-            $deposit_details->where('users.phone_number', $phone_number);
+            $balance_details->where('users.phone_number', $phone_number);
         }
 
-        if ($deposit_date) {
-            $start_date     = substr($deposit_date, 0, 10);
-            $end_date       = substr($deposit_date, 13, 19);
+        if ($date) {
+            $start_date     = substr($date, 0, 10);
+            $end_date       = substr($date, 13, 19);
 
-            $deposit_details->whereDate('deposit_details.created_at', '>=', $start_date);
-            $deposit_details->whereDate('deposit_details.created_at', '<=', $end_date);
+            $balance_details->whereDate('balance_details.created_at', '>=', $start_date);
+            $balance_details->whereDate('balance_details.created_at', '<=', $end_date);
         }
 
-        $deposit_details = $deposit_details->paginate(10);
-        $deposit_details->withPath("/admin/deposit-details?email=$email&phone_number=$phone_number&deposit_date=$deposit_date");
+        $balance_details = $balance_details->paginate(10);
+        $balance_details->withPath("/admin/balance-details?email=$email&phone_number=$phone_number&date=$date");
 
-        return view('admin/deposit_detail', [
-            'page_title'      => 'Deposit Details',
-            'deposit_details' => $deposit_details
+        return view('admin/balance_detail', [
+            'page_title'      => 'Balance Details',
+            'balance_details' => $balance_details
         ]);
     }
 
@@ -185,10 +184,9 @@ class AdminController extends Controller
     {
         $reference_id   = $request->reference_id;
         $email          = $request->email;
-        $order_status   = $request->order_status;
-        $payment_status = $request->payment_status;
+        $status         = $request->status;
         $product_category = $request->product_category;
-        $order_date     = $request->order_date;
+        $date           = $request->date;
 
         $orders = Order::join('users', 'orders.user_id', '=', 'users.id')
             ->join('products', 'orders.product_code', '=', 'products.code')
@@ -203,41 +201,46 @@ class AdminController extends Controller
             $orders->where('users.email', $email);
         }
 
-        if ($order_status) {
-            $orders->where('orders.order_status', $order_status);
+        if ($status) {
+            $orders->where('orders.status', $status);
         } else {
-            $orders->where('orders.order_status', 0);
-        }
-
-        if ($payment_status) {
-            $orders->where('orders.payment_status', $payment_status);
-        } else {
-            $orders->where('orders.payment_status', 1);
+            $orders->where('orders.status', 3);
         }
 
         if ($product_category) {
             $orders->where('products.category', $product_category);
         }
 
-        if ($order_date) {
-            $start_date     = substr($order_date, 0, 10);
-            $end_date       = substr($order_date, 13, 19);
+        if ($date) {
+            $start_date     = substr($date, 0, 10);
+            $end_date       = substr($date, 13, 19);
 
             $orders->whereDate('orders.created_at', '>=', $start_date);
             $orders->whereDate('orders.created_at', '<=', $end_date);
         }
 
         $orders = $orders->paginate(10);
-        $orders->withPath("/admin/orders?reference_id=$reference_id&email=$email&order_status=$order_status&payment_status=$payment_status&order_date=$order_date");
+        $orders->withPath("/admin/orders?reference_id=$reference_id&email=$email&status=$status&date=$date");
+
+        $statuses = [
+            0   => 'Pending',
+            1   => 'Pilih pembayaran',
+            2   => 'Menunggu pembayaran',
+            3   => 'Verifikasi pembayaran',
+            4   => 'Sedang diproses',
+            5   => 'Berhasil',
+            6   => 'Batal'
+        ];
 
         return view('admin/order', [
-            'page_title'    => 'Orders',
-            'orders'  => $orders
+            'page_title'   => 'Orders',
+            'orders'    => $orders,
+            'statuses'  => $statuses
         ]);
     }
 
     /**
-     * Verify the order.
+     * Verify the order (for Bank Transfer).
      */
     public function verifyOrder(Request $request) 
     {
@@ -253,33 +256,44 @@ class AdminController extends Controller
         $user_id    = $request->user_id;
         $order_id   = $request->order_id;
 
-        $user       = User::find($user_id);
-        $order      = Order::find($order_id);
+        $user   = User::find($user_id);
+
+        $order  = Order::where('id', $order_id)
+            ->where('status', 3)
+            ->where('payment_method', 'Bank Transfer')
+            ->first();
 
         $product_code = $order->product_code;
+
         $product    = Product::find($product_code);
         $product_category    = $product->category;
 
         if ($product_category == 'Saldo') {
-            $deposit        = $user->deposit;
+            $balance        = $user->balance;
             $topup_amount   = $order->order_amount;
-            $current_amount = $deposit + $topup_amount;
+            $current_amount = $balance + $topup_amount;
 
-            // update user deposit
-            $user->deposit = $current_amount;
+            // update user balance
+            $user->balance = $current_amount;
             $user->save();
 
             // create deposit detail
-            DepositDetail::create([
+            BalanceDetail::create([
                 'user_id'           => $user_id,
                 'order_id'          => $order_id,
                 'amount'            => $topup_amount,
-                'previous_amount'   => $deposit,
+                'previous_amount'   => $balance,
                 'current_amount'    => $current_amount,
                 'type'              => 'Top up'
             ]);
 
+            $order->status = 5;
+            $order->save();
+
         } else {
+            $order->status = 4;
+            $order->save();
+
             $dji_product_id = $product->dji_product_id;
             $reference_id   = $order->reference_id;
             $customer_number = $order->customer_number;
@@ -303,11 +317,10 @@ class AdminController extends Controller
                     'message'   => $result->rc . ': ' . trim($result->description),
                 ]);
             }
-        }
 
-        // update order status
-        $order->order_status = 1;
-        $order->save();
+            $order->status = 5;
+            $order->save();
+        }
 
         return redirect('admin/orders');
     }

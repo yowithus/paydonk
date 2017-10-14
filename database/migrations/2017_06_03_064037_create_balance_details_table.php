@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDepositDetailsTable extends Migration
+class CreateBalanceDetailsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateDepositDetailsTable extends Migration
      */
     public function up()
     {
-        Schema::create('deposit_details', function (Blueprint $table) {
+        Schema::create('balance_details', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id');
             $table->integer('order_id');
@@ -32,6 +32,6 @@ class CreateDepositDetailsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('deposit_details');
+        Schema::dropIfExists('balance_details');
     }
 }

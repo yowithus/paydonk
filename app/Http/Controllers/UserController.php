@@ -68,9 +68,7 @@ class UserController extends Controller
             'last_name'         => $request->last_name,
             'phone_number'      => $request->phone_number,
             'email'             => $request->email,
-            'password'          => bcrypt($request->password),
-            'deposit'           => 0,
-            'status'            => 1,
+            'password'          => bcrypt($request->password)
         ]);
 
         $token = JWTAuth::fromUser($user);
@@ -356,14 +354,14 @@ class UserController extends Controller
         }
     }
 
-    public function getDepositDetails() 
+    public function getBalanceDetails() 
     {
         $user = JWTAuth::parseToken()->authenticate();
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Get deposit details successful',
-            'deposit_details'  => $user->deposit_details()->with('order.product')->get()
+            'message'   => 'Get balance details successful',
+            'deposit_details'  => $user->balance_details()->with('order.product')->get()
         ]);
     }
 }

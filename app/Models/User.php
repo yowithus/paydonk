@@ -65,10 +65,10 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the deposit details for the user.
+     * Get the balance details for the user.
      */
-    public function deposit_details()
+    public function balance_details()
     {
-        return $this->hasMany(DepositDetail::class);
+        return $this->hasMany(BalanceDetail::class);
     }
 }

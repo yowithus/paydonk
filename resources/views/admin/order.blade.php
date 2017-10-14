@@ -25,11 +25,15 @@
                                 <input type="text" class="form-control" name="reference_id" value="{{ Request::get('reference_id') }}" placeholder="Reference ID">
                             </div>
 
-                            <label class="col-sm-2 control-label">Order Status</label>
-                            <div class="col-sm-2">
-                                <select class="form-control" name="order_status">
-                                    <option value="0" @if (Request::get('order_status') == '0' || Request::get('order_status') == '') selected @endif>Pending</option>
-                                    <option value="1" @if (Request::get('order_status') == '1') selected @endif>Success</option>
+                            <label class="col-sm-1 control-label">Status</label>
+                            <div class="col-sm-3">
+                                <select class="form-control" name="status">
+                                    @foreach ($statuses as $status => $status_text)
+                                        <option value="{{ $status }}" 
+                                        @if (Request::get('status') == $status) selected 
+                                        @elseif (Request::get('status') == '' && $status == 3) selected 
+                                        @endif>{{ $status_text }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -39,12 +43,9 @@
                                 <input type="text" class="form-control" name="email" value="{{ Request::get('email') }}" placeholder="Email">
                             </div>
 
-                            <label class="col-sm-2 control-label">Payment Status</label>
-                            <div class="col-sm-2">
-                                <select class="form-control" name="payment_status">
-                                    <option value="0" @if (Request::get('payment_status') == '0') selected @endif>Pending</option>
-                                    <option value="1" @if (Request::get('payment_status') == '1' || Request::get('payment_status') == '') selected @endif>Success</option>
-                                </select>
+                            <label class="col-sm-1 control-label">Date</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" id="date" name="date" value="{{ Request::get('date') }}" required>
                             </div>
                         </div>
                         <div class="form-group">
@@ -61,11 +62,6 @@
                                     <option value="Angsuran Kredit" @if (Request::get('product_category') == 'Angsuran Kredit') selected @endif>Angsuran Kredit</option>
                                 </select>
                             </div>
-
-                            <label class="col-sm-2 control-label">Order Date</label>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control" id="order-date" name="order_date" value="{{ Request::get('order_date') }}" required>
-                            </div>
                         </div>
                         <a href="{{ url('/admin/orders') }}"><button type="button" class="btn btn-primary">Clear</button></a>
                         <button type="submit" class="btn btn-success">Search</button>
@@ -77,8 +73,8 @@
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th>ID</th>
                                 <th>Order</th>
+                                <th>Promo</th>
                                 <th>Payment</th>
                                 <th>Product</th>
                                 <th>User</th>
@@ -89,14 +85,18 @@
                         <tbody style="font-weight: 400">
                             @foreach ($orders as $order)
                             <tr>
-                                <td>{{ $order->reference_id }}</td>
                                 <td>
+                                    #{{ $order->reference_id }}<br>
                                     {{ 'Rp ' . number_format($order->order_amount) }}<br>
                                     @if ($order->order_status == 0)
                                         Pending
                                     @else
                                         Success
                                     @endif
+                                </td>
+                                <td>
+                                    {{ $order->promo->code }}<br>
+                                    {{ 'Rp ' . number_format($order->discount_amount) }}
                                 </td>
                                 <td>
                                     {{ 'Rp ' . number_format($order->payment_amount) }}<br>
@@ -138,7 +138,7 @@
                                 </td>
                                 <td>{{ Carbon\Carbon::parse($order->created_at)->format('M d, Y | g.i A') }}</td>
                                 <td>
-                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#verify-order-{{ $order->id }}" @if ($order->order_status == 1) disabled @endif>Verify</button>
+                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#verify-order-{{ $order->id }}" @if ($order->status != 3) disabled @endif>Verify</button>
                                 </td>
                             </tr>
                             @endforeach
@@ -186,7 +186,7 @@
 $(function () {
     $('.pagination').addClass('pagination-sm no-margin pull-right');
 
-    $('#order-date').daterangepicker({
+    $('#date').daterangepicker({
         locale: {
             format: 'YYYY-MM-DD'
         },

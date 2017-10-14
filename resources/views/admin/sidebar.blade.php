@@ -30,7 +30,7 @@
                 <a href="#"><i class="fa fa-blind"></i> <span>Users</span> <i class="fa fa-angle-left pull-right"></i></a>
                 <ul class="treeview-menu">
                     <li><a href="{{ url('admin/users') }}"><i class="fa fa-circle-o"></i>User List</a></li>
-                    <li><a href="{{ url('admin/deposit-details') }}"><i class="fa fa-circle-o"></i>Deposit Details</a></li>
+                    <li><a href="{{ url('admin/balance-details') }}"><i class="fa fa-circle-o"></i>Balance Details</a></li>
                 </ul>
             </li>
             <li class="treeview">

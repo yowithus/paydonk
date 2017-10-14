@@ -40,7 +40,7 @@
                                 <th>Last Name</th>
                                 <th>Email</th>
                                 <th>Phone Number</th>
-                                <th>Deposit</th>
+                                <th>Balance</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -53,7 +53,7 @@
                                 <td>{{ $user->last_name }}</td>
                                 <td>{{ $user->email }}</td>
                                 <td>{{ $user->phone_number }}</td>
-                                <td>{{ 'Rp '.number_format($user->deposit) }}</td>
+                                <td>{{ 'Rp '.number_format($user->balance) }}</td>
                                 <td>
                                     <form action="{{ url('admin/users/'.$user->id.'/status') }}" method="POST">
                                         {!! csrf_field() !!}

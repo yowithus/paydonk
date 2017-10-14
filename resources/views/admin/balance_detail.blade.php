@@ -5,8 +5,8 @@
     <div class="col-xs-12">
         <div class="box">
             <div class="box-header with-border">
-                <h3 class="box-title">Deposit Details</h3>
-                <form action="{{ url('admin/deposit-details') }}" method="GET" class="form-horizontal" style="margin-top: 10px;">
+                <h3 class="box-title">Balance Details</h3>
+                <form action="{{ url('admin/balance-details') }}" method="GET" class="form-horizontal" style="margin-top: 10px;">
                     <div class="box-body">
                         <div class="form-group">
                             <label class="col-sm-1 control-label">Email</label>
@@ -22,10 +22,10 @@
                         <div class="form-group">
                             <label class="col-sm-1 control-label">Date</label>
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" id="deposit-date" name="deposit_date" value="{{ Request::get('deposit_date') }}" required>
+                                <input type="text" class="form-control" id="date" name="date" value="{{ Request::get('date') }}" required>
                             </div>
                         </div>
-                        <a href="{{ url('/admin/deposit-details') }}"><button type="button" class="btn btn-primary">Clear</button></a>
+                        <a href="{{ url('/admin/balance-details') }}"><button type="button" class="btn btn-primary">Clear</button></a>
                         <button type="submit" class="btn btn-success">Search</button>
                     </div>
                 </form>
@@ -45,30 +45,30 @@
                             </tr>
                         </thead>
                         <tbody style="font-weight: 400">
-                            @foreach ($deposit_details as $deposit_detail)
+                            @foreach ($balance_details as $balance_detail)
                             <tr>
-                                <td>{{ $deposit_detail->id }}</td>
-                                <td>{{ $deposit_detail->type }}</td>
+                                <td>{{ $balance_detail->id }}</td>
+                                <td>{{ $balance_detail->type }}</td>
                                 <td>
-                                    #{{ $deposit_detail->order->reference_id }}
+                                    #{{ $balance_detail->order->reference_id }}
                                     <br>
-                                    {{ 'Rp '.number_format($deposit_detail->amount) }}
+                                    {{ 'Rp '.number_format($balance_detail->amount) }}
                                 </td>
-                                <td>{{ 'Rp '.number_format($deposit_detail->previous_amount) }}</td>
-                                <td>{{ 'Rp '.number_format($deposit_detail->current_amount) }}</td>
+                                <td>{{ 'Rp '.number_format($balance_detail->previous_amount) }}</td>
+                                <td>{{ 'Rp '.number_format($balance_detail->current_amount) }}</td>
                                 <td>
-                                    {{ $deposit_detail->user->first_name . ' ' . $deposit_detail->user->last_name }}<br>
-                                    {{ $deposit_detail->user->email }}<br>
-                                    {{ $deposit_detail->user->phone_number }}
+                                    {{ $balance_detail->user->first_name . ' ' . $balance_detail->user->last_name }}<br>
+                                    {{ $balance_detail->user->email }}<br>
+                                    {{ $balance_detail->user->phone_number }}
                                 </td>
-                                <td>{{ Carbon\Carbon::parse($deposit_detail->created_at)->format('M d, Y | g.i A') }}</td>
+                                <td>{{ Carbon\Carbon::parse($balance_detail->created_at)->format('M d, Y | g.i A') }}</td>
                             </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
                 <div class="box-footer clearfix">
-                    {{ $deposit_details->links() }}
+                    {{ $balance_details->links() }}
                 </div>
             </div>
         </div>
@@ -81,7 +81,7 @@
 $(function () {
     $('.pagination').addClass('pagination-sm no-margin pull-right');
 
-    $('#deposit-date').daterangepicker({
+    $('#date').daterangepicker({
         locale: {
             format: 'YYYY-MM-DD'
         },

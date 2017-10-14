@@ -7,7 +7,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\User;
 use App\TopUpOrder;
-use App\DepositDetail;
+use App\BalanceDetail;
 use App\Order;
 use App\BankTransfer;
 use App\Product;
@@ -186,8 +186,6 @@ class OrderController extends Controller
         }
 
         $order = Order::where('id', $order_id)
-            ->where('order_status', 0)
-            ->where('payment_status', 0)
             ->first();
 
         if (!$order) {
@@ -301,7 +299,18 @@ class OrderController extends Controller
         
         // top up saldo
         if ($product_category == 'Saldo') {
-            $product_price  = $product->price;
+            $validator = validator()->make($request->all(), [
+                'product_price' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status'    => 0,
+                    'message'   => $validator->errors()->first()
+                ]);
+            }
+
+            $product_price  = $request->product_price;
             $admin_fee      = 0;
             $order_amount   = $product_price + $admin_fee;
 
@@ -361,11 +370,43 @@ class OrderController extends Controller
         ]);
     }
 
-    public function confirmOrder(Request $request) 
+    public function savePromoCode(Request $request)
+    {
+        $order_id   = $request->order_id;
+        $promo_code = strtoupper($request->promo_code);
+
+        // user
+        $user       = JWTAuth::parseToken()->authenticate();
+        $user_id    = $user->id;
+
+        // order
+        $order  = Order::where('id', $order_id)
+            ->where('user_id', $user_id)
+            ->where('status', '!=', 5)
+            ->first();
+        
+        if (!$order) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => 'Order tidak ditemukan atau sudah dikonfirmasi'
+            ]);
+        }
+
+        $order->status = 1;
+        $order->temp_promo_code = $promo_code;
+        $order->save();
+
+        return response()->json([
+            'status'    => 1,
+            'message'   => 'Save promo code successful!'
+        ]);
+    }
+
+    public function savePaymentMethod(Request $request)
     {
         $validator = validator()->make($request->all(), [
             'order_id'     => 'required',
-            'payment_method' => 'required|in:Saldo,Bank Transfer,Credit Card'
+            'payment_method' => 'required|in:Balance,Bank Transfer,Credit Card'
         ]);
 
         if ($validator->fails()) {
@@ -377,12 +418,95 @@ class OrderController extends Controller
 
         $order_id       = $request->order_id;
         $payment_method = $request->payment_method;
-        $promo_code     = $request->promo_code;
-        
+
+        // user
+        $user    = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+        $balance = $user->balance;
+
         // order
-        $order    = Order::where('id', $order_id)
-            ->where('order_status', 0)
-            ->where('payment_status', 0)
+        $order   = Order::where('id', $order_id)
+            ->where('user_id', $user_id)
+            ->where('status', '!=', 5)
+            ->first();
+        
+        if (!$order) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => 'Order tidak ditemukan atau sudah dikonfirmasi'
+            ]);
+        }
+
+        $product_code = $order->product_code;
+        $order_amount = $order->order_amount;
+
+        // product
+        $product    = Product::where('code', $product_code)
+            ->where('status', 1)
+            ->first();
+        
+        if (!$product) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => 'Produk tidak ditemukan'
+            ]);
+        }
+
+        $product_category   = $product->category;
+
+        // bank transfer
+        if ($payment_method == 'Bank Transfer') {
+            $unique_code    = rand(1, 999);
+            $payment_amount = $order_amount + $unique_code;
+        
+        // balance & credit card
+        } else {
+            if ($product_category == 'Saldo') {
+                return response()->json([
+                    'status'    => 0,
+                    'message'   => 'Pembayaran untuk top up saldo hanya bisa dilakukan dengan bank transfer'
+                ]);
+            }
+
+            if ($payment_method == 'Balance') {
+                if ($balance < $order_amount) {
+                    return response()->json([
+                        'status'    => 0,
+                        'message'   => 'Saldo anda tidak mencukupi'
+                    ]);
+                }
+            }
+
+            $unique_code    = 0;
+            $payment_amount = $order_amount;
+        }
+
+        $order->status      = 2;
+        $order->unique_code = $unique_code;
+        $order->payment_amount  = $payment_amount;
+        $order->payment_method  = $payment_method;
+        $order->save();
+
+        return response()->json([
+            'status'    => 1,
+            'message'   => 'Save payment method successful!'
+        ]);
+    }
+
+    public function confirmOrder(Request $request) 
+    {
+        $promo_code = $request->promo_code;
+        $order_id   = $request->order_id;
+        
+        // user
+        $user    = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+        $balance = $user->balance;
+
+        // order
+        $order   = Order::where('id', $order_id)
+            ->where('user_id', $user_id)
+            ->where('status', '!=', 5)
             ->first();
         
         if (!$order) {
@@ -398,6 +522,8 @@ class OrderController extends Controller
         $product_price  = $order->product_price;
         $admin_fee      = $order->admin_fee;
         $order_amount   = $order->order_amount;
+        $payment_method = $order->payment_method;
+        $unique_code    = $order->unique_code;
         $promo_id       = null;
         
         // promo
@@ -420,7 +546,7 @@ class OrderController extends Controller
             $discount_amount = 0;
         }
 
-        $payment_amount = $order_amount - $discount_amount;
+        $payment_amount = $order_amount - $discount_amount + $unique_code;
 
         // product
         $product    = Product::where('code', $product_code)
@@ -436,11 +562,6 @@ class OrderController extends Controller
 
         $product_category   = $product->category;
         $dji_product_id     = $product->dji_product_id;
-
-        // user
-        $user           = JWTAuth::parseToken()->authenticate();
-        $user_id        = $user->id;
-        $deposit        = $user->deposit;
 
         // top up saldo
         if ($product_category == 'Saldo') {
@@ -468,17 +589,15 @@ class OrderController extends Controller
                     'sender_account_number' => $request->sender_account_number
                 ]);
 
-                $order->payment_method = $payment_method;
-                $order->promo_id = $promo_id;
+                $order->payment_method  = $payment_method;
+                $order->promo_id        = $promo_id;
                 $order->discount_amount = $discount_amount;
-                $order->payment_amount = $payment_amount;
-                $order->payment_status = 1;
+                $order->payment_amount  = $payment_amount;
+                $order->status          = 3;
                 $order->save();
 
-                // if ($payment_method == 'Bank Transfer') {
-                //     $transfer_deadline = date('Y-m-d H:i:s', strtotime('+1 days'));
-                //     $order->transfer_deadline = $transfer_deadline;
-                // }
+                $payment_due_date = date('Y-m-d H:i:s', strtotime('+1 days'));
+                $order->payment_due_date = $payment_due_date;
             } else {
                 return response()->json([
                     'status'    => 0,
@@ -488,8 +607,8 @@ class OrderController extends Controller
             
         // digital products
         } else {
-            if ($payment_method == 'Saldo') {
-                if ($deposit < $payment_amount) {
+            if ($payment_method == 'Balance') {
+                if ($balance < $payment_amount) {
                     return response()->json([
                         'status'    => 0,
                         'message'   => 'Saldo anda tidak mencukupi'
@@ -513,24 +632,23 @@ class OrderController extends Controller
                     ]);
                 }
 
-                $current_amount  = $deposit - $payment_amount;
-                $user->deposit = $current_amount;
+                $current_amount = $balance - $payment_amount;
+                $user->balance  = $current_amount;
                 $user->save();
 
-                $order->payment_method = $payment_method;
-                $order->promo_id = $promo_id;
+                $order->payment_method  = $payment_method;
+                $order->promo_id        = $promo_id;
                 $order->discount_amount = $discount_amount;
-                $order->payment_amount = $payment_amount;
-                $order->payment_status = 1;
-                $order->order_status = 1;
+                $order->payment_amount  = $payment_amount;
+                $order->status          = 5;
                 $order->save();
 
-                DepositDetail::create([
+                BalanceDetail::create([
                     'user_id'           => $user_id,
                     'topup_order_id'    => 0,
                     'order_id'          => $order_id,
                     'amount'            => $payment_amount,
-                    'previous_amount'   => $deposit,
+                    'previous_amount'   => $balance,
                     'current_amount'    => $current_amount,
                     'type'              => 'Payment'
                 ]);
@@ -559,11 +677,11 @@ class OrderController extends Controller
                     'sender_account_number' => $request->sender_account_number
                 ]);
 
-                $order->payment_method = $payment_method;
-                $order->promo_id = $promo_id;
+                $order->payment_method  = $payment_method;
+                $order->promo_id        = $promo_id;
                 $order->discount_amount = $discount_amount;
-                $order->payment_amount = $payment_amount;
-                $order->payment_status = 1;
+                $order->payment_amount  = $payment_amount;
+                $order->status          = 3;
                 $order->save();
 
             } else if ($payment_method == 'Credit Card') {
@@ -607,11 +725,11 @@ class OrderController extends Controller
                 ]);
 
                 $order->payment_external_id = $payment_external_id;
-                $order->payment_method = $payment_method;
-                $order->promo_id = $promo_id;
+                $order->payment_method  = $payment_method;
+                $order->promo_id        = $promo_id;
                 $order->discount_amount = $discount_amount;
-                $order->payment_amount = $payment_amount;
-                $order->payment_status = 1;
+                $order->payment_amount  = $payment_amount;
+                $order->status          = 4;
                 $order->save();
 
                 $djiClient = new \App\Classes\DJIClient();
@@ -631,7 +749,7 @@ class OrderController extends Controller
                     ]);
                 }
 
-                $order->order_status = 1;
+                $order->status  = 5;
                 $order->save();
             }
         }

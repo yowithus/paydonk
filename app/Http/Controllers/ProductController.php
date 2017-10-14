@@ -50,20 +50,6 @@ class ProductController extends Controller
         ]);
     }
 
-    public function getSaldoProducts() 
-    {
-    	$saldo_products = Product::selectRaw('variant_name as name, price, code')
-            ->where('category', 'Saldo')
-            ->where('status', 1)
-            ->get();
-
-    	return response()->json([
-            'status'      => 1,
-            'message'     => 'Get saldo products successful',
-            'saldo_products' => $saldo_products,
-        ]);
-    }
-
     public function getPrepaidPLNProducts() 
     {
         $pln_products = Product::selectRaw('variant_name as name, price, code')

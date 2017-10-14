@@ -12,7 +12,7 @@ class Order extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'product_code', 'reference_id', 'customer_number', 'product_price', 'admin_fee', 'order_amount', 'order_status', 'discount_amount', 'payment_amount', 'payment_status', 'payment_method', 'promo_id'
+        'user_id', 'product_code', 'reference_id', 'customer_number', 'product_price', 'admin_fee', 'order_amount', 'order_status', 'discount_amount', 'unique_code', 'payment_amount', 'payment_status', 'payment_method', 'promo_id', 'temp_promo_code', 'cancellation_reason'
     ];
 
     /**
@@ -37,5 +37,13 @@ class Order extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    /**
+     * Get the promo of the order.
+     */
+    public function promo()
+    {
+        return $this->belongsTo(Promo::class);
     }
 }

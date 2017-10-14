@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class DepositDetail extends Model
+class BalanceDetail extends Model
 {
     /**
      * The attributes that are mass assignable.
