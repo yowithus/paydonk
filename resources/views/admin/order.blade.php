@@ -100,8 +100,10 @@
                                     @endif
                                 </td>
                                 <td>
+                                    @if ($order->promo)
                                     {{ $order->promo->code }}<br>
                                     {{ 'Rp ' . number_format($order->discount_amount) }}
+                                    @endif
                                 </td>
                                 <td>
                                     {{ 'Rp ' . number_format($order->payment_amount) }}<br>

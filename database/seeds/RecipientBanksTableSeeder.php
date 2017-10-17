@@ -59,7 +59,7 @@ class RecipientBanksTableSeeder extends Seeder
                 'name'              => 'CIMB',
                 'account_name'      => 'PT Allpay Indonesia',
                 'account_number'    => '7612663616',
-                'code'              => '0015',
+                'code'              => '015',
                 'image_name'        => 'cimb.png',
                 'status'            => 1
             ],
