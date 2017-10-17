@@ -16,6 +16,7 @@
                                 <th>Name</th>
                                 <th>Account Name</th>
                                 <th>Account Number</th>
+                                <th>Code</th>
                                 <th>Image</th>
                                 <th>Status</th>
                             </tr>
@@ -27,6 +28,7 @@
                                 <td>{{ $recipient_bank->name }}</td>
                                 <td>{{ $recipient_bank->account_name }}</td>
                                 <td>{{ $recipient_bank->account_number }}</td>
+                                <td>{{ $recipient_bank->code }}</td>
                                 <td>
                                     <img src="{{ asset('/images/banks/'.$recipient_bank->image_name) }}" style="height: 20px"/>
                                 </td>
