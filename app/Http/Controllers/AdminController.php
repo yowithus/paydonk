@@ -37,12 +37,12 @@ class AdminController extends Controller
             ->count();
 
         $topup_orders_count = Order::where('status', 6)
-            ->where('product_code', 'like', '%10%')
+            ->where('product_code', 'like', '10%')
             ->whereBetween('created_at', [$last_month, $today])
             ->count();
 
         $orders_count = Order::where('status', 6)
-            ->where('product_code', 'not like', '%10%')
+            ->where('product_code', 'not like', '10%')
             ->whereBetween('created_at', [$last_month, $today])
             ->count();
  
