@@ -108,7 +108,6 @@
                                 <td>
                                     {{ 'Rp ' . number_format($order->payment_amount) }}<br>
                                     {{ $order->payment_method }}<br>
-                                    <br>
 
                                     @if ($order->bank_transfer)
                                         <table>
