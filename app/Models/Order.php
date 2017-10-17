@@ -12,7 +12,7 @@ class Order extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'product_code', 'reference_id', 'customer_number', 'product_price', 'admin_fee', 'order_amount', 'order_status', 'discount_amount', 'unique_code', 'payment_amount', 'payment_status', 'payment_method', 'promo_id', 'temp_promo_code', 'cancellation_reason'
+        'user_id', 'product_code', 'reference_id', 'customer_number', 'product_price', 'admin_fee', 'order_amount', 'status', 'discount_amount', 'payment_amount', 'payment_method', 'promo_id', 'temp_promo_code', 'cancellation_reason'
     ];
 
     /**
@@ -45,5 +45,13 @@ class Order extends Model
     public function promo()
     {
         return $this->belongsTo(Promo::class);
+    }
+
+    /**
+     * Get the refund of the order.
+     */
+    public function refund()
+    {
+        return $this->hasOne(Refund::class);
     }
 }

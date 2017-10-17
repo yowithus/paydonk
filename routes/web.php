@@ -33,6 +33,8 @@ Route::get('/admin/balance-details', 'AdminController@getBalanceDetails');
 // orders
 Route::get('/admin/orders', 'AdminController@getOrders');
 Route::post('/admin/orders/verify', 'AdminController@verifyOrder');
+Route::post('/admin/orders/cancel', 'AdminController@cancelOrder');
+Route::post('/admin/orders/refund', 'AdminController@refundOrder');
 
 // products
 Route::get('/admin/products', 'AdminController@getProducts');

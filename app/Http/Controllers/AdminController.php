@@ -9,6 +9,7 @@ use App\Order;
 use App\Product;
 use App\RecipientBank;
 use App\SenderBank;
+use App\Refund;
 use Carbon\Carbon;
 use DB;
 
@@ -202,9 +203,11 @@ class AdminController extends Controller
         }
 
         if ($status) {
-            $orders->where('orders.status', $status);
+            if ($status != 'All') {
+                $orders->where('orders.status', $status);
+            }
         } else {
-            $orders->where('orders.status', 3);
+            $orders->where('orders.status', 4);
         }
 
         if ($product_category) {
@@ -223,13 +226,14 @@ class AdminController extends Controller
         $orders->withPath("/admin/orders?reference_id=$reference_id&email=$email&status=$status&date=$date");
 
         $statuses = [
-            0   => 'Pending',
-            1   => 'Pilih pembayaran',
-            2   => 'Menunggu pembayaran',
-            3   => 'Verifikasi pembayaran',
-            4   => 'Sedang diproses',
-            5   => 'Berhasil',
-            6   => 'Batal'
+            // 0   => 'Void',
+            1   => 'Menunggu',
+            2   => 'Pilih pembayaran',
+            3   => 'Menunggu pembayaran',
+            4   => 'Memverifikasi pembayaran',
+            5   => 'Sedang diproses',
+            6   => 'Berhasil',
+            7   => 'Dibatalkan'
         ];
 
         return view('admin/order', [
@@ -244,26 +248,21 @@ class AdminController extends Controller
      */
     public function verifyOrder(Request $request) 
     {
-        $validator = validator()->make($request->all(), [
-            'user_id'   => 'required',
-            'order_id'  => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect('admin/orders')->withErrors($validator);
-        }
-
-        $user_id    = $request->user_id;
         $order_id   = $request->order_id;
 
-        $user   = User::find($user_id);
-
         $order  = Order::where('id', $order_id)
-            ->where('status', 3)
+            ->where('status', 4)
             ->where('payment_method', 'Bank Transfer')
             ->first();
 
+        if (!$order) {
+            return redirect('admin/orders')->withErrors('Order tidak ditemukan atau sudah berhasil.');
+        }
+
+        $user_id    = $order->user_id;
         $product_code = $order->product_code;
+
+        $user   = User::find($user_id);
 
         $product    = Product::find($product_code);
         $product_category    = $product->category;
@@ -287,11 +286,11 @@ class AdminController extends Controller
                 'type'              => 'Top up'
             ]);
 
-            $order->status = 5;
+            $order->status = 6;
             $order->save();
 
         } else {
-            $order->status = 4;
+            $order->status = 5;
             $order->save();
 
             $dji_product_id = $product->dji_product_id;
@@ -318,9 +317,91 @@ class AdminController extends Controller
                 ]);
             }
 
-            $order->status = 5;
+            $order->status = 6;
             $order->save();
         }
+
+        return redirect('admin/orders');
+    }
+
+    /**
+     * Cancel the order.
+     */
+    public function cancelOrder(Request $request) 
+    {
+        $validator = validator()->make($request->all(), [
+            'cancellation_reason' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect('admin/orders')->withErrors($validator->errors()->first());
+        }
+
+        $order_id   = $request->order_id;
+        $cancellation_reason = $request->cancellation_reason;
+
+        $order  = Order::where('id', $order_id)
+            ->where('status', '!=', 6)
+            ->first();
+
+        if (!$order) {
+            return redirect('admin/orders')->withErrors('Order tidak ditemukan atau sudah berhasil.');
+        }
+
+        $order->cancellation_reason = $cancellation_reason;
+        $order->status = 7;
+        $order->save();
+
+        return redirect('admin/orders');
+    }
+
+    /**
+     * Refund the order.
+     */
+    public function refundOrder(Request $request) 
+    {
+        $validator = validator()->make($request->all(), [
+            'refund_amount' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect('admin/orders')->withErrors($validator->errors()->first());
+        }
+
+        $order_id   = $request->order_id;
+        $refund_amount = $request->refund_amount;
+
+        $order  = Order::where('id', $order_id)
+            ->where('status', '!=', 6)
+            ->first();
+
+        if (!$order) {
+            return redirect('admin/orders')->withErrors('Order tidak ditemukan atau sudah berhasil.');
+        }
+
+        $user_id    = $order->user_id;
+        $user       = User::find($user_id);
+
+        $balance        = $user->balance;
+        $current_amount = $balance + $refund_amount;
+
+        $user->balance = $current_amount;
+        $user->save();
+
+        BalanceDetail::create([
+            'user_id'           => $user_id,
+            'order_id'          => $order_id,
+            'amount'            => $refund_amount,
+            'previous_amount'   => $balance,
+            'current_amount'    => $current_amount,
+            'type'              => 'Refund'
+        ]);
+
+        Refund::create([
+            'order_id'   => $order_id,
+            'amount'     => $refund_amount,
+            'status'     => 1
+        ]);
 
         return redirect('admin/orders');
     }

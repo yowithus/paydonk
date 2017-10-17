@@ -28,10 +28,11 @@
                             <label class="col-sm-1 control-label">Status</label>
                             <div class="col-sm-3">
                                 <select class="form-control" name="status">
+                                    <option value="All" @if (Request::get('status') == 'All') selected @endif>All</option>
                                     @foreach ($statuses as $status => $status_text)
                                         <option value="{{ $status }}" 
-                                        @if (Request::get('status') == $status) selected 
-                                        @elseif (Request::get('status') == '' && $status == 3) selected 
+                                        @if (Request::get('status') == $status) selectedd
+                                        @elseif (Request::get('status') == '' && $status == 4) selected 
                                         @endif>{{ $status_text }}</option>
                                     @endforeach
                                 </select>
@@ -88,10 +89,14 @@
                                 <td>
                                     #{{ $order->reference_id }}<br>
                                     {{ 'Rp ' . number_format($order->order_amount) }}<br>
-                                    @if ($order->order_status == 0)
-                                        Pending
-                                    @else
-                                        Success
+                                    {{ $statuses[$order->status] }}
+
+                                    @if ($order->status == 7)
+                                    karena: <br>{{ $order->cancellation_reason }}
+                                    @endif
+
+                                    @if ($order->refund)
+                                    <br>Refunded: {{ 'Rp ' . number_format($order->refund->amount) }}
                                     @endif
                                 </td>
                                 <td>
@@ -101,11 +106,6 @@
                                 <td>
                                     {{ 'Rp ' . number_format($order->payment_amount) }}<br>
                                     {{ $order->payment_method }}<br>
-                                    @if ($order->payment_status == 0)
-                                        Pending
-                                    @else
-                                        Success
-                                    @endif
                                     <br>
 
                                     @if ($order->bank_transfer)
@@ -138,7 +138,11 @@
                                 </td>
                                 <td>{{ Carbon\Carbon::parse($order->created_at)->format('M d, Y | g.i A') }}</td>
                                 <td>
-                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#verify-order-{{ $order->id }}" @if ($order->status != 3) disabled @endif>Verify</button>
+                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#verify-order-{{ $order->id }}" @if ($order->status != 4) disabled @endif>Verify</button><br>
+
+                                    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#cancel-order-{{ $order->id }}" @if ($order->status == 6 || $order->status == 7) disabled @endif>Cancel</button><br>
+
+                                    <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#refund-order-{{ $order->id }}" @if ($order->status == 6 || $order->refund) disabled @endif>Refund</button>
                                 </td>
                             </tr>
                             @endforeach
@@ -167,11 +171,66 @@
                 <div class="modal-body">
                     Are you sure you want to verify this order ?
                     <input type="hidden" name="order_id" value="{{ $order->id }}">
-                    <input type="hidden" name="user_id" value="{{ $order->user_id }}">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary @if ($order->order_status == 1) disabled @endif">Verify</button>
+                    <button type="submit" class="btn btn-primary">Verify</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@endforeach
+
+@foreach ($orders as $order)
+<div class="modal fade" id="cancel-order-{{ $order->id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <form action="{{ url('/admin/orders/cancel') }}" method="POST" enctype="multipart/form-data">
+            {!! csrf_field() !!}
+            {{ method_field('POST') }}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Cancel Order</h4>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to cancel this order ? <br><br>
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="cancellation_reason" value="" placeholder="Reason">
+                    </div>
+                    <input type="hidden" name="order_id" value="{{ $order->id }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-danger">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@endforeach
+
+@foreach ($orders as $order)
+<div class="modal fade" id="refund-order-{{ $order->id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <form action="{{ url('/admin/orders/refund') }}" method="POST" enctype="multipart/form-data">
+            {!! csrf_field() !!}
+            {{ method_field('POST') }}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Refund Order</h4>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to refund this order ? <br><br>
+                    <div class="form-group">
+                        <input type="number" class="form-control" name="refund_amount" value="" placeholder="Refund amount">
+                    </div>
+                    <input type="hidden" name="order_id" value="{{ $order->id }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">Refund</button>
                 </div>
             </div>
         </form>

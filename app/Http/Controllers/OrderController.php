@@ -358,7 +358,8 @@ class OrderController extends Controller
             'product_price'     => $product_price,
             'admin_fee'         => $admin_fee,
             'order_amount'      => $order_amount,
-            'payment_amount'    => $order_amount
+            'payment_amount'    => $order_amount,
+            'status'            => 1
         ]);
 
         return response()->json([
@@ -382,7 +383,7 @@ class OrderController extends Controller
         // order
         $order  = Order::where('id', $order_id)
             ->where('user_id', $user_id)
-            ->where('status', '!=', 5)
+            ->where('status', 1)
             ->first();
         
         if (!$order) {
@@ -392,7 +393,7 @@ class OrderController extends Controller
             ]);
         }
 
-        $order->status = 1;
+        $order->status = 2;
         $order->temp_promo_code = $promo_code;
         $order->save();
 
@@ -427,7 +428,7 @@ class OrderController extends Controller
         // order
         $order   = Order::where('id', $order_id)
             ->where('user_id', $user_id)
-            ->where('status', '!=', 5)
+            ->where('status', 2)
             ->first();
         
         if (!$order) {
@@ -439,6 +440,7 @@ class OrderController extends Controller
 
         $product_code = $order->product_code;
         $order_amount = $order->order_amount;
+        $payment_amount = $order_amount;
 
         // product
         $product    = Product::where('code', $product_code)
@@ -454,35 +456,24 @@ class OrderController extends Controller
 
         $product_category   = $product->category;
 
-        // bank transfer
-        if ($payment_method == 'Bank Transfer') {
-            $unique_code    = rand(1, 999);
-            $payment_amount = $order_amount + $unique_code;
-        
-        // balance & credit card
-        } else {
-            if ($product_category == 'Saldo') {
-                return response()->json([
-                    'status'    => 0,
-                    'message'   => 'Pembayaran untuk top up saldo hanya bisa dilakukan dengan bank transfer'
-                ]);
-            }
-
-            if ($payment_method == 'Balance') {
-                if ($balance < $order_amount) {
-                    return response()->json([
-                        'status'    => 0,
-                        'message'   => 'Saldo anda tidak mencukupi'
-                    ]);
-                }
-            }
-
-            $unique_code    = 0;
-            $payment_amount = $order_amount;
+        // validation
+        if ($product_category == 'Saldo' && $payment_method != 'Bank Transfer') {
+            return response()->json([
+                'status'    => 0,
+                'message'   => 'Pembayaran untuk top up saldo hanya bisa dilakukan dengan bank transfer'
+            ]);
         }
 
-        $order->status      = 2;
-        $order->unique_code = $unique_code;
+        if ($payment_method == 'Balance') {
+            if ($balance < $order_amount) {
+                return response()->json([
+                    'status'    => 0,
+                    'message'   => 'Saldo anda tidak mencukupi'
+                ]);
+            }
+        }
+
+        $order->status  = 3;
         $order->payment_amount  = $payment_amount;
         $order->payment_method  = $payment_method;
         $order->save();
@@ -506,7 +497,7 @@ class OrderController extends Controller
         // order
         $order   = Order::where('id', $order_id)
             ->where('user_id', $user_id)
-            ->where('status', '!=', 5)
+            ->where('status', 3)
             ->first();
         
         if (!$order) {
@@ -523,7 +514,6 @@ class OrderController extends Controller
         $admin_fee      = $order->admin_fee;
         $order_amount   = $order->order_amount;
         $payment_method = $order->payment_method;
-        $unique_code    = $order->unique_code;
         $promo_id       = null;
         
         // promo
@@ -546,7 +536,7 @@ class OrderController extends Controller
             $discount_amount = 0;
         }
 
-        $payment_amount = $order_amount - $discount_amount + $unique_code;
+        $payment_amount = $order_amount - $discount_amount;
 
         // product
         $product    = Product::where('code', $product_code)
@@ -593,7 +583,7 @@ class OrderController extends Controller
                 $order->promo_id        = $promo_id;
                 $order->discount_amount = $discount_amount;
                 $order->payment_amount  = $payment_amount;
-                $order->status          = 3;
+                $order->status          = 4;
                 $order->save();
 
                 $payment_due_date = date('Y-m-d H:i:s', strtotime('+1 days'));
@@ -640,7 +630,7 @@ class OrderController extends Controller
                 $order->promo_id        = $promo_id;
                 $order->discount_amount = $discount_amount;
                 $order->payment_amount  = $payment_amount;
-                $order->status          = 5;
+                $order->status          = 6;
                 $order->save();
 
                 BalanceDetail::create([
@@ -657,9 +647,9 @@ class OrderController extends Controller
 
                 $validator = validator()->make($request->all(), [
                     'recipient_bank_id'     => 'required',
+                    'sender_bank_id'        => 'required',
                     'sender_account_name'   => 'required',
-                    'sender_account_number' => 'required',
-                    'sender_bank_name'      => 'required',
+                    'sender_account_number' => 'required'
                 ]);
 
                 if ($validator->fails()) {
@@ -681,7 +671,7 @@ class OrderController extends Controller
                 $order->promo_id        = $promo_id;
                 $order->discount_amount = $discount_amount;
                 $order->payment_amount  = $payment_amount;
-                $order->status          = 3;
+                $order->status          = 4;
                 $order->save();
 
             } else if ($payment_method == 'Credit Card') {
@@ -729,7 +719,7 @@ class OrderController extends Controller
                 $order->promo_id        = $promo_id;
                 $order->discount_amount = $discount_amount;
                 $order->payment_amount  = $payment_amount;
-                $order->status          = 4;
+                $order->status          = 5;
                 $order->save();
 
                 $djiClient = new \App\Classes\DJIClient();
@@ -749,7 +739,7 @@ class OrderController extends Controller
                     ]);
                 }
 
-                $order->status  = 5;
+                $order->status  = 6;
                 $order->save();
             }
         }

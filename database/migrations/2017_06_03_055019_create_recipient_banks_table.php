@@ -18,6 +18,7 @@ class CreateRecipientBanksTable extends Migration
             $table->string('name');
             $table->string('account_name');
             $table->string('account_number');
+            $table->string('code');
             $table->string('image_name');
             $table->integer('status');
             $table->timestamp('created_at')->default(\DB::raw('CURRENT_TIMESTAMP'));
