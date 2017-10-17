@@ -31,7 +31,7 @@
                                     <option value="All" @if (Request::get('status') == 'All') selected @endif>All</option>
                                     @foreach ($statuses as $status => $status_text)
                                         <option value="{{ $status }}" 
-                                        @if (Request::get('status') == $status) selectedd
+                                        @if (Request::get('status') == $status) selected
                                         @elseif (Request::get('status') == '' && $status == 4) selected 
                                         @endif>{{ $status_text }}</option>
                                     @endforeach
