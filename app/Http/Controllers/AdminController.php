@@ -192,6 +192,7 @@ class AdminController extends Controller
         $orders = Order::join('users', 'orders.user_id', '=', 'users.id')
             ->join('products', 'orders.product_code', '=', 'products.code')
             ->select('orders.*', 'users.email')
+            ->where('orders.status', '!=', 0)
             ->orderBy('orders.created_at', 'desc');
             
         if ($reference_id) {
