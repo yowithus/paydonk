@@ -22,6 +22,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 // dashboard
 Route::get('/admin', 'AdminController@index');
 Route::get('/admin/monthly-statistic', 'AdminController@getMonthlyStatistic');
+Route::get('/admin/category-statistic', 'AdminController@getCategoryStatistic');
 
 // users
 Route::get('/admin/users', 'AdminController@getUsers');

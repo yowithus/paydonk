@@ -36,18 +36,18 @@ class AdminController extends Controller
         $users_count = User::whereBetween('created_at', [$last_month, $today])
             ->count();
 
-        $topup_orders_count = Order::where('status', 5)
+        $topup_orders_count = Order::where('status', 6)
             ->where('product_code', 'like', '%10%')
             ->whereBetween('created_at', [$last_month, $today])
             ->count();
 
-        $orders_count = Order::where('status', 5)
+        $orders_count = Order::where('status', 6)
             ->where('product_code', 'not like', '%10%')
             ->whereBetween('created_at', [$last_month, $today])
             ->count();
  
         $total_revenue = Order::select(DB::raw('sum(payment_amount) as total_revenue'))
-            ->where('status', 5)
+            ->where('status', 6)
             ->whereBetween('created_at', [$last_month, $today])
             ->value('total_revenue');
 
@@ -71,22 +71,46 @@ class AdminController extends Controller
         $last_month = Carbon::now()->subDays(30);
 
         $sales = Order::select(DB::raw('date(created_at) as date, sum(payment_amount) as revenue'))
-            ->where('status', 5)
+            ->where('status', 6)
             ->whereBetween('created_at', [$last_month, $today])
             ->groupBy('date')
             ->pluck('revenue', 'date')
             ->toArray();
 
-        $total_revenue      = array_sum($sales);
-        $total_cost         = 0.9 * $total_revenue;
-        $total_profit       = $total_revenue - $total_cost;
+        return [
+            'sales' => $sales
+        ];
+    }
 
-        return array(
-            'sales'     => $sales,
-            'total_revenue' => $total_revenue,
-            'total_cost'    => $total_cost,
-            'total_profit'  => $total_profit
-        );
+    /**
+     * Show category statistic.
+     */
+    public function getCategoryStatistic(Request $request)
+    {
+        $today      = Carbon::now();
+        $last_month = Carbon::now()->subDays(30);
+
+        $sales = Order::select(DB::raw('products.category, sum(orders.payment_amount) as revenue'))
+            ->join('products', 'orders.product_code', '=', 'products.code')
+            ->where('orders.status', 6)
+            ->whereBetween('orders.created_at', [$last_month, $today])
+            ->groupBy('products.category')
+            ->pluck('revenue', 'category')
+            ->toArray();
+
+        return [
+            'sales' => $sales,
+            'categories' => [
+                'Saldo', 
+                'PLN', 
+                'PDAM', 
+                'TV Kabel', 
+                'Pulsa', 
+                'Telkom', 
+                'Angsuran Kredit', 
+                'BPJS'
+            ]
+        ];
     }
 
     /**

@@ -75,43 +75,11 @@
             <div class="box-body">
                 <div class="row">
                     <div class="col-md-12">
-                        <p class="text-center">
-                            <strong>Sales: {{ $orders_count }}</strong>
-                        </p>
                         <div class="chart">
-                            <canvas id="salesChart" style="height: 180px;"></canvas>
+                            <canvas id="salesChart" style="height: 200px;"></canvas>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div class="box-footer">
-                <div class="row">
-                    <div class="col-sm-3 col-xs-6">
-                        <div class="description-block border-right">
-                            <span class="description-percentage text-green"><i class="fa fa-caret-up"></i> 17%</span>
-                            <h5 class="description-header" id="total-revenue"></h5>
-                            <span class="description-text">TOTAL REVENUE</span>
-                        </div>
-                    </div>
-                    <div class="col-sm-3 col-xs-6">
-                        <div class="description-block border-right">
-                            <span class="description-percentage text-yellow"><i class="fa fa-caret-left"></i> 0%</span>
-                            <h5 class="description-header" id="total-cost"></h5>
-                            <span class="description-text">TOTAL COST</span>
-                        </div>
-                    </div>
-                    <div class="col-sm-3 col-xs-6">
-                        <div class="description-block border-right">
-                            <span class="description-percentage text-green"><i class="fa fa-caret-up"></i> 20%</span>
-                            <h5 class="description-header" id="total-profit"></h5>
-                            <span class="description-text">TOTAL PROFIT</span>
-                        </div>
-                    </div>
-                    <div class="col-sm-3 col-xs-6">
-                        <div class="description-block">
-                            <span class="description-percentage text-red"><i class="fa fa-caret-down"></i> 18%</span>
-                            <h5 class="description-header">50</h5>
-                            <span class="description-text">GOAL COMPLETIONS</span>
+                        <div class="chart">
+                            <canvas id="salesChartCategory" style="height: 200px;"></canvas>
                         </div>
                     </div>
                 </div>
@@ -152,43 +120,59 @@ $(function () {
             var salesChartData = {
                 labels: dates,
                 datasets: [{
-                label: "Digital Goods",
-                    fillColor: "rgba(60,141,188,0.9)",
-                    strokeColor: "rgba(60,141,188,0.8)",
-                    pointColor: "#3b8bba",
-                    pointStrokeColor: "rgba(60,141,188,1)",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(60,141,188,1)",
-                    data: sales
+                    label: 'Digital Products',
+                    data: sales,
+                    fillColor: '#00a65a'
+                }]
+            };
+
+            var salesChartOptions = {
+                showScale: true,
+                pointDot: false,
+                responsive: true
+            };
+
+            salesChart.Line(salesChartData, salesChartOptions);
+        }
+    });
+
+    $.ajax({
+        url: '/admin/category-statistic',
+        type: 'GET',
+        success: function(result) {
+            var categories = result.categories;
+            var sales = [];
+
+            for (category of categories) {
+                sales.push(result.sales[category]);
+            }
+
+            var salesChartCanvas = $('#salesChartCategory').get(0).getContext('2d');
+            var salesChart = new Chart(salesChartCanvas);
+
+            var salesChartData = {
+                labels: categories,
+                datasets: [{
+                    label: 'Digital Products',
+                    data: sales,
+                    fillColor: [
+                        '#f56954',
+                        '#00a65a',
+                        '#f39c12',
+                        '#00c0ef',
+                        '#3c8dbc',
+                        '#d2d6de'
+                    ]
                 }]
             };
 
             var salesChartOptions = {
                 showScale: true,
                 scaleShowGridLines: false,
-                scaleGridLineColor: "rgba(0,0,0,.05)",
-                scaleGridLineWidth: 1,
-                scaleShowHorizontalLines: true,
-                scaleShowVerticalLines: true,
-                bezierCurve: true,
-                bezierCurveTension: 0.3,
-                pointDot: false,
-                pointDotRadius: 4,
-                pointDotStrokeWidth: 1,
-                pointHitDetectionRadius: 20,
-                datasetStroke: true,
-                datasetStrokeWidth: 2,
-                datasetFill: true,
-                legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].lineColor%>\"></span><%=datasets[i].label%></li><%}%></ul>",
-                maintainAspectRatio: true,
                 responsive: true
             };
 
-            salesChart.Line(salesChartData, salesChartOptions);
-
-            $('#total-revenue').text('Rp '+result.total_revenue.toLocaleString());
-            $('#total-cost').text('Rp '+result.total_cost.toLocaleString());
-            $('#total-profit').text('Rp '+result.total_profit.toLocaleString());
+            salesChart.Bar(salesChartData, salesChartOptions);
         }
     });
 
