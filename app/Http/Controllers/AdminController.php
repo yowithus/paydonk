@@ -250,21 +250,10 @@ class AdminController extends Controller
         $orders = $orders->paginate(10);
         $orders->withPath("/admin/orders?reference_id=$reference_id&email=$email&status=$status&date=$date");
 
-        $statuses = [
-            // 0   => 'Void',
-            1   => 'Menunggu',
-            2   => 'Pilih pembayaran',
-            3   => 'Menunggu pembayaran',
-            4   => 'Memverifikasi pembayaran',
-            5   => 'Sedang diproses',
-            6   => 'Berhasil',
-            7   => 'Dibatalkan'
-        ];
-
         return view('admin/order', [
             'page_title'   => 'Orders',
             'orders'    => $orders,
-            'statuses'  => $statuses
+            'statuses'  => ORDER_STATUSES
         ]);
     }
 

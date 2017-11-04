@@ -364,4 +364,21 @@ class UserController extends Controller
             'deposit_details'  => $user->balance_details()->with('order.product')->get()
         ]);
     }
+
+    public function getOrders() 
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+
+        $orders = $user->orders()->with('product')->get();
+
+        foreach ($orders as $order) {
+            $order->status_text = ORDER_STATUSES[$order->status];
+        }
+
+        return response()->json([
+            'status'  => 1,
+            'message' => 'Get orders successful',
+            'orders'  => $orders
+        ]);
+    }
 }

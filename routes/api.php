@@ -29,6 +29,7 @@ Route::post('/update-profile', 'UserController@updateProfile');
 Route::post('/update-fcm-token', 'UserController@updateFCMToken');
 Route::get('/get-credit-card-token', 'UserController@getCreditCardToken');
 Route::get('/get-balance-details', 'UserController@getBalanceDetails');
+Route::get('/get-orders', 'UserController@getOrders');
 
 // banks
 Route::get('/banks/get-recipient', 'ProductController@getRecipientBanks');

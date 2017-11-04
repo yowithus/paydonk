@@ -1,5 +1,17 @@
 <?php
 
+// global variables
+define('ORDER_STATUSES', [
+    1   => 'Menunggu Pembayaran',
+    2   => 'Pilih Pembayaran',
+    3   => 'Menunggu Pembayaran',
+    4   => 'Memverifikasi Pembayaran',
+    5   => 'Sedang Diproses',
+    6   => 'Berhasil',
+    7   => 'Dibatalkan'
+]);
+
+// global functions
 function sendPushNotification($data)
 {
 	$base_uri       = 'https://fcm.googleapis.com';
