@@ -428,7 +428,7 @@ class OrderController extends Controller
         // order
         $order   = Order::where('id', $order_id)
             ->where('user_id', $user_id)
-            ->where('status', 2)
+            ->whereIn('status', [1,2])
             ->first();
         
         if (!$order) {
