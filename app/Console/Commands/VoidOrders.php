@@ -40,8 +40,8 @@ class VoidOrders extends Command
      */
     public function handle()
     {
-        $void_orders_count = Order::where('status', 1)
-            ->where('updated_at', '<=', Carbon::now()->addMinutes(-10))
+        $void_orders_count = Order::whereIn('status', [1, 2, 3])
+            ->where('updated_at', '<=', Carbon::now()->addMinutes(-30))
             ->update([
                 'status' => 0
             ]);

@@ -2,7 +2,7 @@
 
 // global variables
 define('ORDER_STATUSES', [
-    1   => 'Menunggu Pembayaran',
+    1   => 'Menunggu',
     2   => 'Pilih Pembayaran',
     3   => 'Menunggu Pembayaran',
     4   => 'Memverifikasi Pembayaran',
