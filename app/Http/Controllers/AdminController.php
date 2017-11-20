@@ -325,10 +325,7 @@ class AdminController extends Controller
             ]);
 
             if (isset($result->rc) && $result->rc != '00') {
-                return response()->json([
-                    'status'    => 0,
-                    'message'   => $result->rc . ': ' . trim($result->description),
-                ]);
+                return redirect('admin/orders')->withErrors([$result->rc . ': ' . trim($result->description)]);
             }
 
             $order->status = 6;

@@ -27,6 +27,8 @@ class CreateOrdersTable extends Migration
             $table->double('payment_amount');
             $table->string('payment_method')->nullable();
             $table->string('payment_external_id')->nullable();
+            $table->string('customer_name')->nullable();
+            $table->string('billing_period')->nullable();
             $table->integer('promo_id')->nullable();
             $table->string('temp_promo_code')->nullable();
             $table->string('cancellation_reason')->nullable();

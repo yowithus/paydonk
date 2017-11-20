@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\User;
+use App\Product;
 use Twilio;
 use DB;
 use Mail;
@@ -361,7 +362,7 @@ class UserController extends Controller
         return response()->json([
             'status'    => 1,
             'message'   => 'Get balance details successful',
-            'deposit_details'  => $user->balance_details()->with('order.product')->get()
+            'balance_details'  => $user->balance_details()->with('order.product')->get()
         ]);
     }
 
@@ -369,16 +370,53 @@ class UserController extends Controller
     {
         $user = JWTAuth::parseToken()->authenticate();
 
-        $orders = $user->orders()->with('product')->get();
+        $orders_arr = [];
+        $orders = $user->orders()
+            ->where('status', '!=', 0)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         foreach ($orders as $order) {
-            $order->status_text = ORDER_STATUSES[$order->status];
+            $product     = Product::find($order->product_code);
+            $status_text = ORDER_STATUSES[$order->status];
+            $order->status_text = $status_text;
+
+            $order_obj = [
+                'order' => $order,
+                'product' => $product
+            ];
+
+            $orders_arr[] = $order_obj;
         }
 
         return response()->json([
             'status'  => 1,
             'message' => 'Get orders successful',
-            'orders'  => $orders
+            'orders'  => $orders_arr
         ]);
+    }
+
+    public function getOrderDetails($order_id) 
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+
+        $order = $user->orders->find($order_id);
+
+        if (!$order) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => 'Get order detail failed'
+            ]);
+        }
+
+        $product = Product::find($order->product_code);
+
+        return response()->json([
+            'status'  => 1,
+            'message' => 'Get order details successful',
+            'order'   => $order,
+            'product' => $product
+        ]);
+
     }
 }

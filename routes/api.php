@@ -18,7 +18,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 // user
-Route::get('/user', 'UserController@show');
 Route::post('/login', 'UserController@login');
 Route::post('/register', 'UserController@register');
 Route::post('/logout', 'UserController@logout');
@@ -27,9 +26,12 @@ Route::post('/verify', 'UserController@verify');
 Route::post('/reset-password', 'UserController@resetPassword');
 Route::post('/update-profile', 'UserController@updateProfile');
 Route::post('/update-fcm-token', 'UserController@updateFCMToken');
-Route::get('/get-credit-card-token', 'UserController@getCreditCardToken');
-Route::get('/get-balance-details', 'UserController@getBalanceDetails');
-Route::get('/get-orders', 'UserController@getOrders');
+
+Route::get('/user', 'UserController@getUser');
+Route::get('/credit-card-token', 'UserController@getCreditCardToken');
+Route::get('/balance-details', 'UserController@getBalanceDetails');
+Route::get('/orders', 'UserController@getOrders');
+Route::get('/orders/{order}', 'UserController@getOrderDetails');
 
 // banks
 Route::get('/banks/get-recipient', 'ProductController@getRecipientBanks');
@@ -48,5 +50,6 @@ Route::post('/create-order', 'OrderController@createOrder');
 Route::post('/save-promo-code', 'OrderController@savePromoCode');
 Route::post('/save-payment-method', 'OrderController@savePaymentMethod');
 Route::post('/confirm-order', 'OrderController@confirmOrder');
+Route::post('/cancel-order', 'OrderController@cancelOrder');
 
 

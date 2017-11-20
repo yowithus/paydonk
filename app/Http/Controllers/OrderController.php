@@ -47,7 +47,7 @@ class OrderController extends Controller
         $admin_fee      = 0;
         $product_price  = 0;
         $order_amount   = 0;
-        $period         = null;
+        $billing_period = null;
 
         if ($product_category == 'PLN') {
             $customer_name  = trim($result->data->NM);
@@ -64,7 +64,7 @@ class OrderController extends Controller
                         $month  = preg_replace("/[^A-Z]+/", "", $broken_period);
                         $year   = preg_replace("/[^0-9]/","", $broken_period);
 
-                        $period = ucfirst(strtolower($month)) . " 20$year";
+                        $billing_period = ucfirst(strtolower($month)) . " 20$year";
                     } else {
                         break;
                     }
@@ -85,7 +85,7 @@ class OrderController extends Controller
             $year   = substr($broken_period, 0, 4);
             $month  = substr($broken_period, 4, 2);
 
-            $period = Date::create($year, $month)->format('F Y');
+            $billing_period = Date::create($year, $month)->format('F Y');
 
         } else if ($product_category == 'TV Kabel') {
             $customer_name  = isset($result->data->nama) ? trim($result->data->nama) : '';
@@ -144,7 +144,7 @@ class OrderController extends Controller
                 $month  = $broken_periods[1];
                 $year   = $broken_periods[2];
 
-                $period = Date::create($year, $month, $date)->format('d F Y');
+                $billing_period = Date::create($year, $month, $date)->format('d F Y');
             }
         } else if ($product_category == 'Pulsa' || $product_category == 'Telepon' || $product_category == 'Angsuran Kredit') {
             $customer_name  = isset($result->data->nama) ? trim($result->data->nama) : '';
@@ -163,10 +163,10 @@ class OrderController extends Controller
             'message'   => 'Get bill successful',
             'customer_number' => $customer_number,
             'customer_name'   => $customer_name,
-            'product_price' => $product_price,
-            'admin_fee'     => $admin_fee,
-            'order_amount'  => $order_amount,
-            'period'        => $period
+            'product_price'   => $product_price,
+            'admin_fee'       => $admin_fee,
+            'order_amount'    => $order_amount,
+            'billing_period'  => $billing_period
         ]);
     }
 
@@ -295,7 +295,7 @@ class OrderController extends Controller
 
         $customer_number   = null;
         $customer_name     = null;
-        $period            = null;
+        $billing_period    = null;
         
         // top up saldo
         if ($product_category == 'Saldo') {
@@ -343,11 +343,11 @@ class OrderController extends Controller
                 ]);
             }
             
-            $customer_name = $bill_result['customer_name'];
+            $customer_name = ucwords(strtolower($bill_result['customer_name']));
             $product_price = $bill_result['product_price'];
             $admin_fee     = $bill_result['admin_fee'];
             $order_amount  = $bill_result['order_amount'];
-            $period        = $bill_result['period'];
+            $billing_period = $bill_result['billing_period'];
         }
 
         $order = Order::create([
@@ -359,6 +359,8 @@ class OrderController extends Controller
             'admin_fee'         => $admin_fee,
             'order_amount'      => $order_amount,
             'payment_amount'    => $order_amount,
+            'customer_name'     => $customer_name,
+            'billing_period'    => $billing_period,
             'status'            => 1
         ]);
 
@@ -366,8 +368,7 @@ class OrderController extends Controller
             'status'    => 1,
             'message'   => 'Create order successful',
             'order'     => $order,
-            'period'    => $period,
-            'customer_name' => $customer_name
+            'product'   => $product
         ]);
     }
 
@@ -747,6 +748,37 @@ class OrderController extends Controller
         return response()->json([
             'status'    => 1,
             'message'   => 'Confirm order successful'
+        ]);
+    }
+
+    public function cancelOrder(Request $request) 
+    {
+        $order_id   = $request->order_id;
+        
+        // user
+        $user    = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+
+        // order
+        $order   = Order::where('id', $order_id)
+            ->where('user_id', $user_id)
+            ->where('status', '!=', 6)
+            ->first();
+        
+        if (!$order) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => 'Order tidak ditemukan atau sudah dikonfirmasi'
+            ]);
+        }
+
+        $order->cancellation_reason = 'by user';
+        $order->status = 7;
+        $order->save();
+
+        return response()->json([
+            'status'    => 1,
+            'message'   => 'Cancel order successful'
         ]);
     }
 }
