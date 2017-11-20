@@ -27,16 +27,16 @@ class UserController extends Controller
         ]]);
     }  
 
-    public function show()
+    public function getUser()
     {
         $user = JWTAuth::parseToken()->authenticate();
 
-        $asd = sendPushNotification([
-            'fcm_token' => '',
-            'title' => 'asd',
-            'body' => 'asd',
-            'type' => 'asd'
-        ]);
+        // $asd = sendPushNotification([
+        //     'fcm_token' => '',
+        //     'title' => 'asd',
+        //     'body' => 'asd',
+        //     'type' => 'asd'
+        // ]);
 
         // Mail::to($user->email)->queue(new Welcome($user));
 
