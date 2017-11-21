@@ -15,6 +15,7 @@ use App\Promo;
 use App\CreditCardToken;
 use DB;
 use Jenssegers\Date\Date;
+use Log;
 
 class OrderController extends Controller
 {
@@ -679,8 +680,7 @@ class OrderController extends Controller
 
                 $validator = validator()->make($request->all(), [
                     'token_id' => 'required',
-                    'credit_card_number' => 'required',
-                    'credit_card_type'   => 'required',
+                    'masked_card_number' => 'required'
                 ]);
 
                 if ($validator->fails()) {
@@ -691,14 +691,26 @@ class OrderController extends Controller
                 }
 
                 $token_id = $request->token_id;
-                $credit_card_number = $request->credit_card_number;
-                $credit_card_type   = $request->credit_card_type;
+                $masked_card_number = $request->masked_card_number;
 
-                $options['secret_api_key'] = ENV('XENDIT_SECRET_KEY');
-                $xenditPHPClient = new \XenditClient\XenditPHPClient();
-                $response = $xenditPHPClient->captureCreditCardPayment($reference_id, $token_id, $payment_amount);
+                try {
+                    Log::info("User $user_id is paying using Credit Card.");
+
+                    $options['secret_api_key'] = ENV('XENDIT_SECRET_KEY');
+                    $xenditPHPClient = new \XenditClient\XenditPHPClient($options);
+                    $response = $xenditPHPClient->captureCreditCardPayment($reference_id, $token_id, $payment_amount);
+                } catch (Exceptions $e) {
+                    Log::info("User $user_id is getting Credit Card exception: " .  $e->getMessage());
+
+                    return response()->json([
+                        'status'    => 0,
+                        'message'   => 'Pembayaran gagal, mohon dicoba kembali',
+                    ]);
+                }
 
                 if (!isset($response['id']) || $response['status'] != 'CAPTURED') {
+                    Log::info("User $user_id failed when paying with Credit Card: " . json_encode($response));
+
                     return response()->json([
                         'status'    => 0,
                         'message'   => 'Pembayaran gagal, mohon dicoba kembali',
@@ -706,13 +718,18 @@ class OrderController extends Controller
                 }
 
                 $payment_external_id = $response['id'];
+                $masked_card_number = $response['masked_card_number'];
+                $card_brand = ucfirst(strtolower($response['card_brand']));
+                $card_type  = ucfirst(strtolower($response['card_type']));
                 
                 CreditCardToken::updateOrCreate([
-                    'user_id' => $user_id
+                    'user_id' => $user_id,
+                    'masked_card_number' => $masked_card_number
                 ], [
-                    'token_id'  => $token_id,
-                    'credit_card_number' => $credit_card_number, 
-                    'credit_card_type'   => $credit_card_type
+                    'token_id'      => $token_id,
+                    'masked_card_number' => $masked_card_number, 
+                    'card_brand'    => $card_brand,
+                    'card_type'     => $card_type
                 ]);
 
                 $order->payment_external_id = $payment_external_id;

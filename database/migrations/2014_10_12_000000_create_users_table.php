@@ -22,6 +22,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->double('balance')->default(0);
             $table->integer('status')->default(1);
+            $table->string('image_name')->nullable();
             $table->string('fcm_token_android')->nullable();
             $table->string('fcm_token_ios')->nullable();
             $table->rememberToken();

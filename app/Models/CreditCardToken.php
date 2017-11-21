@@ -12,6 +12,6 @@ class CreditCardToken extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'token_id', 'credit_card_number', 'credit_card_type'
+        'user_id', 'token_id', 'masked_card_number', 'card_brand', 'card_type'
     ];
 }

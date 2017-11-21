@@ -17,8 +17,9 @@ class CreateCreditCardTokensTable extends Migration
             $table->increments('id');
             $table->integer('user_id');
             $table->string('token_id');
-            $table->string('credit_card_number');
-            $table->string('credit_card_type');
+            $table->string('masked_card_number');
+            $table->string('card_brand')->nullable();
+            $table->string('card_type')->nullable();
             $table->timestamps();
         });
     }

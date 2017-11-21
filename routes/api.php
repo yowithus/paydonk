@@ -25,10 +25,12 @@ Route::post('/send-verification-code', 'UserController@sendVerificationCode');
 Route::post('/verify', 'UserController@verify');
 Route::post('/reset-password', 'UserController@resetPassword');
 Route::post('/update-profile', 'UserController@updateProfile');
+Route::post('/update-profile-picture', 'UserController@updateProfilePicture');
 Route::post('/update-fcm-token', 'UserController@updateFCMToken');
 
 Route::get('/user', 'UserController@getUser');
-Route::get('/credit-card-token', 'UserController@getCreditCardToken');
+Route::get('/credit-card-tokens', 'UserController@getCreditCardTokens');
+Route::post('/credit-card-tokens', 'UserController@storeCreditCardToken');
 Route::get('/balance-details', 'UserController@getBalanceDetails');
 Route::get('/orders', 'UserController@getOrders');
 Route::get('/orders/{order}', 'UserController@getOrderDetails');

@@ -58,11 +58,11 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the credit card token for the user.
+     * Get the credit card tokens for the user.
      */
-    public function credit_card_token()
+    public function credit_card_tokens()
     {
-        return $this->hasOne(CreditCardToken::class);
+        return $this->hasMany(CreditCardToken::class);
     }
 
     /**

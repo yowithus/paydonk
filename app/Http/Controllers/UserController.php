@@ -7,6 +7,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\User;
 use App\Product;
+use App\CreditCardToken;
 use Twilio;
 use DB;
 use Mail;
@@ -298,6 +299,35 @@ class UserController extends Controller
         ]);
     }
 
+    public function updateProfilePicture(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+
+        $validator = validator()->make($request->all(), [
+            'image' => 'required|mimes:jpeg,jpg,png,bmp|max:2000'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => $validator->errors()->first()
+            ]);
+        }
+
+        $image_name = md5("user-$user_id") . '.jpg';
+
+        $request->image->move(public_path('images/users'), $image_name);
+
+        $user->image_name = $image_name;
+        $user->save();
+
+        return response()->json([
+            'status'    => 1,
+            'message'   => 'Update profile picture successful'
+        ]);
+    }
+
     public function updateFCMToken(Request $request)
     {
         $validator = validator()->make($request->all(), [
@@ -335,24 +365,49 @@ class UserController extends Controller
         ]);
     }
 
-    public function getCreditCardToken() 
+    public function storeCreditCardToken(Request $request) 
     {
         $user = JWTAuth::parseToken()->authenticate();
-        $credit_card_token = $user->credit_card_token;
-        
-        if ($credit_card_token) {
+        $user_id = $user->id;
 
-            return response()->json([
-                'status'    => 1,
-                'message'   => 'Get credit card token successful',
-                'credit_card_token'  => $credit_card_token
-            ]);
-        } else {
+        $validator = validator()->make($request->all(), [
+            'token_id'       => 'required',
+            'masked_card_number' => 'required'
+        ]);
+
+        if ($validator->fails()) {
             return response()->json([
                 'status'    => 0,
-                'message'   => 'Get credit card token failed'
+                'message'   => $validator->errors()->first()
             ]);
         }
+
+        $token_id = $request->token_id;
+        $masked_card_number = $request->masked_card_number;
+        
+        CreditCardToken::updateOrCreate([
+            'user_id' => $user_id,
+            'masked_card_number' => $masked_card_number
+        ], [
+            'token_id'      => $token_id,
+            'masked_card_number' => $masked_card_number
+        ]);
+
+        return response()->json([
+            'status'    => 1,
+            'message'   => 'Store credit card token successful'
+        ]);
+    }
+
+    public function getCreditCardTokens() 
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+
+        return response()->json([
+            'status'    => 1,
+            'message'   => 'Get credit card tokens successful',
+            'credit_card_tokens'  => $user->credit_card_tokens
+        ]);
     }
 
     public function getBalanceDetails() 
