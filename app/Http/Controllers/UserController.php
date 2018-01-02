@@ -109,6 +109,8 @@ class UserController extends Controller
 
         $user = auth()->User();
 
+        JWTAuth::invalidate($user->jwt_token);
+
         // update fcm token
         $device_type        = $request->device_type;
         $fcm_token_android  = $request->fcm_token_android;
@@ -120,6 +122,7 @@ class UserController extends Controller
             $user->fcm_token_ios = $fcm_token_ios;
         }
 
+        $user->jwt_token = $token;
         $user->updated_at = Carbon::now();
         $user->save();
 
@@ -168,7 +171,9 @@ class UserController extends Controller
 
     public function sendVerificationCode(Request $request)
     {
-        if ($request->is_register) {
+        $is_register = $request->is_register;
+
+        if ($is_register) {
             $validator = validator()->make($request->all(), [
                 'phone_number'  => 'required|regex:/^(\+62)[0-9]{9,11}$/|unique:users',
             ]);  
@@ -187,6 +192,13 @@ class UserController extends Controller
 
         $phone_number      = $request->phone_number;
         $verification_code = rand(1000, 9999);
+
+        if (!$is_register && User::where('phone_number', '=', $phone_number)->count() == 0) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => 'User with this phone number does not exist'
+            ]);
+        }
 
         DB::table('phone_verifications')->insert([
             'phone_number'      => $phone_number,
@@ -365,6 +377,59 @@ class UserController extends Controller
         ]);
     }
 
+    public function verifyPassword(Request $request)
+    {
+        $validator = validator()->make($request->all(), [
+            'password'      => 'required|string|min:6',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => $validator->errors()->first()
+            ]);
+        }
+
+        $user = JWTAuth::parseToken()->authenticate();
+
+        $credentials = $request->only('password');
+        if (! $token = JWTAuth::attempt($credentials)) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => 'Password salah.'
+            ]);
+        }
+
+        return response()->json([
+            'status'    => 1,
+            'message'   => 'Verify password successful'
+        ]);
+    }
+
+    public function savePinPattern(Request $request)
+    {
+        $validator = validator()->make($request->all(), [
+            'pin_pattern'  => 'required|string|min:6',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => $validator->errors()->first()
+            ]);
+        }
+
+        $user = JWTAuth::parseToken()->authenticate();
+        $user->pin_pattern = $request->pin_pattern;
+        $user->save();
+
+        return response()->json([
+            'status'    => 1,
+            'message'   => 'Save pin pattern successful'
+        ]);
+    }
+
+
     public function storeCreditCardToken(Request $request) 
     {
         $user = JWTAuth::parseToken()->authenticate();
@@ -372,7 +437,8 @@ class UserController extends Controller
 
         $validator = validator()->make($request->all(), [
             'token_id'       => 'required',
-            'masked_card_number' => 'required'
+            'masked_card_number' => 'required',
+            'card_brand'    => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -384,18 +450,36 @@ class UserController extends Controller
 
         $token_id = $request->token_id;
         $masked_card_number = $request->masked_card_number;
+        $card_brand = $request->card_brand;
         
         CreditCardToken::updateOrCreate([
             'user_id' => $user_id,
             'masked_card_number' => $masked_card_number
         ], [
             'token_id'      => $token_id,
-            'masked_card_number' => $masked_card_number
+            'masked_card_number' => $masked_card_number,
+            'card_brand' => $card_brand
         ]);
 
         return response()->json([
             'status'    => 1,
             'message'   => 'Store credit card token successful'
+        ]);
+    }
+
+    public function deleteCreditCardToken($id) 
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+
+        $credit_card_token = CreditCardToken::find($id);
+
+        if ($credit_card_token) {
+            $credit_card_token->delete();
+        }
+
+        return response()->json([
+            'status'    => 1,
+            'message'   => 'Delete credit card tokens successful'
         ]);
     }
 
@@ -419,59 +503,5 @@ class UserController extends Controller
             'message'   => 'Get balance details successful',
             'balance_details'  => $user->balance_details()->with('order.product')->get()
         ]);
-    }
-
-    public function getOrders() 
-    {
-        $user = JWTAuth::parseToken()->authenticate();
-
-        $orders_arr = [];
-        $orders = $user->orders()
-            ->where('status', '!=', 0)
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        foreach ($orders as $order) {
-            $product     = Product::find($order->product_code);
-            $status_text = ORDER_STATUSES[$order->status];
-            $order->status_text = $status_text;
-
-            $order_obj = [
-                'order' => $order,
-                'product' => $product
-            ];
-
-            $orders_arr[] = $order_obj;
-        }
-
-        return response()->json([
-            'status'  => 1,
-            'message' => 'Get orders successful',
-            'orders'  => $orders_arr
-        ]);
-    }
-
-    public function getOrderDetails($order_id) 
-    {
-        $user = JWTAuth::parseToken()->authenticate();
-
-        $order = $user->orders->find($order_id);
-
-        if (!$order) {
-            return response()->json([
-                'status'    => 0,
-                'message'   => 'Get order detail failed'
-            ]);
-        }
-
-        $product = Product::find($order->product_code);
-
-        return response()->json([
-            'status'  => 1,
-            'message' => 'Get order details successful',
-            'order'   => $order,
-            'product' => $product
-        ]);
-
     }
 }

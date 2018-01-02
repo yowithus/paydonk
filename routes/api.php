@@ -27,13 +27,17 @@ Route::post('/reset-password', 'UserController@resetPassword');
 Route::post('/update-profile', 'UserController@updateProfile');
 Route::post('/update-profile-picture', 'UserController@updateProfilePicture');
 Route::post('/update-fcm-token', 'UserController@updateFCMToken');
-
+Route::post('/verify-password', 'UserController@verifyPassword');
+Route::post('/save-pin-pattern', 'UserController@savePinPattern');
 Route::get('/user', 'UserController@getUser');
+
+// balance detail
+Route::get('/balance-details', 'UserController@getBalanceDetails');
+
+// credit card
 Route::get('/credit-card-tokens', 'UserController@getCreditCardTokens');
 Route::post('/credit-card-tokens', 'UserController@storeCreditCardToken');
-Route::get('/balance-details', 'UserController@getBalanceDetails');
-Route::get('/orders', 'UserController@getOrders');
-Route::get('/orders/{order}', 'UserController@getOrderDetails');
+Route::delete('/credit-card-tokens/{id}', 'UserController@deleteCreditCardToken');
 
 // banks
 Route::get('/banks/get-recipient', 'ProductController@getRecipientBanks');
@@ -47,6 +51,8 @@ Route::get('/products/get-finance', 'ProductController@getFinanceProducts');
 Route::post('/products/get-pulsa-postpaid', 'ProductController@getPostpaidPulsaProduct');
 
 // order
+Route::get('/orders', 'OrderController@getOrders');
+Route::get('/orders/{id}', 'OrderController@getOrderDetails');
 Route::post('/use-promo-code', 'OrderController@usePromoCode');
 Route::post('/create-order', 'OrderController@createOrder');
 Route::post('/save-promo-code', 'OrderController@savePromoCode');

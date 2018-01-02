@@ -24,6 +24,59 @@ class OrderController extends Controller
     	$this->middleware('jwt.auth');
     }  
 
+    public function getOrders() 
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+
+        $orders_arr = [];
+        $orders = $user->orders()
+            ->where('status', '!=', 0)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        foreach ($orders as $order) {
+            $product     = Product::find($order->product_code);
+            $status_text = ORDER_STATUSES[$order->status];
+            $order->status_text = $status_text;
+
+            $order_obj = [
+                'order' => $order,
+                'product' => $product
+            ];
+
+            $orders_arr[] = $order_obj;
+        }
+
+        return response()->json([
+            'status'  => 1,
+            'message' => 'Get orders successful',
+            'orders'  => $orders_arr
+        ]);
+    }
+
+    public function getOrderDetails($id) 
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+
+        $order = $user->orders->find($id);
+
+        if (!$order) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => 'Get order detail failed'
+            ]);
+        }
+
+        $product = Product::find($order->product_code);
+
+        return response()->json([
+            'status'  => 1,
+            'message' => 'Get order details successful',
+            'order'   => $order,
+            'product' => $product
+        ]);
+    }
+
     private function getBill($data)
     {
         $customer_number = $data['customer_number'];
@@ -680,7 +733,6 @@ class OrderController extends Controller
 
                 $validator = validator()->make($request->all(), [
                     'token_id' => 'required',
-                    'masked_card_number' => 'required'
                 ]);
 
                 if ($validator->fails()) {
@@ -691,7 +743,6 @@ class OrderController extends Controller
                 }
 
                 $token_id = $request->token_id;
-                $masked_card_number = $request->masked_card_number;
 
                 try {
                     Log::info("User $user_id is paying using Credit Card.");
@@ -718,19 +769,6 @@ class OrderController extends Controller
                 }
 
                 $payment_external_id = $response['id'];
-                $masked_card_number = $response['masked_card_number'];
-                $card_brand = ucfirst(strtolower($response['card_brand']));
-                $card_type  = ucfirst(strtolower($response['card_type']));
-                
-                CreditCardToken::updateOrCreate([
-                    'user_id' => $user_id,
-                    'masked_card_number' => $masked_card_number
-                ], [
-                    'token_id'      => $token_id,
-                    'masked_card_number' => $masked_card_number, 
-                    'card_brand'    => $card_brand,
-                    'card_type'     => $card_type
-                ]);
 
                 $order->payment_external_id = $payment_external_id;
                 $order->payment_method  = $payment_method;

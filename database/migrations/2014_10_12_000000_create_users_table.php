@@ -22,9 +22,11 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->double('balance')->default(0);
             $table->integer('status')->default(1);
-            $table->string('image_name')->nullable();
+            $table->string('image_name')->nullable()->default('default.jpg');
             $table->string('fcm_token_android')->nullable();
             $table->string('fcm_token_ios')->nullable();
+            $table->string('jwt_token')->nullable();
+            $table->string('pin_pattern')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
