@@ -108,8 +108,11 @@ class UserController extends Controller
         }
 
         $user = auth()->User();
+        $jwt_token_old = $user->jwt_token;
 
-        JWTAuth::invalidate($user->jwt_token);
+        if ($jwt_token_old) {
+            JWTAuth::invalidate($user->jwt_token);
+        }
 
         // update fcm token
         $device_type        = $request->device_type;
