@@ -111,7 +111,12 @@ class UserController extends Controller
         $jwt_token_old = $user->jwt_token;
 
         if ($jwt_token_old) {
-            JWTAuth::invalidate($user->jwt_token);
+            try {
+                JWTAuth::invalidate($jwt_token_old);
+            } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
+                // token is already invalid
+            }
+            
         }
 
         // update fcm token
