@@ -437,6 +437,33 @@ class UserController extends Controller
         ]);
     }
 
+    public function verifyPinPattern(Request $request)
+    {
+        $validator = validator()->make($request->all(), [
+            'pin_pattern'  => 'required|string|min:6',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => $validator->errors()->first()
+            ]);
+        }
+
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($user->pin_pattern != $request->pin_pattern) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => 'Pin salah.'
+            ]);
+        }
+
+        return response()->json([
+            'status'    => 1,
+            'message'   => 'Verify pin pattern successful'
+        ]);
+    }
+
 
     public function storeCreditCardToken(Request $request) 
     {

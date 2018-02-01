@@ -29,6 +29,7 @@ Route::post('/update-profile-picture', 'UserController@updateProfilePicture');
 Route::post('/update-fcm-token', 'UserController@updateFCMToken');
 Route::post('/verify-password', 'UserController@verifyPassword');
 Route::post('/save-pin-pattern', 'UserController@savePinPattern');
+Route::post('/verify-pin-pattern', 'UserController@verifyPinPattern');
 Route::get('/user', 'UserController@getUser');
 
 // balance detail
