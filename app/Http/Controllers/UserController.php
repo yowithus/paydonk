@@ -388,6 +388,7 @@ class UserController extends Controller
     public function verifyPassword(Request $request)
     {
         $validator = validator()->make($request->all(), [
+            'phone_number'  => 'required|regex:/^(\+62)[0-9]{9,11}$/',
             'password'      => 'required|string|min:6',
         ]);
 
