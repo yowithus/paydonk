@@ -398,9 +398,7 @@ class UserController extends Controller
             ]);
         }
 
-        $user = JWTAuth::parseToken()->authenticate();
-
-        $credentials = $request->only('password');
+        $credentials = $request->only('phone_number', 'password');
         if (! $token = JWTAuth::attempt($credentials)) {
             return response()->json([
                 'status'    => 0,
