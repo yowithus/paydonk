@@ -120,6 +120,7 @@ class DJIClient
                'productID'      => $data['dji_product_id'],
                'customerID'     => $data['customer_number'],
                'referenceID'    => $data['reference_id'], 
+               'periode'        => isset($data['period']) ? $data['period'] : ''
             ],
         ]);
 

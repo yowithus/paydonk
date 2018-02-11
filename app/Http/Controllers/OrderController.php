@@ -382,12 +382,14 @@ class OrderController extends Controller
             }
 
             $customer_number   = $request->customer_number;
+            $period = $request->period;
 
             $bill_result = $this->getBill([
                 'customer_number' => $customer_number,
                 'reference_id'   => $reference_id,
                 'dji_product_id' => $dji_product_id,
-                'product'        => $product
+                'product'        => $product,
+                'period'         => $period
             ]);
 
             if ($bill_result['status'] == 0) {
