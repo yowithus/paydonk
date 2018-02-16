@@ -45,11 +45,7 @@ Route::get('/banks/get-recipient', 'ProductController@getRecipientBanks');
 Route::get('/banks/get-sender', 'ProductController@getSenderBanks');
 
 // products
-Route::get('/products/get-pdam', 'ProductController@getPDAMProducts');
-Route::get('/products/get-pln', 'ProductController@getPrepaidPLNProducts');
-Route::get('/products/get-tv', 'ProductController@getTVProducts');
-Route::get('/products/get-finance', 'ProductController@getFinanceProducts');
-Route::post('/products/get-pulsa-postpaid', 'ProductController@getPostpaidPulsaProduct');
+Route::get('/products', 'ProductController@getProducts');
 
 // order
 Route::get('/orders', 'OrderController@getOrders');

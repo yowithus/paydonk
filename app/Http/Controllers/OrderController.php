@@ -340,6 +340,7 @@ class OrderController extends Controller
         
         $dji_product_id    = $product->dji_product_id;
         $product_category  = $product->category;
+        $product_type      = $product->type;
 
         $now_id            = Order::latest()->value('id') + 1;
         $reference_id      = sprintf("PD%s%05d", date('ym'), substr($now_id, -1, 5));
@@ -384,26 +385,34 @@ class OrderController extends Controller
             $customer_number   = $request->customer_number;
             $period = $request->period;
 
-            $bill_result = $this->getBill([
-                'customer_number' => $customer_number,
-                'reference_id'   => $reference_id,
-                'dji_product_id' => $dji_product_id,
-                'product'        => $product,
-                'period'         => $period
-            ]);
-
-            if ($bill_result['status'] == 0) {
-                return response()->json([
-                    'status'    => 0,
-                    'message'   => $bill_result['message']
+            if (in_array($product_category, ['Pulsa', 'Paket Data']) && $product_type == 'Prepaid') {
+                $customer_name = '';
+                $product_price = $product->price;
+                $admin_fee     = 0;
+                $order_amount  = $product_price;
+                $billing_period = '';
+            } else {
+                $bill_result = $this->getBill([
+                    'customer_number' => $customer_number,
+                    'reference_id'   => $reference_id,
+                    'dji_product_id' => $dji_product_id,
+                    'product'        => $product,
+                    'period'         => $period
                 ]);
+
+                if ($bill_result['status'] == 0) {
+                    return response()->json([
+                        'status'    => 0,
+                        'message'   => $bill_result['message']
+                    ]);
+                }
+                
+                $customer_name = ucwords(strtolower($bill_result['customer_name']));
+                $product_price = $bill_result['product_price'];
+                $admin_fee     = $bill_result['admin_fee'];
+                $order_amount  = $bill_result['order_amount'];
+                $billing_period = $bill_result['billing_period'];
             }
-            
-            $customer_name = ucwords(strtolower($bill_result['customer_name']));
-            $product_price = $bill_result['product_price'];
-            $admin_fee     = $bill_result['admin_fee'];
-            $order_amount  = $bill_result['order_amount'];
-            $billing_period = $bill_result['billing_period'];
         }
 
         $order = Order::create([
