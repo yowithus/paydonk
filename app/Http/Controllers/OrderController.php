@@ -678,7 +678,8 @@ class OrderController extends Controller
                     'reference_id'      => $reference_id, 
                     'product_price'     => $product_price,
                     'admin_fee'         => $admin_fee,
-                    'order_amount'      => $order_amount    
+                    'order_amount'      => $order_amount,
+                    'product_category'  => $product_category  
                 ]);
 
                 if (isset($result->rc) && $result->rc != '00') {
@@ -796,7 +797,8 @@ class OrderController extends Controller
                     'reference_id'      => $reference_id, 
                     'product_price'     => $product_price,
                     'admin_fee'         => $admin_fee,
-                    'order_amount'      => $order_amount    
+                    'order_amount'      => $order_amount,
+                    'product_category'  => $product_category   
                 ]);
 
                 if (isset($result->rc) && $result->rc != '00') {

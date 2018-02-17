@@ -133,15 +133,16 @@ class DJIClient
     public function payment($data)
     {
         $base_uri       = $this->base_uri;
-        $request_uri    = '/Services/Payment';
+        $request_uri    = (in_array($data['product_category'], ['Pulsa', 'Paket Data'])) ? '/Services/SinglePayment' : '/Services/Payment';
         $authorization  = $this->getAuthorization();
 
-        $result = $this->inquiry($data);
+        // get session id from sign on
+        $result = $this->signOn();
         if (isset($result->rc) && $result->rc != '00') {
             return $result;
         }
 
-        $session_id = $result->sessionID;
+        $session_id = $result->SessionID;
 
         $client = new \GuzzleHttp\Client(['base_uri' => $base_uri, 'verify' => false, 'exceptions' => false]);
         $response   = $client->post($request_uri, [

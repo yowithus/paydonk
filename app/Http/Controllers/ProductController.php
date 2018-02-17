@@ -12,18 +12,6 @@ class ProductController extends Controller
 {
     public function __construct()
     {
-    	$this->middleware('jwt.auth', ['except' => [
-            'getRecipientBanks', 
-            'getSenderBanks', 
-            'getProducts', 
-            'getPrepaidPLNProducts', 
-            'getPDAMProducts',
-            'getTVProducts',
-            'getFinanceProducts', 
-            'getGameProducts',
-            'getPostpaidPulsaProduct',
-            'getPrepaidPulsaProduct',
-        ]]);
     }  
 
     public function getRecipientBanks()
