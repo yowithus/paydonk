@@ -55,7 +55,7 @@ class ProductController extends Controller
 
         $category = $request->category;
 
-        $products = Product::selectRaw('name, variant_name, price, code, type, image_name')
+        $products = Product::selectRaw('name, if(variant_name is null, price, null) as price, if(variant_name is null, code, null) as code, type, image_name')
             ->where('category', $category);
 
         if ($category == 'PLN') {
@@ -79,7 +79,19 @@ class ProductController extends Controller
         }
 
         $products = $products->where('status', 1)
+            ->groupBy('name')
             ->get();
+
+        foreach ($products as $product) {
+            $product_variants = Product::selectRaw('variant_name as name, price, code')
+                ->where('category', $category)
+                ->where('name', $product->name)    
+                ->where('type', $product->type)
+                ->where('variant_name', '!=', null)
+                ->get();
+
+            $product->variants = (count($product_variants) > 0) ? $product_variants : null;
+        }
 
         return response()->json([
             'status'    => 1,

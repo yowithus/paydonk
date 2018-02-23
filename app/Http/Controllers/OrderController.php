@@ -130,10 +130,10 @@ class OrderController extends Controller
             }
 
         } else if ($product_category == 'PDAM') {
-            $customer_name  = trim($result->data->nama);
-            $admin_fee      = (int)$result->data->admin;
-            $product_price  = (int)$result->data->tagihan;
-            $order_amount   = (int)$result->data->total; 
+            $customer_name  = isset($result->data->nama) ? trim($result->data->nama) : null;
+            $admin_fee      = isset($result->data->admin) ? (int)$result->data->admin : 0;
+            $product_price  = isset($result->data->tagihan) ? (int)$result->data->tagihan : 0;
+            $order_amount   = isset($result->data->total) ? (int)$result->data->total : 0; 
 
             $broken_period = $result->data->rincian[0]->periode;
             $year   = substr($broken_period, 0, 4);
@@ -142,7 +142,7 @@ class OrderController extends Controller
             $billing_period = Date::create($year, $month)->format('F Y');
 
         } else if ($product_category == 'TV Kabel') {
-            $customer_name  = isset($result->data->nama) ? trim($result->data->nama) : '';
+            $customer_name  = isset($result->data->nama) ? trim($result->data->nama) : null;
             $broken_period  = '';
 
             // Transvision & Big TV & Topas TV
@@ -200,13 +200,13 @@ class OrderController extends Controller
 
                 $billing_period = Date::create($year, $month, $date)->format('d F Y');
             }
-        } else if ($product_category == 'Pulsa' || $product_category == 'Telepon' || $product_category == 'Angsuran Kredit') {
-            $customer_name  = isset($result->data->nama) ? trim($result->data->nama) : '';
+        } else if (in_array($product_category, ['Pulsa', 'Telepon', 'Angsuran Kredit', 'Voucher Game'])) {
+            $customer_name  = isset($result->data->nama) ? trim($result->data->nama) : null;
             $admin_fee      = isset($result->data->adminBank) ? (int)$result->data->adminBank : 0;
             $product_price  = isset($result->data->tagihan) ? (int)$result->data->tagihan : 0;
             $order_amount   = isset($result->data->total) ? (int)$result->data->total : 0; 
         } else if ($product_category == 'BPJS') {
-            $customer_name  = isset($result->data->nama) ? trim($result->data->nama) : '';
+            $customer_name  = isset($result->data->nama) ? trim($result->data->nama) : null;
             $admin_fee      = isset($result->data->adminBank) ? (int)$result->data->adminBank : 0;
             $order_amount   = isset($result->data->total) ? (int)$result->data->total : 0; 
             $product_price  = $order_amount - $admin_fee;

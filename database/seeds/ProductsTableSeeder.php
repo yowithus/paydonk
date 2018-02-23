@@ -24,7 +24,7 @@ class ProductsTableSeeder extends Seeder
                 'code'          => '1001',
                 'dji_product_id' => null,
                 'type'          => 'Prepaid',
-                'image_name'    => null,
+                'image_name'    => 'donkpet.png',
                 'status'        => 1,
             ],
 
@@ -37,7 +37,7 @@ class ProductsTableSeeder extends Seeder
                 'code'          => '1101',
                 'dji_product_id' => '100301',
                 'type'          => 'Postpaid',
-                'image_name'    => null,
+                'image_name'    => 'pln.png',
                 'status'        => 1,
             ],
 
@@ -50,7 +50,7 @@ class ProductsTableSeeder extends Seeder
 	            'code'          => '1111',
                 'dji_product_id' => '100302',
                 'type'          => 'Prepaid',
-                'image_name'    => null,
+                'image_name'    => 'pln.png',
                 'status'        => 1,
             ],
             [
@@ -61,7 +61,7 @@ class ProductsTableSeeder extends Seeder
                 'code'          => '1112',
                 'dji_product_id' => '100302',
                 'type'          => 'Prepaid',
-                'image_name'    => null,
+                'image_name'    => 'pln.png',
                 'status'        => 1,
             ],
             [
@@ -72,7 +72,7 @@ class ProductsTableSeeder extends Seeder
                 'code'          => '1113',
                 'dji_product_id' => '100302',
                 'type'          => 'Prepaid',
-                'image_name'    => null,
+                'image_name'    => 'pln.png',
                 'status'        => 1,
             ],
             [
@@ -83,7 +83,7 @@ class ProductsTableSeeder extends Seeder
                 'code'          => '1114',
                 'dji_product_id' => '100302',
                 'type'          => 'Prepaid',
-                'image_name'    => null,
+                'image_name'    => 'pln.png',
                 'status'        => 1,
             ],
             [
@@ -94,7 +94,7 @@ class ProductsTableSeeder extends Seeder
                 'code'          => '1115',
                 'dji_product_id' => '100302',
                 'type'          => 'Prepaid',
-                'image_name'    => null,
+                'image_name'    => 'pln.png',
                 'status'        => 1,
             ],
             [
@@ -105,7 +105,7 @@ class ProductsTableSeeder extends Seeder
                 'code'          => '1107',
                 'dji_product_id' => '100302',
                 'type'          => 'Prepaid',
-                'image_name'    => null,
+                'image_name'    => 'pln.png',
                 'status'        => 1,
             ],
 
@@ -1613,7 +1613,7 @@ class ProductsTableSeeder extends Seeder
             // Voucher Game
             [
                 'name'          => 'Aeria Games',
-                'variant_name'  => 'GAR-510',
+                'variant_name'  => 'Aerial 5.10 Points',
                 'category'      => 'Voucher Game',
                 'price'         => null,
                 'code'          => '2001',
@@ -1624,21 +1624,10 @@ class ProductsTableSeeder extends Seeder
             ],
             [
                 'name'          => 'Aeria Games',
-                'variant_name'  => 'GAR-2120',
+                'variant_name'  => 'Aerial 1.040 Points',
                 'category'      => 'Voucher Game',
                 'price'         => null,
                 'code'          => '2002',
-                'dji_product_id' => '6246AA',
-                'type'          => 'Prepaid',
-                'image_name'    => null,
-                'status'        => 1,
-            ],
-            [
-                'name'          => 'Aeria Games',
-                'variant_name'  => 'GAR-1040',
-                'category'      => 'Voucher Game',
-                'price'         => null,
-                'code'          => '2003',
                 'dji_product_id' => '6123AA',
                 'type'          => 'Prepaid',
                 'image_name'    => null,
@@ -1646,7 +1635,18 @@ class ProductsTableSeeder extends Seeder
             ],
             [
                 'name'          => 'Aeria Games',
-                'variant_name'  => 'GAR-3240',
+                'variant_name'  => 'Aerial 2.120 Points',
+                'category'      => 'Voucher Game',
+                'price'         => null,
+                'code'          => '2003',
+                'dji_product_id' => '6246AA',
+                'type'          => 'Prepaid',
+                'image_name'    => null,
+                'status'        => 1,
+            ],
+            [
+                'name'          => 'Aeria Games',
+                'variant_name'  => 'Aerial 3.240 Points',
                 'category'      => 'Voucher Game',
                 'price'         => null,
                 'code'          => '2004',
@@ -1657,7 +1657,7 @@ class ProductsTableSeeder extends Seeder
             ],
             [
                 'name'          => 'Aeria Games',
-                'variant_name'  => 'GAR-5500',
+                'variant_name'  => 'Aerial 5.500 Points',
                 'category'      => 'Voucher Game',
                 'price'         => null,
                 'code'          => '2005',
@@ -1668,7 +1668,7 @@ class ProductsTableSeeder extends Seeder
             ],
             [
                 'name'          => 'Aeria Games',
-                'variant_name'  => 'GAR-8550',
+                'variant_name'  => 'Aerial 8.550 Points',
                 'category'      => 'Voucher Game',
                 'price'         => null,
                 'code'          => '2006',
@@ -1681,7 +1681,7 @@ class ProductsTableSeeder extends Seeder
             // Asiasoft SEA
             [
                 'name'          => 'Asiasoft SEA',
-                'variant_name'  => 'GAC-V5000',
+                'variant_name'  => '@Cash 5.000 ',
                 'category'      => 'Voucher Game',
                 'price'         => null,
                 'code'          => '2011',
@@ -1692,7 +1692,7 @@ class ProductsTableSeeder extends Seeder
             ],
             [
                 'name'          => 'Asiasoft SEA',
-                'variant_name'  => 'GAC-V10000',
+                'variant_name'  => '@Cash 10.000',
                 'category'      => 'Voucher Game',
                 'price'         => null,
                 'code'          => '2012',
@@ -1703,7 +1703,7 @@ class ProductsTableSeeder extends Seeder
             ],
             [
                 'name'          => 'Asiasoft SEA',
-                'variant_name'  => 'GAC-V30000',
+                'variant_name'  => '@Cash 30.000',
                 'category'      => 'Voucher Game',
                 'price'         => null,
                 'code'          => '2013',
@@ -1716,7 +1716,7 @@ class ProductsTableSeeder extends Seeder
             // Cherry Credits
             [
                 'name'          => 'Cherry Credits',
-                'variant_name'  => 'VCC-V50',
+                'variant_name'  => '5.000 CC',
                 'category'      => 'Voucher Game',
                 'price'         => null,
                 'code'          => '2021',
@@ -1727,7 +1727,7 @@ class ProductsTableSeeder extends Seeder
             ],
             [
                 'name'          => 'Cherry Credits',
-                'variant_name'  => 'VCC-V100',
+                'variant_name'  => '10.000 CC',
                 'category'      => 'Voucher Game',
                 'price'         => null,
                 'code'          => '2022',
@@ -1738,7 +1738,7 @@ class ProductsTableSeeder extends Seeder
             ],
             [
                 'name'          => 'Cherry Credits',
-                'variant_name'  => 'VCC-V300',
+                'variant_name'  => '30.000 CC',
                 'category'      => 'Voucher Game',
                 'price'         => null,
                 'code'          => '2023',
@@ -1751,7 +1751,7 @@ class ProductsTableSeeder extends Seeder
             // E Games Hub
             [
                 'name'          => 'E Games Hub',
-                'variant_name'  => 'GEP-500P',
+                'variant_name'  => 'EP Points 500',
                 'category'      => 'Voucher Game',
                 'price'         => null,
                 'code'          => '2031',
@@ -1762,7 +1762,7 @@ class ProductsTableSeeder extends Seeder
             ],
             [
                 'name'          => 'E Games Hub',
-                'variant_name'  => 'GEP-2000P',
+                'variant_name'  => 'EP Points 2.000',
                 'category'      => 'Voucher Game',
                 'price'         => null,
                 'code'          => '2032',
@@ -1773,7 +1773,7 @@ class ProductsTableSeeder extends Seeder
             ],
             [
                 'name'          => 'E Games Hub',
-                'variant_name'  => 'GEP-5000P',
+                'variant_name'  => 'EP Points 5.0000',
                 'category'      => 'Voucher Game',
                 'price'         => null,
                 'code'          => '2033',
@@ -1786,7 +1786,7 @@ class ProductsTableSeeder extends Seeder
             // Funnel Asia
             [
                 'name'          => 'Funnel Asia',
-                'variant_name'  => 'GFP-V300',
+                'variant_name'  => 'Funnel Points 300',
                 'category'      => 'Voucher Game',
                 'price'         => null,
                 'code'          => '2041',
@@ -1797,7 +1797,7 @@ class ProductsTableSeeder extends Seeder
             ],
             [
                 'name'          => 'Funnel Asia',
-                'variant_name'  => 'GFP-V1000',
+                'variant_name'  => 'Funnel Points 1000',
                 'category'      => 'Voucher Game',
                 'price'         => null,
                 'code'          => '2042',
@@ -1808,7 +1808,7 @@ class ProductsTableSeeder extends Seeder
             ],
             [
                 'name'          => 'Funnel Asia',
-                'variant_name'  => 'GFP-V2000',
+                'variant_name'  => 'Funnel Points 2000',
                 'category'      => 'Voucher Game',
                 'price'         => null,
                 'code'          => '2043',
@@ -1819,7 +1819,7 @@ class ProductsTableSeeder extends Seeder
             ],
             [
                 'name'          => 'Funnel Asia',
-                'variant_name'  => 'GFP-V5000',
+                'variant_name'  => 'Funnel Points 5000',
                 'category'      => 'Voucher Game',
                 'price'         => null,
                 'code'          => '2044',
@@ -1832,7 +1832,7 @@ class ProductsTableSeeder extends Seeder
             // Gameview
             [
                 'name'          => 'Gameview',
-                'variant_name'  => 'GGV-100P',
+                'variant_name'  => 'GV Points 100',
                 'category'      => 'Voucher Game',
                 'price'         => null,
                 'code'          => '2051',
@@ -1843,7 +1843,7 @@ class ProductsTableSeeder extends Seeder
             ],
             [
                 'name'          => 'Gameview',
-                'variant_name'  => 'GGV-300P',
+                'variant_name'  => 'GV Points 300',
                 'category'      => 'Voucher Game',
                 'price'         => null,
                 'code'          => '2052',
@@ -1854,7 +1854,7 @@ class ProductsTableSeeder extends Seeder
             ],
             [
                 'name'          => 'Gameview',
-                'variant_name'  => 'GGV-500P',
+                'variant_name'  => 'GV Points 500',
                 'category'      => 'Voucher Game',
                 'price'         => null,
                 'code'          => '2053',
@@ -1865,7 +1865,7 @@ class ProductsTableSeeder extends Seeder
             ],
             [
                 'name'          => 'Gameview',
-                'variant_name'  => 'GGV-1000P',
+                'variant_name'  => 'GV Points 1000',
                 'category'      => 'Voucher Game',
                 'price'         => null,
                 'code'          => '2054',
@@ -1876,7 +1876,7 @@ class ProductsTableSeeder extends Seeder
             ],
             [
                 'name'          => 'Gameview',
-                'variant_name'  => 'GGV-2000P',
+                'variant_name'  => 'GV Points 2000',
                 'category'      => 'Voucher Game',
                 'price'         => null,
                 'code'          => '2055',
