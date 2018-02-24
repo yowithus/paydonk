@@ -1,14 +1,36 @@
 <?php
 
 // global variables
+define('PRODUCT_CATEGORIES', [
+  'Saldo',
+  'PLN',
+  'PDAM',
+  'TV Kabel',
+  'Pulsa',
+  'Paket Data',
+  'Telkom',
+  'Angsuran Kredit',
+  'BPJS',
+  'Voucher Game',
+  'Streaming',
+]);
+
 define('ORDER_STATUSES', [
-    1   => 'Menunggu',
-    2   => 'Pilih Pembayaran',
-    3   => 'Menunggu Pembayaran',
-    4   => 'Memverifikasi Pembayaran',
-    5   => 'Sedang Diproses',
-    6   => 'Berhasil',
-    7   => 'Dibatalkan'
+  'voided'              => 0,
+  'pending_created'     => 1,
+  'pending_selection'   => 2,
+  'pending_payment'     => 3,
+  'pending_verification'=> 4, // for bank transfer
+  'pending_processing'  => 5,
+  'completed'           => 6,
+  'cancelled'           => 7
+]);
+
+define('BALANCE_TYPES', [
+  'Top Up',
+  'Payment',
+  'Refund',
+  'Admin'
 ]);
 
 define('OPERATOR_PREFIXES', [

@@ -27,6 +27,8 @@ Route::get('/admin/category-statistic', 'AdminController@getCategoryStatistic');
 // users
 Route::get('/admin/users', 'AdminController@getUsers');
 Route::patch('/admin/users/{user}/status', 'AdminController@updateStatusUser');
+Route::patch('/admin/users/{user}', 'AdminController@updateUser');
+Route::post('/admin/users/{user}/add-balance', 'AdminController@addBalance');
 
 // balance details
 Route::get('/admin/balance-details', 'AdminController@getBalanceDetails');

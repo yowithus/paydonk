@@ -5,8 +5,6 @@
     <div class="col-md-12">
         <div class="box">
             <div class="box-header with-border">
-                <h3 class="box-title">Order List</h3>
-
                 @if (count($errors) > 0)
                     <div class="alert alert-danger">
                         <ul>
@@ -17,30 +15,39 @@
                     </div>
                 @endif
 
+                @if (session('success'))
+                    <div class="alert alert-success">
+                        <p>{{ session('success') }}</p>
+                    </div>
+                @endif
+
+                <h3 class="box-title">Order List</h3>
                 <form action="{{ url('admin/orders') }}" method="GET" class="form-horizontal" style="margin-top: 10px;">
                     <div class="box-body">
                         <div class="form-group">
                             <label class="col-sm-1 control-label">Order</label>
-                            <div class="col-sm-2">
+                            <div class="col-sm-3">
                                 <input type="text" class="form-control" name="reference_id" value="{{ Request::get('reference_id') }}" placeholder="Reference ID">
                             </div>
 
                             <label class="col-sm-1 control-label">Status</label>
                             <div class="col-sm-3">
+
                                 <select class="form-control" name="status">
                                     <option value="All" @if (Request::get('status') == 'All') selected @endif>All</option>
-                                    @foreach ($statuses as $status => $status_text)
-                                        <option value="{{ $status }}" 
-                                        @if (Request::get('status') == $status) selected
-                                        @elseif (Request::get('status') == '' && $status == 4) selected 
-                                        @endif>{{ $status_text }}</option>
+                                    @foreach ($statuses as $status_key => $status_val)
+                                        @if ($status_key == 'voided') @continue @endif
+                                        <option value="{{ $status_val }}" 
+                                        @if (Request::get('status') == $status_val) selected
+                                        @elseif (Request::get('status') == '' && $status_key == 'pending_verification') selected 
+                                        @endif>{{ trans("state.$status_key") }}</option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-1 control-label">Email</label>
-                            <div class="col-sm-2">
+                            <div class="col-sm-3">
                                 <input type="text" class="form-control" name="email" value="{{ Request::get('email') }}" placeholder="Email">
                             </div>
 
@@ -51,16 +58,12 @@
                         </div>
                         <div class="form-group">
                             <label class="col-sm-1 control-label">Product</label>
-                            <div class="col-sm-2">
+                            <div class="col-sm-3">
                                 <select class="form-control" name="product_category">
                                     <option value="" @if (Request::get('product_category') == '') selected @endif>All</option>
-                                    <option value="Saldo" @if (Request::get('product_category') == 'Saldo') selected @endif>Saldo</option>
-                                    <option value="PLN" @if (Request::get('product_category') == 'PLN') selected @endif>PLN</option>
-                                    <option value="PDAM" @if (Request::get('product_category') == 'PDAM') selected @endif>PDAM</option>
-                                    <option value="TV Kabel" @if (Request::get('product_category') == 'TV Kabel') selected @endif>TV Kabel</option>
-                                    <option value="Pulsa" @if (Request::get('product_category') == 'Pulsa') selected @endif>Pulsa</option>
-                                    <option value="TV Kabel" @if (Request::get('product_category') == 'Telepon') selected @endif>Telepon</option>
-                                    <option value="Angsuran Kredit" @if (Request::get('product_category') == 'Angsuran Kredit') selected @endif>Angsuran Kredit</option>
+                                    @foreach ($product_categories as $category)
+                                    <option value="{{ $category }}" @if (Request::get('product_category') == $category) selected @endif>{{ $category }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -88,25 +91,25 @@
                             <tr>
                                 <td>
                                     #{{ $order->reference_id }}<br>
-                                    {{ 'Rp ' . number_format($order->order_amount) }}<br>
-                                    {{ $statuses[$order->status] }}
+                                    {{ 'Rp ' . number_format($order->order_amount, 0, '', '.') }}<br>
+                                    {{ trans('state.' . array_search($order->status, $statuses)) }}
 
-                                    @if ($order->status == 7)
+                                    @if ($order->status == $statuses['cancelled'])
                                     karena: <br>{{ $order->cancellation_reason }}
                                     @endif
 
                                     @if ($order->refund)
-                                    <br>Refunded: {{ 'Rp ' . number_format($order->refund->amount) }}
+                                    <br>Refunded: {{ 'Rp ' . number_format($order->refund->amount, 0, '', '.') }}
                                     @endif
                                 </td>
                                 <td>
                                     @if ($order->promo)
                                     {{ $order->promo->code }}<br>
-                                    {{ 'Rp ' . number_format($order->discount_amount) }}
+                                    {{ 'Rp ' . number_format($order->discount_amount, 0, '', '.') }}
                                     @endif
                                 </td>
                                 <td>
-                                    {{ 'Rp ' . number_format($order->payment_amount) }}<br>
+                                    {{ 'Rp ' . number_format($order->payment_amount, 0, '', '.') }}<br>
                                     {{ $order->payment_method }}<br>
 
                                     @if ($order->bank_transfer)
@@ -139,11 +142,11 @@
                                 </td>
                                 <td>{{ Carbon\Carbon::parse($order->created_at)->format('M d, Y | g.i A') }}</td>
                                 <td>
-                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#verify-order-{{ $order->id }}" @if ($order->status != 4) disabled @endif>Verify</button><br>
+                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#verify-order-{{ $order->id }}" @if ($order->status != $statuses['pending_verification']) disabled @endif>Verify</button><br>
 
-                                    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#cancel-order-{{ $order->id }}" @if ($order->status == 6 || $order->status == 7) disabled @endif>Cancel</button><br>
+                                    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#cancel-order-{{ $order->id }}" @if ($order->status == $statuses['completed'] || $order->status == $statuses['cancelled']) disabled @endif>Cancel</button><br>
 
-                                    <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#refund-order-{{ $order->id }}" @if ($order->status == 6 || $order->refund) disabled @endif>Refund</button>
+                                    <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#refund-order-{{ $order->id }}" @if ($order->status == $statuses['completed'] || $order->refund) disabled @endif>Refund</button>
                                 </td>
                             </tr>
                             @endforeach

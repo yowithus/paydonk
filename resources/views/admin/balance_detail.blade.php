@@ -10,12 +10,12 @@
                     <div class="box-body">
                         <div class="form-group">
                             <label class="col-sm-1 control-label">Email</label>
-                            <div class="col-sm-2">
+                            <div class="col-sm-3">
                                 <input type="text" class="form-control" name="email" value="{{ Request::get('email') }}" placeholder="Email">
                             </div>
 
-                            <label class="col-sm-2 control-label">Phone Number</label>
-                            <div class="col-sm-2">
+                            <label class="col-sm-1 control-label">Phone</label>
+                            <div class="col-sm-3">
                                 <input type="text" class="form-control" name="phone_number" value="{{ Request::get('phone_number') }}" placeholder="Phone Number">
                             </div>
                         </div>
@@ -23,6 +23,16 @@
                             <label class="col-sm-1 control-label">Date</label>
                             <div class="col-sm-3">
                                 <input type="text" class="form-control" id="date" name="date" value="{{ Request::get('date') }}" required>
+                            </div>
+
+                            <label class="col-sm-1 control-label">Type</label>
+                            <div class="col-sm-3">
+                                <select class="form-control" name="type">
+                                    <option value="" @if (Request::get('type') == '') selected @endif>All</option>
+                                    @foreach ($types as $type)
+                                    <option value="{{ $type }}" @if (Request::get('type') == $type) selected @endif>{{ $type }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                         <a href="{{ url('/admin/balance-details') }}"><button type="button" class="btn btn-primary">Clear</button></a>
@@ -50,12 +60,13 @@
                                 <td>{{ $balance_detail->id }}</td>
                                 <td>{{ $balance_detail->type }}</td>
                                 <td>
-                                    #{{ $balance_detail->order->reference_id }}
-                                    <br>
-                                    {{ 'Rp '.number_format($balance_detail->amount) }}
+                                    @if ($balance_detail->order_id) 
+                                        #{{ $balance_detail->order->reference_id }} <br>
+                                    @endif
+                                    {{ 'Rp '.number_format($balance_detail->amount, 0, '', '.') }}
                                 </td>
-                                <td>{{ 'Rp '.number_format($balance_detail->previous_amount) }}</td>
-                                <td>{{ 'Rp '.number_format($balance_detail->current_amount) }}</td>
+                                <td>{{ 'Rp '.number_format($balance_detail->previous_amount, 0, '', '.') }}</td>
+                                <td>{{ 'Rp '.number_format($balance_detail->current_amount, 0, '', '.') }}</td>
                                 <td>
                                     {{ $balance_detail->user->first_name . ' ' . $balance_detail->user->last_name }}<br>
                                     {{ $balance_detail->user->email }}<br>

@@ -10,20 +10,16 @@
                     <div class="box-body">
                         <div class="form-group">
                             <label class="col-sm-1 control-label">Category</label>
-                            <div class="col-sm-2">
+                            <div class="col-sm-3">
                                 <select class="form-control" name="category">
-                                    <option value="Saldo" @if (Request::get('category') == 'Saldo') selected @endif>Saldo</option>
-                                    <option value="PLN" @if (Request::get('category') == 'PLN') selected @endif>PLN</option>
-                                    <option value="PDAM" @if (Request::get('category') == 'PDAM') selected @endif>PDAM</option>
-                                    <option value="TV Kabel" @if (Request::get('category') == 'TV Kabel') selected @endif>TV Kabel</option>
-                                    <option value="Pulsa" @if (Request::get('category') == 'Pulsa') selected @endif>Pulsa</option>
-                                    <option value="TV Kabel" @if (Request::get('category') == 'Telepon') selected @endif>Telepon</option>
-                                    <option value="Angsuran Kredit" @if (Request::get('category') == 'Angsuran Kredit') selected @endif>Angsuran Kredit</option>
+                                    @foreach($categories as $category)
+                                    <option value="{{ $category }}" @if (Request::get('category') == $category) selected @endif>{{ $category }}</option>
+                                    @endforeach
                                 </select>
                             </div>
 
-                            <label class="col-sm-2 control-label">Type</label>
-                            <div class="col-sm-2">
+                            <label class="col-sm-1 control-label">Type</label>
+                            <div class="col-sm-3">
                                 <select class="form-control" name="type">
                                     <option value="All" @if (Request::get('type') == 'All') selected @endif>All</option>
                                     <option value="Postpaid" @if (Request::get('type') == 'Postpaid') selected @endif>Postpaid</option>

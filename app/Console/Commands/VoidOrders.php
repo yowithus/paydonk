@@ -40,10 +40,10 @@ class VoidOrders extends Command
      */
     public function handle()
     {
-        $void_orders_count = Order::whereIn('status', [1, 2, 3])
+        $void_orders_count = Order::whereIn('status', [ORDER_STATUSES['pending_created'], ORDER_STATUSES['pending_selection'], ORDER_STATUSES['pending_payment']])
             ->where('updated_at', '<=', Carbon::now()->addMinutes(-30))
             ->update([
-                'status' => 0
+                'status' => ORDER_STATUSES['voided']
             ]);
 
         $this->info(Carbon::now() . ' : ' . $void_orders_count . ' orders have been voided successfully!');

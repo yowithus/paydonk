@@ -36,18 +36,18 @@ class AdminController extends Controller
         $users_count = User::whereBetween('created_at', [$last_month, $today])
             ->count();
 
-        $topup_orders_count = Order::where('status', 6)
+        $topup_orders_count = Order::where('status', ORDER_STATUSES['completed'])
             ->where('product_code', 'like', '10%')
             ->whereBetween('created_at', [$last_month, $today])
             ->count();
 
-        $orders_count = Order::where('status', 6)
+        $orders_count = Order::where('status', ORDER_STATUSES['completed'])
             ->where('product_code', 'not like', '10%')
             ->whereBetween('created_at', [$last_month, $today])
             ->count();
  
         $total_revenue = Order::select(DB::raw('sum(payment_amount) as total_revenue'))
-            ->where('status', 6)
+            ->where('status', ORDER_STATUSES['completed'])
             ->whereBetween('created_at', [$last_month, $today])
             ->value('total_revenue');
 
@@ -71,7 +71,7 @@ class AdminController extends Controller
         $last_month = Carbon::now()->subDays(30);
 
         $sales = Order::select(DB::raw('date(created_at) as date, sum(payment_amount) as revenue'))
-            ->where('status', 6)
+            ->where('status', ORDER_STATUSES['completed'])
             ->whereBetween('created_at', [$last_month, $today])
             ->groupBy('date')
             ->pluck('revenue', 'date')
@@ -92,7 +92,7 @@ class AdminController extends Controller
 
         $sales = Order::select(DB::raw('products.category, sum(orders.payment_amount) as revenue'))
             ->join('products', 'orders.product_code', '=', 'products.code')
-            ->where('orders.status', 6)
+            ->where('orders.status', ORDER_STATUSES['completed'])
             ->whereBetween('orders.created_at', [$last_month, $today])
             ->groupBy('products.category')
             ->pluck('revenue', 'category')
@@ -100,16 +100,7 @@ class AdminController extends Controller
 
         return [
             'sales' => $sales,
-            'categories' => [
-                'Saldo', 
-                'PLN', 
-                'PDAM', 
-                'TV Kabel', 
-                'Pulsa', 
-                'Telkom', 
-                'Angsuran Kredit', 
-                'BPJS'
-            ]
+            'categories' => PRODUCT_CATEGORIES
         ];
     }
 
@@ -150,6 +141,34 @@ class AdminController extends Controller
     }
 
     /**
+     * Update user.
+     */
+    public function updateUser(Request $request, User $user)
+    {   
+        $validator = validator()->make($request->all(), [
+            'first_name'    => 'required|regex:/^[\pL\s\-]+$/u|min:2|max:30',
+            'last_name'     => 'required|regex:/^[\pL\s\-]+$/u|min:2|max:30',
+            'phone_number'  => 'required|regex:/^(\+62)[0-9]{9,11}$/|unique:users,email,'.$user->id,
+            'email'         => 'required|email|max:50|unique:users,email,'.$user->id,
+            'role'          => 'required|in:User,Admin',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator->errors());
+        }
+
+        $user->update([
+            'first_name'    => $request->first_name,
+            'last_name'     => $request->last_name,
+            'phone_number'  => $request->phone_number,
+            'email'         => $request->email,
+            'role'          => $request->role,
+        ]);
+
+        return redirect()->back()->withSuccess('Update user is successful.');
+    }
+
+    /**
      * Update user status.
      */
     public function updateStatusUser(Request $request, User $user)
@@ -160,7 +179,41 @@ class AdminController extends Controller
             'status' => $status,
         ]);
 
-        return redirect('admin/users');
+        return redirect()->back()->withSuccess('Update user status is successful.');
+    }
+
+    /**
+     * Add balance.
+     */
+    public function addBalance(Request $request, User $user)
+    {   
+        $validator = validator()->make($request->all(), [
+            'amount'    => 'required|numeric|min:5000',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator->errors());
+        }
+
+        $user_id   = $user->id;
+        $balance   = $user->balance;
+        $amount    = $request->amount;
+        $current_amount = $balance + $amount;
+
+        $user->update([
+            'balance' => $current_amount
+        ]);
+
+        BalanceDetail::create([
+            'user_id'           => $user_id,
+            'order_id'          => 0,
+            'amount'            => $amount,
+            'previous_amount'   => $balance,
+            'current_amount'    => $current_amount,
+            'type'              => 'Admin'
+        ]);
+
+        return redirect()->back()->withSuccess('Add balance is successful.');
     }
 
     /**
@@ -170,6 +223,7 @@ class AdminController extends Controller
     {
         $email         = $request->email;
         $phone_number  = $request->phone_number;
+        $type          = $request->type;
         $date          = $request->date;
 
         $balance_details = BalanceDetail::join('users', 'balance_details.user_id', '=', 'users.id')
@@ -182,6 +236,10 @@ class AdminController extends Controller
 
         if ($phone_number) {
             $balance_details->where('users.phone_number', $phone_number);
+        }
+
+        if ($type) {
+            $balance_details->where('balance_details.type', $type);
         }
 
         if ($date) {
@@ -197,7 +255,8 @@ class AdminController extends Controller
 
         return view('admin/balance_detail', [
             'page_title'      => 'Balance Details',
-            'balance_details' => $balance_details
+            'balance_details' => $balance_details,
+            'types'     => BALANCE_TYPES
         ]);
     }
 
@@ -232,7 +291,7 @@ class AdminController extends Controller
                 $orders->where('orders.status', $status);
             }
         } else {
-            $orders->where('orders.status', 4);
+            $orders->where('orders.status', ORDER_STATUSES['pending_verification']);
         }
 
         if ($product_category) {
@@ -251,9 +310,10 @@ class AdminController extends Controller
         $orders->withPath("/admin/orders?reference_id=$reference_id&email=$email&status=$status&date=$date");
 
         return view('admin/order', [
-            'page_title'   => 'Orders',
-            'orders'    => $orders,
-            'statuses'  => ORDER_STATUSES
+            'page_title' => 'Orders',
+            'orders'     => $orders,
+            'statuses'   => ORDER_STATUSES,
+            'product_categories' => PRODUCT_CATEGORIES
         ]);
     }
 
@@ -265,12 +325,12 @@ class AdminController extends Controller
         $order_id   = $request->order_id;
 
         $order  = Order::where('id', $order_id)
-            ->where('status', 4)
+            ->where('status', ORDER_STATUSES['pending_verification'])
             ->where('payment_method', 'Bank Transfer')
             ->first();
 
         if (!$order) {
-            return redirect('admin/orders')->withErrors('Order tidak ditemukan atau sudah berhasil.');
+            return redirect('admin/orders')->withErrors('Order is not found or has been confirmed.');
         }
 
         $user_id    = $order->user_id;
@@ -300,11 +360,11 @@ class AdminController extends Controller
                 'type'              => 'Top up'
             ]);
 
-            $order->status = 6;
+            $order->status = ORDER_STATUSES['completed'];
             $order->save();
 
         } else {
-            $order->status = 5;
+            $order->status = ORDER_STATUSES['pending_processing'];
             $order->save();
 
             $dji_product_id = $product->dji_product_id;
@@ -325,14 +385,14 @@ class AdminController extends Controller
             ]);
 
             if (isset($result->rc) && $result->rc != '00') {
-                return redirect('admin/orders')->withErrors([$result->rc . ': ' . trim($result->description)]);
+                return redirect()->back()->withErrors([$result->rc . ': ' . trim($result->description)]);
             }
 
-            $order->status = 6;
+            $order->status = ORDER_STATUSES['completed'];
             $order->save();
         }
 
-        return redirect('admin/orders');
+        return redirect()->back()->withSuccess('Verify order is successful.');
     }
 
     /**
@@ -352,18 +412,18 @@ class AdminController extends Controller
         $cancellation_reason = $request->cancellation_reason;
 
         $order  = Order::where('id', $order_id)
-            ->where('status', '!=', 6)
+            ->where('status', '!=', ORDER_STATUSES['completed'])
             ->first();
 
         if (!$order) {
-            return redirect('admin/orders')->withErrors('Order tidak ditemukan atau sudah berhasil.');
+            return redirect('admin/orders')->withErrors('Order is not found or has been confirmed.');
         }
 
         $order->cancellation_reason = $cancellation_reason;
-        $order->status = 7;
+        $order->status = ORDER_STATUSES['cancelled'];
         $order->save();
 
-        return redirect('admin/orders');
+        return redirect()->back()->withSuccess('Cancel order is successful.');
     }
 
     /**
@@ -383,11 +443,11 @@ class AdminController extends Controller
         $refund_amount = $request->refund_amount;
 
         $order  = Order::where('id', $order_id)
-            ->where('status', '!=', 6)
+            ->where('status', '!=', ORDER_STATUSES['completed'])
             ->first();
 
         if (!$order) {
-            return redirect('admin/orders')->withErrors('Order tidak ditemukan atau sudah berhasil.');
+            return redirect('admin/orders')->withErrors('Order is not found or has been confirmed.');
         }
 
         $user_id    = $order->user_id;
@@ -414,7 +474,7 @@ class AdminController extends Controller
             'status'     => 1
         ]);
 
-        return redirect('admin/orders');
+        return redirect()->back()->withSuccess('Refund order is successful.');
     }
 
 
@@ -443,7 +503,8 @@ class AdminController extends Controller
 
         return view('admin/product', [
             'page_title'    => 'Products',
-            'products'      => $products
+            'products'      => $products,
+            'categories'    => PRODUCT_CATEGORIES
         ]);
     }
 
@@ -458,7 +519,7 @@ class AdminController extends Controller
             'status' => $status,
         ]);
 
-        return redirect('admin/products');
+        return redirect()->back()->withSuccess('Update product status is successful.');
     }
 
     /**
@@ -486,7 +547,7 @@ class AdminController extends Controller
             'status' => $status,
         ]);
 
-        return redirect('admin/recipient-banks');
+        return redirect()->back()->withSuccess('Update recipient bank status is successful.');
     }
 
     /**
@@ -514,6 +575,6 @@ class AdminController extends Controller
             'status' => $status,
         ]);
 
-        return redirect('admin/sender-banks');
+        return redirect()->back()->withSuccess('Update sender bank status is successful.');
     }
 }

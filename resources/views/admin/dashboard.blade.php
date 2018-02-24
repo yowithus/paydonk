@@ -31,7 +31,7 @@
             <span class="info-box-icon bg-green"><i class="fa fa-shopping-cart"></i></span>
 
             <div class="info-box-content">
-                <span class="info-box-text">Orders Success</span>
+                <span class="info-box-text">Orders Completed</span>
                 <span class="info-box-number">{{ $orders_count }}</span>
             </div>
         </div>

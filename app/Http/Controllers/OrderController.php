@@ -30,7 +30,7 @@ class OrderController extends Controller
 
         $orders_arr = [];
         $orders = $user->orders()
-            ->where('status', '!=', 0)
+            ->where('status', '!=', ORDER_STATUSES['voided'])
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -43,8 +43,7 @@ class OrderController extends Controller
 
         foreach ($orders as $order) {
             $product     = Product::find($order->product_code);
-            $status_text = ORDER_STATUSES[$order->status];
-            $order->status_text = $status_text;
+            $order->status_text = trans('state.' . array_search($order->status, ORDER_STATUSES));
 
             $order_obj = [
                 'order' => $order,
@@ -431,7 +430,7 @@ class OrderController extends Controller
             'payment_amount'    => $order_amount,
             'customer_name'     => $customer_name,
             'billing_period'    => $billing_period,
-            'status'            => 1
+            'status'            => ORDER_STATUSES['pending_created']
         ]);
 
         return response()->json([
@@ -454,7 +453,7 @@ class OrderController extends Controller
         // order
         $order  = Order::where('id', $order_id)
             ->where('user_id', $user_id)
-            ->where('status', 1)
+            ->where('status', ORDER_STATUSES['pending_created'])
             ->first();
         
         if (!$order) {
@@ -464,7 +463,7 @@ class OrderController extends Controller
             ]);
         }
 
-        $order->status = 2;
+        $order->status = ORDER_STATUSES['pending_selection'];
         $order->temp_promo_code = $promo_code;
         $order->save();
 
@@ -499,7 +498,7 @@ class OrderController extends Controller
         // order
         $order   = Order::where('id', $order_id)
             ->where('user_id', $user_id)
-            ->whereIn('status', [1,2])
+            ->whereIn('status', [ORDER_STATUSES['pending_created'], ORDER_STATUSES['pending_selection']])
             ->first();
         
         if (!$order) {
@@ -544,7 +543,7 @@ class OrderController extends Controller
             }
         }
 
-        $order->status  = 3;
+        $order->status  = ORDER_STATUSES['pending_payment'];
         $order->payment_amount  = $payment_amount;
         $order->payment_method  = $payment_method;
         $order->save();
@@ -568,7 +567,7 @@ class OrderController extends Controller
         // order
         $order   = Order::where('id', $order_id)
             ->where('user_id', $user_id)
-            ->where('status', 3)
+            ->where('status', ORDER_STATUSES['pending_payment'])
             ->first();
         
         if (!$order) {
@@ -654,7 +653,7 @@ class OrderController extends Controller
                 $order->promo_id        = $promo_id;
                 $order->discount_amount = $discount_amount;
                 $order->payment_amount  = $payment_amount;
-                $order->status          = 4;
+                $order->status          = ORDER_STATUSES['pending_verification'];
                 $order->save();
 
                 $payment_due_date = date('Y-m-d H:i:s', strtotime('+1 days'));
@@ -702,7 +701,7 @@ class OrderController extends Controller
                 $order->promo_id        = $promo_id;
                 $order->discount_amount = $discount_amount;
                 $order->payment_amount  = $payment_amount;
-                $order->status          = 6;
+                $order->status          = ORDER_STATUSES['completed'];
                 $order->save();
 
                 BalanceDetail::create([
@@ -743,7 +742,7 @@ class OrderController extends Controller
                 $order->promo_id        = $promo_id;
                 $order->discount_amount = $discount_amount;
                 $order->payment_amount  = $payment_amount;
-                $order->status          = 4;
+                $order->status          = ORDER_STATUSES['pending_verification'];
                 $order->save();
 
             } else if ($payment_method == 'Credit Card') {
@@ -792,7 +791,7 @@ class OrderController extends Controller
                 $order->promo_id        = $promo_id;
                 $order->discount_amount = $discount_amount;
                 $order->payment_amount  = $payment_amount;
-                $order->status          = 5;
+                $order->status          = ORDER_STATUSES['pending_processing'];
                 $order->save();
 
                 $djiClient = new \App\Classes\DJIClient();
@@ -813,7 +812,7 @@ class OrderController extends Controller
                     ]);
                 }
 
-                $order->status  = 6;
+                $order->status  = ORDER_STATUSES['pending_completed'];
                 $order->save();
             }
         }
@@ -835,7 +834,7 @@ class OrderController extends Controller
         // order
         $order   = Order::where('id', $order_id)
             ->where('user_id', $user_id)
-            ->where('status', '!=', 6)
+            ->where('status', '!=', ORDER_STATUSES['completed'])
             ->first();
         
         if (!$order) {
@@ -846,7 +845,7 @@ class OrderController extends Controller
         }
 
         $order->cancellation_reason = 'by user';
-        $order->status = 7;
+        $order->status = ORDER_STATUSES['cancelled'];
         $order->save();
 
         return response()->json([
