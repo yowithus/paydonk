@@ -55,7 +55,7 @@ class UserController extends Controller
             'last_name'     => 'required|regex:/^[\pL\s\-]+$/u|min:2|max:30',
             'phone_number'  => 'required|regex:/^(\+62)[0-9]{9,11}$/|unique:users',
             'email'         => 'required|email|max:50|unique:users',
-            'password'      => 'required|string|min:6',
+            'password'      => 'required|string|min:8|regex:/^(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/',
         ]);
 
         if ($validator->fails()) {
@@ -77,7 +77,7 @@ class UserController extends Controller
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Register successful',
+            'message'   => trans('messages.success', ['action' => trans('action.register')]),
             'token'     => $token
         ]);
     }
@@ -86,7 +86,7 @@ class UserController extends Controller
     {
         $validator = validator()->make($request->all(), [
             'phone_number'  => 'required|regex:/^(\+62)[0-9]{9,11}$/',
-            'password'      => 'required|string|min:6',
+            'password'      => 'required|string|min:8',
             'device_type'   => 'required|in:Android,iOS',
             'fcm_token_android' => 'required_if:device_type,==,Android',
             'fcm_token_ios' => 'required_if:device_type,==,iOS',
@@ -103,7 +103,7 @@ class UserController extends Controller
         if (! $token = JWTAuth::attempt($credentials)) {
             return response()->json([
                 'status'    => 0,
-                'message'   => 'Nomor telepon atau password salah.'
+                'message'   => trans('messages.error_incorrect_credentials')
             ]);
         }
 
@@ -136,7 +136,7 @@ class UserController extends Controller
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Login successful',
+            'message'   => trans('messages.success', ['action' => trans('action.login')]),
             'token'     => $token,
             'user'      => $user
         ]);
@@ -173,7 +173,7 @@ class UserController extends Controller
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Logout successful',
+            'message'   => trans('messages.success', ['action' => trans('action.logout')]),
         ]);
     }
 
@@ -204,7 +204,7 @@ class UserController extends Controller
         if (!$is_register && User::where('phone_number', '=', $phone_number)->count() == 0) {
             return response()->json([
                 'status'    => 0,
-                'message'   => 'User with this phone number does not exist'
+                'message'   => trans('messages.error_unregistered_phone_number')
             ]);
         }
 
@@ -217,7 +217,7 @@ class UserController extends Controller
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Send verification code successful'
+            'message'   => trans('messages.success', ['action' => trans('action.send_verification_code')]),
         ]);
     }
 
@@ -243,16 +243,16 @@ class UserController extends Controller
             ->orderBy('created_at', 'desc')
             ->first();
         
-        if ($verification_code != $phone_verification->verification_code) {
+        if (($phone_verification && $verification_code != $phone_verification->verification_code) || !$phone_verification) {
             return response()->json([
                 'status'    => 0,
-                'message'   => 'Kode verifikasi yang ada masukan salah.'
+                'message'   => trans('messages.error_incorrect_verification_code')
             ]);
         }
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Verify successful'
+            'message'   => trans('messages.success', ['action' => trans('action.verify')]),
         ]);
     }
 
@@ -260,7 +260,7 @@ class UserController extends Controller
     {
         $validator = validator()->make($request->all(), [
             'phone_number'  => 'required|regex:/^(\+62)[0-9]{9,11}$/',
-            'password'      => 'required|string|min:6|confirmed',
+            'password'      => 'required|string|min:8|regex:/^(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/|confirmed',
         ]);
 
         if ($validator->fails()) {
@@ -270,13 +270,10 @@ class UserController extends Controller
             ]);
         }
 
-        $user = User::where('phone_number', $request->phone_number)
-            ->first();
-
-        if (!$user) {
+        if (! $user = User::where('phone_number', $request->phone_number)->first()) {
             return response()->json([
                 'status'    => 0,
-                'message'   => 'User tidak ditemukan.'
+                'message'   => trans('messages.error_unregistered_phone_number')
             ]);
         }
 
@@ -286,7 +283,7 @@ class UserController extends Controller
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Reset password successful'
+            'message'   => trans('messages.success', ['action' => trans('action.reset_password')]),
         ]);
     }
 
@@ -315,7 +312,7 @@ class UserController extends Controller
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Update profile successful'
+            'message'   => trans('messages.success', ['action' => trans('action.update_profile')]),
         ]);
     }
 
@@ -344,7 +341,7 @@ class UserController extends Controller
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Update profile picture successful'
+            'message'   => trans('messages.success', ['action' => trans('action.update_profile_picture')]),
         ]);
     }
 
@@ -381,7 +378,7 @@ class UserController extends Controller
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Update fcm token successful',
+            'message'   => trans('messages.success', ['action' => trans('action.update_fcm_token')]),
         ]);
     }
 
@@ -389,7 +386,7 @@ class UserController extends Controller
     {
         $validator = validator()->make($request->all(), [
             'phone_number'  => 'required|regex:/^(\+62)[0-9]{9,11}$/',
-            'password'      => 'required|string|min:6',
+            'password'      => 'required|string|min:8',
         ]);
 
         if ($validator->fails()) {
@@ -403,13 +400,13 @@ class UserController extends Controller
         if (! $token = JWTAuth::attempt($credentials)) {
             return response()->json([
                 'status'    => 0,
-                'message'   => 'Password salah.'
+                'message'   => trans('messages.error_incorrect_password')
             ]);
         }
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Verify password successful'
+            'message'   => trans('messages.success', ['action' => trans('action.verify_password')]),
         ]);
     }
 
@@ -432,7 +429,7 @@ class UserController extends Controller
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Save pin pattern successful'
+            'message'   => trans('messages.success', ['action' => trans('action.save_pin_pattern')]),
         ]);
     }
 
@@ -453,13 +450,13 @@ class UserController extends Controller
         if ($user->pin_pattern != $request->pin_pattern) {
             return response()->json([
                 'status'    => 0,
-                'message'   => 'Pin salah.'
+                'message'   => trans('messages.error_incorrect_pin_pattern')
             ]);
         }
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Verify pin pattern successful'
+            'message'   => trans('messages.success', ['action' => trans('action.verify_pin_pattern')]),
         ]);
     }
 
@@ -497,7 +494,7 @@ class UserController extends Controller
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Store credit card token successful'
+            'message'   => trans('messages.success', ['action' => trans('action.store_credit_card_token')]),
         ]);
     }
 
@@ -513,7 +510,7 @@ class UserController extends Controller
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Delete credit card tokens successful'
+            'message'   => trans('messages.success', ['action' => trans('action.delete_credit_card_token')]),
         ]);
     }
 
@@ -523,7 +520,7 @@ class UserController extends Controller
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Get credit card tokens successful',
+            'message'   => trans('messages.success', ['action' => trans('action.get_credit_card_tokens')]),
             'credit_card_tokens'  => $user->credit_card_tokens
         ]);
     }
@@ -534,7 +531,7 @@ class UserController extends Controller
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Get balance details successful',
+            'message'   => trans('messages.success', ['action' => trans('action.get_balance_details')]),
             'balance_details'  => $user->balance_details()->with('order.product')->get()
         ]);
     }

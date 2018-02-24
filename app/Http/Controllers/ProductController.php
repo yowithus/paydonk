@@ -22,7 +22,7 @@ class ProductController extends Controller
 
         return response()->json([
             'status'      => 1,
-            'message'     => 'Get recipient banks successful',
+            'message'     => trans('messages.success', ['action' => trans('action.get_recipient_banks')]),
             'recipient_banks' => $recipient_banks,
         ]);
     }
@@ -35,7 +35,7 @@ class ProductController extends Controller
 
         return response()->json([
             'status'      => 1,
-            'message'     => 'Get sender banks successful',
+            'message'     => trans('messages.success', ['action' => trans('action.get_sender_banks')]),
             'sender_banks' => $sender_banks,
         ]);
     }
@@ -70,7 +70,7 @@ class ProductController extends Controller
             } else {
                 return response()->json([
                     'status'    => 0,
-                    'message'   => 'The number is currently not supported.'
+                    'message'   => trans('messages.error_invalid_operator'),
                 ]);
             }
 
@@ -95,7 +95,7 @@ class ProductController extends Controller
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Get products successful',
+            'message'   => trans('messages.success', ['action' => trans('action.get_products')]),
             'products'  => $products,
         ]);
     }

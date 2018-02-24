@@ -34,6 +34,13 @@ class OrderController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+        if (count($orders) == 0) {
+            return response()->json([
+                'status'    => 0,
+                'message'   => trans('messages.error', ['action' => trans('action.get_orders')]),
+            ]);
+        }
+
         foreach ($orders as $order) {
             $product     = Product::find($order->product_code);
             $status_text = ORDER_STATUSES[$order->status];
@@ -49,7 +56,7 @@ class OrderController extends Controller
 
         return response()->json([
             'status'  => 1,
-            'message' => 'Get orders successful',
+            'message' => trans('messages.success', ['action' => trans('action.get_orders')]),
             'orders'  => $orders_arr
         ]);
     }
@@ -63,7 +70,7 @@ class OrderController extends Controller
         if (!$order) {
             return response()->json([
                 'status'    => 0,
-                'message'   => 'Get order detail failed'
+                'message'   => trans('messages.error', ['action' => trans('action.get_order_details')]),
             ]);
         }
 
@@ -71,7 +78,7 @@ class OrderController extends Controller
 
         return response()->json([
             'status'  => 1,
-            'message' => 'Get order details successful',
+            'message' => trans('messages.success', ['action' => trans('action.get_order_details')]),
             'order'   => $order,
             'product' => $product
         ]);
@@ -214,7 +221,6 @@ class OrderController extends Controller
 
         return ([
             'status'    => 1,
-            'message'   => 'Get bill successful',
             'customer_number' => $customer_number,
             'customer_name'   => $customer_name,
             'product_price'   => $product_price,
@@ -235,7 +241,7 @@ class OrderController extends Controller
         if (!$promo) {
             return ([
                 'status'    => 0,
-                'message'   => 'Kode promo tidak ditemukan'
+                'message'   => trans('messages.error_invalid_promo_code'),
             ]);
         }
 
@@ -245,7 +251,7 @@ class OrderController extends Controller
         if (!$order) {
             return ([
                 'status'    => 0,
-                'message'   => 'Order tidak ditemukan atau sudah dikonfirmasi'
+                'message'   => trans('messages.error_invalid_order'),
             ]);
         }
 
@@ -258,7 +264,7 @@ class OrderController extends Controller
         if ($product_price < $min_usage) {
             return ([
                 'status'    => 0,
-                'message'   => "Minimum pembelian adalah Rp $min_usage"
+                'message'   => trans('messages.error_promo_minimum_usage', ['min_usage' => number_format($min_usage, 0, '', '.')]),
             ]);
         }
 
@@ -267,7 +273,6 @@ class OrderController extends Controller
 
         return ([
             'status'    => 1,
-            'message'   => 'Get promo successful',
             'promo_id'  => $promo_id,
             'discount_amount' => $discount_amount
         ]);
@@ -306,7 +311,7 @@ class OrderController extends Controller
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Use promo code successful',
+            'message'   => trans('messages.success', ['action' => trans('action.use_promo_code')]),
             'discount_amount' => $discount_amount
         ]);
     }
@@ -334,7 +339,7 @@ class OrderController extends Controller
         if (!$product) {
             return ([
                 'status'    => 0,
-                'message'   => 'Produk tidak ditemukan'
+                'message'   => trans('messages.error_invalid_product')
             ]);
         }
         
@@ -431,7 +436,7 @@ class OrderController extends Controller
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Create order successful',
+            'message'   => trans('messages.success', ['action' => trans('action.create_order')]),
             'order'     => $order,
             'product'   => $product
         ]);
@@ -455,7 +460,7 @@ class OrderController extends Controller
         if (!$order) {
             return response()->json([
                 'status'    => 0,
-                'message'   => 'Order tidak ditemukan atau sudah dikonfirmasi'
+                'message'   => trans('messages.error_invalid_order'),
             ]);
         }
 
@@ -465,7 +470,7 @@ class OrderController extends Controller
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Save promo code successful!'
+            'message'   => trans('messages.success', ['action' => trans('action.save_promo_code')]),
         ]);
     }
 
@@ -500,7 +505,7 @@ class OrderController extends Controller
         if (!$order) {
             return response()->json([
                 'status'    => 0,
-                'message'   => 'Order tidak ditemukan atau sudah dikonfirmasi'
+                'message'   => trans('messages.error_invalid_order'),
             ]);
         }
 
@@ -516,7 +521,7 @@ class OrderController extends Controller
         if (!$product) {
             return response()->json([
                 'status'    => 0,
-                'message'   => 'Produk tidak ditemukan'
+                'message'   => trans('messages.error_invalid_product'),
             ]);
         }
 
@@ -526,7 +531,7 @@ class OrderController extends Controller
         if ($product_category == 'Saldo' && $payment_method != 'Bank Transfer') {
             return response()->json([
                 'status'    => 0,
-                'message'   => 'Pembayaran untuk top up saldo hanya bisa dilakukan dengan bank transfer'
+                'message'   => trans('messages.error_invalid_topup_payment_method')
             ]);
         }
 
@@ -534,7 +539,7 @@ class OrderController extends Controller
             if ($balance < $order_amount) {
                 return response()->json([
                     'status'    => 0,
-                    'message'   => 'Saldo anda tidak mencukupi'
+                    'message'   => trans('messages.error_not_enough_balance')
                 ]);
             }
         }
@@ -546,7 +551,7 @@ class OrderController extends Controller
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Save payment method successful!'
+            'message'   => trans('messages.success', ['action' => trans('action.save_payment_method')]),
         ]);
     }
 
@@ -569,7 +574,7 @@ class OrderController extends Controller
         if (!$order) {
             return response()->json([
                 'status'    => 0,
-                'message'   => 'Order tidak ditemukan atau sudah dikonfirmasi'
+                'message'   => trans('messages.error_invalid_order'),
             ]);
         }
 
@@ -612,7 +617,7 @@ class OrderController extends Controller
         if (!$product) {
             return response()->json([
                 'status'    => 0,
-                'message'   => 'Produk tidak ditemukan'
+                'message'   => trans('messages.error_invalid_product'),
             ]);
         }
 
@@ -657,7 +662,7 @@ class OrderController extends Controller
             } else {
                 return response()->json([
                     'status'    => 0,
-                    'message'   => 'Pembayaran untuk top up saldo hanya bisa dilakukan dengan bank transfer'
+                    'message'   => trans('messages.error_invalid_topup_payment_method'),
                 ]);
             }
             
@@ -667,7 +672,7 @@ class OrderController extends Controller
                 if ($balance < $payment_amount) {
                     return response()->json([
                         'status'    => 0,
-                        'message'   => 'Saldo anda tidak mencukupi'
+                        'message'   => trans('messages.error_not_enough_balance'),
                     ]);
                 }
 
@@ -767,7 +772,7 @@ class OrderController extends Controller
 
                     return response()->json([
                         'status'    => 0,
-                        'message'   => 'Pembayaran gagal, mohon dicoba kembali',
+                        'message'   => trans('messages.payment_failed'),
                     ]);
                 }
 
@@ -776,7 +781,7 @@ class OrderController extends Controller
 
                     return response()->json([
                         'status'    => 0,
-                        'message'   => 'Pembayaran gagal, mohon dicoba kembali',
+                        'message'   => trans('messages.error_payment_failed'),
                     ]);
                 }
 
@@ -815,7 +820,7 @@ class OrderController extends Controller
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Confirm order successful'
+            'message'   => trans('messages.success', ['action' => trans('action.confirm_order')]),
         ]);
     }
 
@@ -836,7 +841,7 @@ class OrderController extends Controller
         if (!$order) {
             return response()->json([
                 'status'    => 0,
-                'message'   => 'Order tidak ditemukan atau sudah dikonfirmasi'
+                'message'   => trans('messages.error_invalid_order'),
             ]);
         }
 
@@ -846,7 +851,7 @@ class OrderController extends Controller
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Cancel order successful'
+            'message'   => trans('messages.success', ['action' => trans('action.cancel_order')]),
         ]);
     }
 }
