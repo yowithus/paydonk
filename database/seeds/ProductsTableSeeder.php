@@ -1371,7 +1371,7 @@ class ProductsTableSeeder extends Seeder
                 'code'          => '1501',
                 'dji_product_id' => '520011',
                 'type'          => 'Postpaid',
-                'image_name'    => null,
+                'image_name'    => 'telkom.png',
                 'status'        => 1,
             ],
 
@@ -1441,7 +1441,7 @@ class ProductsTableSeeder extends Seeder
                 'code'          => '1701',
                 'dji_product_id' => '900001',
                 'type'          => 'Postpaid',
-                'image_name'    => null,
+                'image_name'    => 'bpjs_kesehatan.png',
                 'status'        => 1,
             ],
             
