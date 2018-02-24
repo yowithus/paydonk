@@ -27,6 +27,7 @@ class CreateUsersTable extends Migration
             $table->string('fcm_token_ios')->nullable();
             $table->string('jwt_token')->nullable();
             $table->string('pin_pattern')->nullable();
+            $table->string('role')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
