@@ -8,6 +8,7 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use App\User;
 use App\Product;
 use App\CreditCardToken;
+use App\Order;
 use Twilio;
 use DB;
 use Mail;
@@ -413,7 +414,7 @@ class UserController extends Controller
     public function savePinPattern(Request $request)
     {
         $validator = validator()->make($request->all(), [
-            'pin_pattern'  => 'required|numeric',
+            'pin_pattern'  => 'required|alpha_num|min:3',
         ]);
 
         if ($validator->fails()) {
@@ -436,7 +437,7 @@ class UserController extends Controller
     public function verifyPinPattern(Request $request)
     {
         $validator = validator()->make($request->all(), [
-            'pin_pattern'  => 'required|numeric',
+            'pin_pattern'  => 'required|alpha_num|min:3',
         ]);
 
         if ($validator->fails()) {
@@ -529,10 +530,20 @@ class UserController extends Controller
     {
         $user = JWTAuth::parseToken()->authenticate();
 
+        $balance_details = $user->balance_details()->get();
+
+        foreach ($balance_details as $balance_detail) {
+            $order     = Order::find($balance_detail->order_id);
+            $balance_detail->order = $order;
+
+            $product   = $order ? Product::find($order->product_code) : null;
+            $balance_detail->product = $product;
+        }
+
         return response()->json([
             'status'    => 1,
             'message'   => trans('messages.success', ['action' => trans('action.get_balance_details')]),
-            'balance_details'  => $user->balance_details()->with('order.product')->get()
+            'balance_details' => $balance_details
         ]);
     }
 }

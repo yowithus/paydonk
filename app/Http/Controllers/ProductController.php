@@ -53,16 +53,17 @@ class ProductController extends Controller
             ]);
         }
 
-        $category = $request->category;
-
-        $products = Product::selectRaw('name, if(variant_name is null, price, null) as price, if(variant_name is null, code, null) as code, type, image_name')
+        $category   = $request->category;
+        $type       = $request->type;
+        $customer_number = $request->customer_number;
+        
+        $products = Product::selectRaw('id, name, if(variant_name is null, price, null) as price, if(variant_name is null, code, null) as code, category, type, image_name')
             ->where('category', $category);
 
         if ($category == 'PLN') {
             $products->where('type', 'Prepaid');
         } else if (in_array($category, ['Pulsa', 'Paket Data'])) {
-            $type   = $request->type;
-            $customer_number = $request->customer_number;
+            
             $prefix = substr($customer_number, 0, 4);
 
             if (isset(OPERATOR_PREFIXES[$prefix])) {
@@ -90,6 +91,7 @@ class ProductController extends Controller
                 ->where('variant_name', '!=', null)
                 ->get();
 
+            $product->customer_number = $customer_number;
             $product->variants = (count($product_variants) > 0) ? $product_variants : null;
         }
 

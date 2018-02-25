@@ -13,13 +13,19 @@ return [
     |
     */
 
+    'alpha_num'            => ':Attribute harus berupa huruf dan angka.',
+    'confirmed'            => ':Attribute tidak sesuai.',
     'email'                => ':Attribute harus menggunakan email address yang valid.',
     'max'                  => [
+        'file'    => ':Attribute tidak boleh melebihi :max kilobytes.',
         'string'  => ':Attribute tidak boleh melebihi :min karakter.',
     ],
+    'mimes'                => ':Attribute harus berupa file :values.',
     'min'                  => [
+        'file'    => ':Attribute minimal :min kilobytes.',
         'string'  => ':Attribute minimal terdiri dari :min karakter.',
     ],
+    'numeric'              => ':Attribute harus berupa angka.',
     'regex'                => 'Format :attribute tidak valid.',
     'required'             => ':Attribute wajib diisi.',
     'string'               => ':Attribute harus berupa huruf.',
@@ -54,10 +60,13 @@ return [
     */
 
     'attributes' => [
-        'password' => 'password',
-        'phone_number' => 'no telepon',
-        'first_name' => 'nama depan',
-        'last_name' => 'nama terakhir'
+        'email'         => 'email',
+        'image'         => 'gambar',
+        'first_name'    => 'nama depan',
+        'last_name'     => 'nama terakhir',
+        'password'      => 'password',
+        'phone_number'  => 'no telepon',
+        'pin_pattern'   => 'pola pin',
     ],
 
 ];
