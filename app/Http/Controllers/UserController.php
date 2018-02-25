@@ -33,7 +33,7 @@ class UserController extends Controller
         $user = JWTAuth::parseToken()->authenticate();
 
         // $asd = sendPushNotification([
-        //     'fcm_token' => '',
+        //     'fcm_token' => 'cnJxf639tpU:APA91bH4CGY_evXokdtSv25u3cjPJXSTOSt3toBUEwjdjnNo-w6dnk1bbFxHclcp36N2zVyVmcyxmPH346F1D34nabvOLIZJYYyG6Ld7cR2XsjQZ9B42Banhu2F1s6IPVkT70-e9h2Wh',
         //     'title' => 'asd',
         //     'body' => 'asd',
         //     'type' => 'asd'
@@ -413,7 +413,7 @@ class UserController extends Controller
     public function savePinPattern(Request $request)
     {
         $validator = validator()->make($request->all(), [
-            'pin_pattern'  => 'required|string|min:6',
+            'pin_pattern'  => 'required|numeric',
         ]);
 
         if ($validator->fails()) {
@@ -436,7 +436,7 @@ class UserController extends Controller
     public function verifyPinPattern(Request $request)
     {
         $validator = validator()->make($request->all(), [
-            'pin_pattern'  => 'required|string|min:6',
+            'pin_pattern'  => 'required|numeric',
         ]);
 
         if ($validator->fails()) {
