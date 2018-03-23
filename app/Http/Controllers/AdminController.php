@@ -337,11 +337,12 @@ class AdminController extends Controller
         $product_code = $order->product_code;
 
         $user   = User::find($user_id);
+        $fcm_token = $user->fcm_token_android;
 
         $product    = Product::find($product_code);
         $product_category    = $product->category;
 
-        if ($product_category == 'Saldo') {
+        // if ($product_category == 'Saldo') {
             $balance        = $user->balance;
             $topup_amount   = $order->order_amount;
             $current_amount = $balance + $topup_amount;
@@ -363,34 +364,42 @@ class AdminController extends Controller
             $order->status = ORDER_STATUSES['completed'];
             $order->save();
 
-        } else {
-            $order->status = ORDER_STATUSES['pending_processing'];
-            $order->save();
+        sendPushNotification([
+            'fcm_token' => $fcm_token,
+            'title'     => 'Berhasil!',
+            'body'      => "Top up sudah berhasil dilakukan.",
+            'order_id'  => $order_id,
+            'click_action' => 'DetailTransaction'
+        ]);
 
-            $dji_product_id = $product->dji_product_id;
-            $reference_id   = $order->reference_id;
-            $customer_number = $order->customer_number;
-            $product_price  = $order->product_price;
-            $admin_fee      = $order->admin_fee;
-            $order_amount   = $order->order_amount;
+        // } else {
+        //     $order->status = ORDER_STATUSES['pending_processing'];
+        //     $order->save();
 
-            $djiClient = new \App\Classes\DJIClient;
-            $result = $djiClient->payment([
-                'dji_product_id'    => $dji_product_id,
-                'customer_number'   => $customer_number,
-                'reference_id'      => $reference_id, 
-                'product_price'     => $product_price,
-                'admin_fee'         => $admin_fee,
-                'order_amount'      => $order_amount    
-            ]);
+        //     $dji_product_id = $product->dji_product_id;
+        //     $reference_id   = $order->reference_id;
+        //     $customer_number = $order->customer_number;
+        //     $product_price  = $order->product_price;
+        //     $admin_fee      = $order->admin_fee;
+        //     $order_amount   = $order->order_amount;
 
-            if (isset($result->rc) && $result->rc != '00') {
-                return redirect()->back()->withErrors([$result->rc . ': ' . trim($result->description)]);
-            }
+        //     $djiClient = new \App\Classes\DJIClient;
+        //     $result = $djiClient->payment([
+        //         'dji_product_id'    => $dji_product_id,
+        //         'customer_number'   => $customer_number,
+        //         'reference_id'      => $reference_id, 
+        //         'product_price'     => $product_price,
+        //         'admin_fee'         => $admin_fee,
+        //         'order_amount'      => $order_amount    
+        //     ]);
 
-            $order->status = ORDER_STATUSES['completed'];
-            $order->save();
-        }
+        //     if (isset($result->rc) && $result->rc != '00') {
+        //         return redirect()->back()->withErrors([$result->rc . ': ' . trim($result->description)]);
+        //     }
+
+        //     $order->status = ORDER_STATUSES['completed'];
+        //     $order->save();
+        // }
 
         return redirect()->back()->withSuccess('Verify order is successful.');
     }

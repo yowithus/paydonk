@@ -10,6 +10,8 @@
     */
 
 return [
+    'get_version'       => 'get version',
+    'get_user'          => 'get user',
     'register'          => 'register',
     'login'             => 'login',
     'logout' 	        => 'logout',

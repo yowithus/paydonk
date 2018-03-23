@@ -102,10 +102,12 @@ function sendPushNotification($data)
     $request_uri    = '/fcm/send';
     $authorization  = 'key=' . ENV('FCM_SERVER_KEY');
 
-    $fcm_token 	= $data['fcm_token'];
-    $title 		= $data['title'];
-    $body 		= $data['body'];
-    $type 		= $data['type'];
+    $fcm_token    = $data['fcm_token'];
+    $title        = $data['title'];
+    $body         = $data['body'];
+    $order_id     = $data['order_id'];
+    $click_action = $data['click_action']; 
+    // $product_code = $data['product_code'];
 
     $client = new \GuzzleHttp\Client(['base_uri' => $base_uri, 'verify' => false, 'exceptions' => false]);
     $response   = $client->post($request_uri, [
@@ -114,10 +116,13 @@ function sendPushNotification($data)
         	'to' => $fcm_token,
            	'notification' => [
            		'title' => $title,
-           		'body' 	=> $body
+           		'body' 	=> $body,
+              'sound' => 'default'
            	], 
            	'data' 	=> [
-           		'type' => $type
+           		'id' => $order_id,
+              'click_action' => $click_action, //DetailTransaction, ListrikPLN, AirPDAM, BPJS, PaketData, PulsaPrabayar, Pascabayar
+              //optional 'product_code' => 
            	],
         ],
     ]);

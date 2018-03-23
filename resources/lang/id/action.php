@@ -10,6 +10,8 @@
     */
 
 return [
+    'get_version'       => 'mendapatkan versi',
+    'get_user'          => 'mendapatkan user',
     'register'          => 'mendaftar',
     'login'             => 'masuk',
     'logout'            => 'keluar',

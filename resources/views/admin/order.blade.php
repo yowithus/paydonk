@@ -109,7 +109,8 @@
                                     @endif
                                 </td>
                                 <td>
-                                    {{ 'Rp ' . number_format($order->payment_amount, 0, '', '.') }}<br>
+                                    {{ 'Rp ' . number_format($order->payment_amount, 0, '', '.') }}
+                                    @if ($order->unique_code) (unique code: {{ $order->unique_code }}) @endif<br>
                                     {{ $order->payment_method }}<br>
 
                                     @if ($order->bank_transfer)

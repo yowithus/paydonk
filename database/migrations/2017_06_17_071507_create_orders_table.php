@@ -25,6 +25,7 @@ class CreateOrdersTable extends Migration
             $table->integer('status');
             $table->double('discount_amount')->default(0);
             $table->double('payment_amount');
+            $table->double('unique_code')->nullable();
             $table->string('payment_method')->nullable();
             $table->string('payment_external_id')->nullable();
             $table->string('customer_name')->nullable();

@@ -25,6 +25,7 @@ return [
 
     'error_not_enough_balance' => 'Saldo anda tidak mencukupi.',
     'error_invalid_topup_payment_method' => 'Pembayaran untuk top up saldo hanya bisa dilakukan dengan bank transfer.',
+    'error_invalid_bill_payment_method' => 'Pembayaran tagihan tidak bisa dilakukan dengan bank transfer.',
     'error_payment_failed' => 'Pembayaran gagal, mohon dicoba kembali.',
 
     'error_invalid_promo_code' => 'Kode promo tidak ditemukan.',

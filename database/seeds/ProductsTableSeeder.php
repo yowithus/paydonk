@@ -44,7 +44,7 @@ class ProductsTableSeeder extends Seeder
             // Token Listrik
     		[
 	            'name'          => 'Token Listrik',
-                'variant_name'  => 'Rp 20.000',
+                'variant_name'  => '20.000',
                 'category'      => 'PLN',
                 'price'         => 20000,
 	            'code'          => '1111',
@@ -55,7 +55,7 @@ class ProductsTableSeeder extends Seeder
             ],
             [
                 'name'          => 'Token Listrik',
-                'variant_name'  => 'Rp 50.000',
+                'variant_name'  => '50.000',
                 'category'      => 'PLN',
                 'price'         => 50000,
                 'code'          => '1112',
@@ -66,7 +66,7 @@ class ProductsTableSeeder extends Seeder
             ],
             [
                 'name'          => 'Token Listrik',
-                'variant_name'  => 'Rp 100.000',
+                'variant_name'  => '100.000',
                 'category'      => 'PLN',
                 'price'         => 100000,
                 'code'          => '1113',
@@ -77,7 +77,7 @@ class ProductsTableSeeder extends Seeder
             ],
             [
                 'name'          => 'Token Listrik',
-                'variant_name'  => 'Rp 200.000',
+                'variant_name'  => '200.000',
                 'category'      => 'PLN',
                 'price'         => 200000,
                 'code'          => '1114',
@@ -88,7 +88,7 @@ class ProductsTableSeeder extends Seeder
             ],
             [
                 'name'          => 'Token Listrik',
-                'variant_name'  => 'Rp 500.000',
+                'variant_name'  => '500.000',
                 'category'      => 'PLN',
                 'price'         => 500000,
                 'code'          => '1115',
@@ -99,7 +99,7 @@ class ProductsTableSeeder extends Seeder
             ],
             [
                 'name'          => 'Token Listrik',
-                'variant_name'  => 'Rp 1.000.000',
+                'variant_name'  => '1.000.000',
                 'category'      => 'PLN',
                 'price'         => 1000000,
                 'code'          => '1107',
@@ -111,7 +111,7 @@ class ProductsTableSeeder extends Seeder
 
             // PDAM
             [
-                'name'          => 'PDAM Kab Banyumas',
+                'name'          => 'Kab Banyumas',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -122,7 +122,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Kebumen',
+                'name'          => 'Kab Kebumen',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -133,7 +133,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kota Magelang',
+                'name'          => 'Kota Magelang',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -144,7 +144,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Cilacap',
+                'name'          => 'Kab Cilacap',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -155,7 +155,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kota Semarang',
+                'name'          => 'Kota Semarang',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -166,7 +166,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Sleman',
+                'name'          => 'Kab Sleman',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -177,7 +177,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [ 
-                'name'          => 'PDAM Kab Boyolali',
+                'name'          => 'Kab Boyolali',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -188,7 +188,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Jepara',
+                'name'          => 'Kab Jepara',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -199,7 +199,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Pekalongan',
+                'name'          => 'Kab Pekalongan',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -210,7 +210,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kota Banjar',
+                'name'          => 'Kota Banjar',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -221,7 +221,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Karanganyar',
+                'name'          => 'Kab Karanganyar',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -232,7 +232,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Wonogiri',
+                'name'          => 'Kab Wonogiri',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -243,7 +243,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Magelang',
+                'name'          => 'Kab Magelang',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -254,7 +254,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Situbondo',
+                'name'          => 'Kab Situbondo',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -265,7 +265,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Probolinggo',
+                'name'          => 'Kab Probolinggo',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -276,7 +276,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Sragen',
+                'name'          => 'Kab Sragen',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -287,7 +287,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Bondowoso',
+                'name'          => 'Kab Bondowoso',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -298,7 +298,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Semarang',
+                'name'          => 'Kab Semarang',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -309,7 +309,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Purworejo',
+                'name'          => 'Kab Purworejo',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -320,7 +320,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Bandung',
+                'name'          => 'Kab Bandung',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -331,7 +331,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kota Banjarmasin',
+                'name'          => 'Kota Banjarmasin',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -342,7 +342,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Kendal',
+                'name'          => 'Kab Kendal',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -353,7 +353,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kota Surakarta',
+                'name'          => 'Kota Surakarta',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -364,7 +364,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kota Madiun',
+                'name'          => 'Kota Madiun',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -375,7 +375,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Purbalingga',
+                'name'          => 'Kab Purbalingga',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -386,7 +386,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Malang',
+                'name'          => 'Kab Malang',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -397,7 +397,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Rembang',
+                'name'          => 'Kab Rembang',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -408,7 +408,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Lombok Tengah',
+                'name'          => 'Kab Lombok Tengah',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -419,7 +419,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kota Salatiga',
+                'name'          => 'Kota Salatiga',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -430,7 +430,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Wonosobo',
+                'name'          => 'Kab Wonosobo',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -441,7 +441,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Brebes',
+                'name'          => 'Kab Brebes',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -452,7 +452,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Jember',
+                'name'          => 'Kab Jember',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -463,7 +463,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Buleleng',
+                'name'          => 'Kab Buleleng',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -474,7 +474,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Giri Menang Mataram',
+                'name'          => 'Giri Menang Mataram',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -485,7 +485,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Intan Banjar',
+                'name'          => 'Intan Banjar',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -496,7 +496,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Temanggung',
+                'name'          => 'Kab Temanggung',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -507,7 +507,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Blora',
+                'name'          => 'Kab Blora',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -518,7 +518,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Kudus',
+                'name'          => 'Kab Kudus',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -529,7 +529,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Palyja',
+                'name'          => 'Palyja Jakarta',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -540,7 +540,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Aetra',
+                'name'          => 'Aetra Jakarta',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -551,7 +551,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kota Bandung',
+                'name'          => 'Kota Bandung',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -562,7 +562,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kota Palembang',
+                'name'          => 'Kota Palembang',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -573,7 +573,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kota Lampung',
+                'name'          => 'Kota Lampung',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -584,7 +584,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Sukoharjo',
+                'name'          => 'Kab Sukoharjo',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -595,7 +595,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Grobogan',
+                'name'          => 'Kab Grobogan',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -606,7 +606,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kota Denpasar',
+                'name'          => 'Kota Denpasar',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -617,7 +617,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Pati',
+                'name'          => 'Kab Pati',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -628,7 +628,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Klungkung',
+                'name'          => 'Kab Klungkung',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -639,7 +639,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Banyuwangi',
+                'name'          => 'Kab Banyuwangi',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -650,7 +650,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Ciamis',
+                'name'          => 'Kab Ciamis',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -661,7 +661,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Sumedang',
+                'name'          => 'Kab Sumedang',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -672,7 +672,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Jombang',
+                'name'          => 'Kab Jombang',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -683,7 +683,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Garut',
+                'name'          => 'Kab Garut',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,
@@ -694,7 +694,7 @@ class ProductsTableSeeder extends Seeder
                 'status'        => 1,
             ],
             [
-                'name'          => 'PDAM Kab Ponorogo',
+                'name'          => 'Kab Ponorogo',
                 'variant_name'  => null,
                 'category'      => 'PDAM',
                 'price'         => null,

@@ -25,6 +25,7 @@ return [
 
     'error_not_enough_balance' => 'You don\' have enough balance.',
     'error_invalid_topup_payment_method' => 'Top up balance can only be done with bank transfer.',
+    'error_invalid_bill_payment_method' => 'Bill payment can not be done with bank transfer.',
     'error_payment_failed' => 'Payment failed, please try again later.',
 
     'error_invalid_promo_code' => 'Promo code is not found.',

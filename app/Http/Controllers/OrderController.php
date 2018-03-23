@@ -30,7 +30,6 @@ class OrderController extends Controller
 
         $orders_arr = [];
         $orders = $user->orders()
-            ->where('status', '!=', ORDER_STATUSES['voided'])
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -74,6 +73,7 @@ class OrderController extends Controller
         }
 
         $product = Product::find($order->product_code);
+        $order->status_text = trans('state.' . array_search($order->status, ORDER_STATUSES));
 
         return response()->json([
             'status'  => 1,
@@ -527,11 +527,20 @@ class OrderController extends Controller
         $product_category   = $product->category;
 
         // validation
-        if ($product_category == 'Saldo' && $payment_method != 'Bank Transfer') {
-            return response()->json([
-                'status'    => 0,
-                'message'   => trans('messages.error_invalid_topup_payment_method')
-            ]);
+        if ($product_category == 'Saldo') {
+            if ($payment_method != 'Bank Transfer') {
+                return response()->json([
+                    'status'    => 0,
+                    'message'   => trans('messages.error_invalid_topup_payment_method')
+                ]);
+            }
+        } else {
+            if ($payment_method == 'Bank Transfer') {
+                return response()->json([
+                    'status'    => 0,
+                    'message'   => trans('messages.error_invalid_bill_payment_method')
+                ]);
+            }
         }
 
         if ($payment_method == 'Balance') {
@@ -563,6 +572,7 @@ class OrderController extends Controller
         $user    = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
         $balance = $user->balance;
+        $fcm_token = $user->fcm_token_android;
 
         // order
         $order   = Order::where('id', $order_id)
@@ -649,10 +659,12 @@ class OrderController extends Controller
                     'sender_account_number' => $request->sender_account_number
                 ]);
 
+                $unique_code     = rand(1, 500);
                 $order->payment_method  = $payment_method;
                 $order->promo_id        = $promo_id;
                 $order->discount_amount = $discount_amount;
-                $order->payment_amount  = $payment_amount;
+                $order->unique_code     = $unique_code;
+                $order->payment_amount  = $payment_amount - $unique_code;
                 $order->status          = ORDER_STATUSES['pending_verification'];
                 $order->save();
 
@@ -665,7 +677,7 @@ class OrderController extends Controller
                 ]);
             }
             
-        // digital products
+        // digital products (biller)
         } else {
             if ($payment_method == 'Balance') {
                 if ($balance < $payment_amount) {
@@ -714,36 +726,44 @@ class OrderController extends Controller
                     'type'              => 'Payment'
                 ]);
 
-            } else if ($payment_method == 'Bank Transfer') {
-
-                $validator = validator()->make($request->all(), [
-                    'recipient_bank_id'     => 'required',
-                    'sender_bank_id'        => 'required',
-                    'sender_account_name'   => 'required',
-                    'sender_account_number' => 'required'
+                sendPushNotification([
+                    'fcm_token' => $fcm_token,
+                    'title'     => 'Berhasil!',
+                    'body'      => "Tagihan $product_category sudah berhasil dilakukan.",
+                    'order_id'  => $order_id,
+                    'click_action' => 'DetailTransaction'
                 ]);
 
-                if ($validator->fails()) {
-                    return response()->json([
-                        'status'    => 0,
-                        'message'   => $validator->errors()->first()
-                    ]);
-                }
+            // } else if ($payment_method == 'Bank Transfer') {
 
-                BankTransfer::create([
-                    'order_id'              => $order_id,
-                    'recipient_bank_id'     => $request->recipient_bank_id,
-                    'sender_bank_id'        => $request->sender_bank_id,
-                    'sender_account_name'   => $request->sender_account_name,
-                    'sender_account_number' => $request->sender_account_number
-                ]);
+            //     $validator = validator()->make($request->all(), [
+            //         'recipient_bank_id'     => 'required',
+            //         'sender_bank_id'        => 'required',
+            //         'sender_account_name'   => 'required',
+            //         'sender_account_number' => 'required'
+            //     ]);
 
-                $order->payment_method  = $payment_method;
-                $order->promo_id        = $promo_id;
-                $order->discount_amount = $discount_amount;
-                $order->payment_amount  = $payment_amount;
-                $order->status          = ORDER_STATUSES['pending_verification'];
-                $order->save();
+            //     if ($validator->fails()) {
+            //         return response()->json([
+            //             'status'    => 0,
+            //             'message'   => $validator->errors()->first()
+            //         ]);
+            //     }
+
+            //     BankTransfer::create([
+            //         'order_id'              => $order_id,
+            //         'recipient_bank_id'     => $request->recipient_bank_id,
+            //         'sender_bank_id'        => $request->sender_bank_id,
+            //         'sender_account_name'   => $request->sender_account_name,
+            //         'sender_account_number' => $request->sender_account_number
+            //     ]);
+
+            //     $order->payment_method  = $payment_method;
+            //     $order->promo_id        = $promo_id;
+            //     $order->discount_amount = $discount_amount;
+            //     $order->payment_amount  = $payment_amount;
+            //     $order->status          = ORDER_STATUSES['pending_verification'];
+            //     $order->save();
 
             } else if ($payment_method == 'Credit Card') {
 
@@ -761,13 +781,13 @@ class OrderController extends Controller
                 $token_id = $request->token_id;
 
                 try {
-                    Log::info("User $user_id is paying using Credit Card.");
+                    Log::info("User $user_id with token $token_id is paying using Credit Card.");
 
                     $options['secret_api_key'] = ENV('XENDIT_SECRET_KEY');
                     $xenditPHPClient = new \XenditClient\XenditPHPClient($options);
                     $response = $xenditPHPClient->captureCreditCardPayment($reference_id, $token_id, $payment_amount);
                 } catch (Exceptions $e) {
-                    Log::info("User $user_id is getting Credit Card exception: " .  $e->getMessage());
+                    Log::info("User $user_id with token $token_id is getting Credit Card exception: " .  $e->getMessage());
 
                     return response()->json([
                         'status'    => 0,
@@ -776,7 +796,7 @@ class OrderController extends Controller
                 }
 
                 if (!isset($response['id']) || $response['status'] != 'CAPTURED') {
-                    Log::info("User $user_id failed when paying with Credit Card: " . json_encode($response));
+                    Log::info("User $user_id with token $token_id failed when paying with Credit Card: " . json_encode($response));
 
                     return response()->json([
                         'status'    => 0,
@@ -812,8 +832,13 @@ class OrderController extends Controller
                     ]);
                 }
 
-                $order->status  = ORDER_STATUSES['pending_completed'];
+                $order->status  = ORDER_STATUSES['completed'];
                 $order->save();
+            } else {
+                return response()->json([
+                    'status'    => 0,
+                    'message'   => trans('messages.error_invalid_bill_payment_method'),
+                ]);
             }
         }
 

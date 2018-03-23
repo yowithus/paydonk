@@ -21,6 +21,7 @@ class UserController extends Controller
     {
        // $this->middleware('guest');
        $this->middleware('jwt.auth', ['except' => [
+            'getVersion',
             'login', 
             'register', 
             'sendVerificationCode', 
@@ -35,17 +36,30 @@ class UserController extends Controller
 
         // $asd = sendPushNotification([
         //     'fcm_token' => 'cnJxf639tpU:APA91bH4CGY_evXokdtSv25u3cjPJXSTOSt3toBUEwjdjnNo-w6dnk1bbFxHclcp36N2zVyVmcyxmPH346F1D34nabvOLIZJYYyG6Ld7cR2XsjQZ9B42Banhu2F1s6IPVkT70-e9h2Wh',
-        //     'title' => 'asd',
-        //     'body' => 'asd',
-        //     'type' => 'asd'
+        //     'title'     => 'Berhasil!',
+        //     'body'      => "Tagihan TV Kabel sudah berhasil dilakukan.",
+        //     'order_id'  => 30,
+        //     'click_action' => 'DetailTransaction'
         // ]);
+
+        // dd($asd);
 
         // Mail::to($user->email)->queue(new Welcome($user));
 
         return response()->json([
             'status'    => 1,
-            'message'   => 'Get user successful',
+            'message'   => trans('messages.success', ['action' => trans('action.get_user')]),
             'user'      => $user
+        ]);
+    }
+
+    public function getVersion()
+    {
+        return response()->json([
+            'status'    => 1,
+            'message'   => trans('messages.success', ['action' => trans('action.get_version')]),
+            'version'   => '1.0',
+            'is_force_update' => false
         ]);
     }
 
