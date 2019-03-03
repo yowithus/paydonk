@@ -98,9 +98,9 @@ return [
     */
 
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
-        ],
+        'password' => [
+            'regex' => 'Password must contain at least one number and one uppercase letter.'
+        ]
     ],
 
     /*

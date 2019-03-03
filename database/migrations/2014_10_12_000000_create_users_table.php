@@ -20,8 +20,14 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->string('phone_number')->unique();
             $table->string('password');
-            $table->double('deposit');
-            $table->integer('status');
+            $table->double('balance')->default(0);
+            $table->integer('status')->default(1);
+            $table->string('image_name')->nullable()->default('default.jpg');
+            $table->string('fcm_token_android')->nullable();
+            $table->string('fcm_token_ios')->nullable();
+            $table->string('jwt_token')->nullable();
+            $table->string('pin_pattern')->nullable();
+            $table->string('role')->nullable()->default('User');
             $table->rememberToken();
             $table->timestamps();
         });

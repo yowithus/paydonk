@@ -19,11 +19,33 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-
+// dashboard
 Route::get('/admin', 'AdminController@index');
+Route::get('/admin/monthly-statistic', 'AdminController@getMonthlyStatistic');
+Route::get('/admin/category-statistic', 'AdminController@getCategoryStatistic');
+
+// users
 Route::get('/admin/users', 'AdminController@getUsers');
-Route::get('/admin/deposit-details', 'AdminController@getDepositDetails');
-Route::get('/admin/topup-orders', 'AdminController@getTopUpOrders');
-Route::post('/admin/topup-orders/verify', 'AdminController@verifyTopUpOrder');
+Route::patch('/admin/users/{user}/status', 'AdminController@updateStatusUser');
+Route::patch('/admin/users/{user}', 'AdminController@updateUser');
+Route::post('/admin/users/{user}/add-balance', 'AdminController@addBalance');
+
+// balance details
+Route::get('/admin/balance-details', 'AdminController@getBalanceDetails');
+
+// orders
 Route::get('/admin/orders', 'AdminController@getOrders');
 Route::post('/admin/orders/verify', 'AdminController@verifyOrder');
+Route::post('/admin/orders/cancel', 'AdminController@cancelOrder');
+Route::post('/admin/orders/refund', 'AdminController@refundOrder');
+
+// products
+Route::get('/admin/products', 'AdminController@getProducts');
+Route::patch('/admin/products/{product}/status', 'AdminController@updateStatusProduct');
+
+// banks
+Route::get('/admin/recipient-banks', 'AdminController@getRecipientBanks');
+Route::patch('/admin/recipient-banks/{recipient_bank}/status', 'AdminController@updateStatusRecipientBank');
+Route::get('/admin/sender-banks', 'AdminController@getSenderBanks');
+Route::patch('/admin/sender-banks/{sender_bank}/status', 'AdminController@updateStatusSenderBank');
+

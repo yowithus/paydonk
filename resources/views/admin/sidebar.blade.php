@@ -30,14 +30,20 @@
                 <a href="#"><i class="fa fa-blind"></i> <span>Users</span> <i class="fa fa-angle-left pull-right"></i></a>
                 <ul class="treeview-menu">
                     <li><a href="{{ url('admin/users') }}"><i class="fa fa-circle-o"></i>User List</a></li>
-                    <li><a href="{{ url('admin/deposit-details') }}"><i class="fa fa-circle-o"></i>Deposit Details</a></li>
+                    <li><a href="{{ url('admin/balance-details') }}"><i class="fa fa-circle-o"></i>Balance Details</a></li>
                 </ul>
             </li>
             <li class="treeview">
-                <a href="#"><i class="fa fa-rocket"></i> <span>Orders</span> <i class="fa fa-angle-left pull-right"></i></a>
+                <a href="{{ url('admin/orders') }}"><i class="fa fa-rocket"></i> <span>Orders</span> <i class="fa fa-angle-left pull-right"></i></a>
+            </li>
+            <li class="treeview">
+                <a href="{{ url('admin/products') }}"><i class="fa fa-beer"></i> <span>Products</span> <i class="fa fa-angle-left pull-right"></i></a>
+            </li>
+            <li class="treeview">
+                <a href="#"><i class="fa fa-bank"></i> <span>Banks</span> <i class="fa fa-angle-left pull-right"></i></a>
                 <ul class="treeview-menu">
-                    <li><a href="{{ url('admin/topup-orders') }}"><i class="fa fa-circle-o"></i>Top Up</a></li>
-                    <li><a href="{{ url('admin/orders') }}"><i class="fa fa-circle-o"></i>Product</a></li>
+                    <li><a href="{{ url('admin/recipient-banks') }}"><i class="fa fa-circle-o"></i>Recipient Banks</a></li>
+                    <li><a href="{{ url('admin/sender-banks') }}"><i class="fa fa-circle-o"></i>Sender Banks</a></li>
                 </ul>
             </li>
         </ul>

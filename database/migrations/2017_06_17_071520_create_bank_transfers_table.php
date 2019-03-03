@@ -17,7 +17,7 @@ class CreateBankTransfersTable extends Migration
             $table->increments('id');
             $table->integer('order_id');
             $table->integer('recipient_bank_id');
-            $table->string('sender_bank_name');
+            $table->integer('sender_bank_id');
             $table->string('sender_account_name');
             $table->string('sender_account_number');
             $table->timestamps();

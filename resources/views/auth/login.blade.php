@@ -4,6 +4,12 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
+            @if ($errors->has('error'))
+            <span class="text-danger">
+                <p>{{ $errors->first('error') }}</p>
+            </span>
+            @endif
+
             <div class="panel panel-default">
                 <div class="panel-heading">Login</div>
                 <div class="panel-body">

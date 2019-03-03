@@ -1,0 +1,19 @@
+before_script:
+  - '[[ ! -e /.dockerenv ]] && exit 0'
+
+deploy_staging:
+    stage: deploy
+    before_script:
+        - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+        - eval $(ssh-agent -s)
+        - ssh-add <(echo "$SSH_PRIVATE_KEY")
+        - mkdir -p ~/.ssh
+        - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    script:
+        #- ssh yonatan@104.236.115.202 "cd /var/www/paydonk-stag && git pull origin dev && composer install"
+        - git push yonatan@104.236.115.202:/var/www/paydonk-stag.git dev 
+    environment:
+        name: staging
+        url: https://104.236.115.202
+    only:
+        - dev

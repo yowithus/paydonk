@@ -33,12 +33,12 @@ class JWTAuthCustom
             ]);
         } catch (TokenInvalidException $e) {
             return response()->json([
-                'status'    => 0,
+                'status'    => -1,
                 'message'   => 'token_invalid'
             ]);
         } catch (JWTException $e) {
             return response()->json([
-                'status'    => 0,
+                'status'    => -1,
                 'message'   => 'token_absent'
             ]);
         }

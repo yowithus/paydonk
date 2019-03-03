@@ -3,6 +3,7 @@
 use Illuminate\Database\Seeder;
 
 use Faker\Factory;
+use App\SenderBank;
 
 class SenderBanksTableSeeder extends Seeder
 {
@@ -13,8 +14,7 @@ class SenderBanksTableSeeder extends Seeder
      */
     public function run()
     {
-
-    	DB::table('sender_banks')->insert([
+    	SenderBank::insert([
     		[
 	            'name'  	   => 'BCA',
 	            'image_name'   => 'bca.png',
